@@ -1,0 +1,137 @@
+{
+  "version": 20,
+  "application": "CirrusFlight",
+  "built_at": "2026-10-25T15:10:35.737500-05:00",
+  "scenery_version": 15,
+  "runtime_device_emulator_verified": false,
+  "dynamics_unchanged_from_version": 17,
+  "save_format_version": 1,
+  "checks": {
+    "menu_save_report.json": {
+      "checks": 209,
+      "failures": 0,
+      "firstFailure": 0,
+      "filesystem": "in-memory fault injection; real SD behavior not verified"
+    },
+    "menu_layout_report.json": {
+      "method": "Execute the actual menu/splash drawing functions on ARM, then rasterize their\ndraw commands with Pillow. Font rasterization approximates the 3DS system font;\nthis is a layout preview, not a GPU/emulator screenshot.\n",
+      "commands_per_screen": [
+        42,
+        11,
+        17,
+        18,
+        11,
+        15
+      ],
+      "text_right_edge_overflow": []
+    },
+    "recorder_report.json": {
+      "checks": 11,
+      "failures": 0,
+      "firstFailure": 0,
+      "csv_rows": 51,
+      "csv_columns": 40,
+      "synthetic_fixture": true
+    },
+    "cockpit_report.json": {
+      "checks": 40659,
+      "failures": 0,
+      "firstFailure": 0,
+      "mesh_triangles": [
+        435,
+        557
+      ],
+      "gpu_runtime_verified": false
+    },
+    "test_report.json": {
+      "checks": 3416280,
+      "failures": 0,
+      "firstFailure": 0,
+      "diagnostic": [
+        70.008056640625,
+        64.01174926757812,
+        60.00770950317383,
+        86.0132064819336,
+        77.00184631347656,
+        67.00582122802734,
+        2.044921875,
+        112.10943603515625,
+        -0.004895193036645651,
+        1.9833984375,
+        164.08375549316406,
+        -3.120900146313943e-06,
+        1430.2020263671875,
+        1299.74072265625,
+        1048.7730712890625,
+        -3.7703731060028076,
+        -3.9731905460357666,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maxSceneryJobVertices": 3024,
+      "worldVertices": [
+        52296,
+        52446,
+        51540
+      ],
+      "imageryVertices": [
+        56976,
+        54240,
+        52308
+      ],
+      "maxImageryMaterialJobVertices": 2196,
+      "regionalPhotoTerrainVertices": [
+        52002,
+        47877
+      ],
+      "meshTriangles": [
+        7102,
+        7628
+      ]
+    },
+    "stream_report.json": {
+      "checks": 1076338,
+      "failures": 0,
+      "firstFailure": 0,
+      "maxResident": 20971008,
+      "maxFrameUpload": 65536,
+      "completedTiles": 177,
+      "failureTiles": 2,
+      "readyFrames": 58655,
+      "pressureTransitions": 0
+    }
+  },
+  "artifacts": {
+    "CirrusFlight.3dsx": "64ff9fb812b236e364b3625de093d5962e22774e0a1303af1598ce34a194e875",
+    "CirrusFlight.smdh": "6e4764c8a405d8c53b0345e0a8662b036b43479e25b7483033eb5dd3fd0c421b"
+  },
+  "source_sha256": {
+    "source/main.c": "61a264943996d7963083866a0ea06d51fd0c59fe834d4c60b3b449060b04e08d",
+    "source/cockpit.c": "a76948c0e4b843473ebbfdee8a3780ef60c18e4fca1d5cdeeadf544f2d66c799",
+    "source/camera.c": "655dadea5092449d77e742ac5a53799e3598b8aa5996eedc67bf252c8e7c913c",
+    "source/aircraft_render.c": "81135a744aa43dc3647c23832dbe9ad65173a958d66c2c146e388595a3207b56",
+    "include/cockpit.h": "4e80cfff4cbfa179bcf3ae47f566fbef529bd894a86db8c3456a1f075009aa60",
+    "include/aircraft_render.h": "50da749af89e7666de0b24e2c3c314a702885e2025fe1fd0ff941cdda0aca79e",
+    "tests/cockpit_test.c": "296b416307c7cc50a5fe86eeb0280524e768abcb1bd270b13dbf39fcf3767931",
+    "tools/test_cockpit.py": "3fa9ef48d43835d963b0d27a0b17a89a6e526e3b51c5528a97043c5c10090fb5",
+    "source/app_menu.c": "2fb8df26c1cf03b7e8e7e4d8c6d0d4de4c0122ff086e3309a0da33b632a12f63",
+    "source/flight_save.c": "48a75fcf988ebd0079f7d087f9e5b033d712b825c97fb8dc58728d5571daf439",
+    "source/flight_recorder.c": "9b0c99c2517ea44e971e57b5e49cb96fb8c6983015b3ba2407f4f2c704f22bf2",
+    "include/app_menu.h": "d874050bbd7023f59d78b6e5d4995470ca28420434cc9af6a20433de0531e864",
+    "include/flight_save.h": "a0dde375ad7a8108bb3784b2fb185f851f8c15ef668b5ab1cceb9f08097673a3",
+    "include/flight.h": "94f6b2471dade7c0f5e4b6b57723dfd929365623b34996d3253823240e3a14d3",
+    "include/camera.h": "769c968cc21318137ea896cec8580da81a005930f657a562a830b788ea758542",
+    "tests/menu_save_test.c": "94e5105b8e0bf042f931370d1a5c54bbd1be03b4d9407afeb9740551975d980a",
+    "tests/recorder_test.c": "4058294f9ad1bdbd13fee8fd774ca4c9970fc8d4eba25e090f28012e67760587",
+    "tools/test_menu_save.py": "f37b808aa62a7dbb6f59c4c88467a74260052acc3d382f5f1da2e4d5c001fc5f",
+    "tools/test_recorder.py": "e07ef25504789bf80ff7b57ae8825957add7b3b77a5173ac144df33479a4a5a1",
+    "tools/preview_menu.py": "31c87b07b4c14ebc9f1d676a5a78bc9cdab30b90de45659e66bbd6e6e99b1115",
+    "tools/analyze_flight_log.py": "153cd416e25588929a6db63baf5b74aae18378c3877ba49bcb8c3242f8d108dd",
+    "Makefile": "01171b9e8805f0f5795ffeeccd2f31c71cffac6205ac93e329a359b690a1aa6a"
+  }
+}

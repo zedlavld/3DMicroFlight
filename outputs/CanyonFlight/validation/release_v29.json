@@ -1,0 +1,134 @@
+{
+  "application": "CirrusFlight",
+  "version": 29,
+  "scenery_version": 15,
+  "packaged_at": "2026-10-27T08:22:22.874254-05:00",
+  "runtime_gpu_verified": false,
+  "emulator_testing": "Azahar OpenGL spot checks: sky, terrain, SF50 exterior, cockpit and storm rain rendered correctly; paused cockpit displayed 60 FPS. Hardware flicker resolution, stereo and audio playback remain unverified.",
+  "checks": {
+    "terrain_stability_report.json": {
+      "checks": 907090,
+      "failures": 0,
+      "firstFailure": 0,
+      "boundaryVertices": 23240,
+      "largestJob": 1968,
+      "runtime_gpu_verified": false,
+      "baseline_v25": false
+    },
+    "audio_report.json": {
+      "checks": 6680,
+      "failures": 0,
+      "firstFailure": 0,
+      "scenarios": [
+        {
+          "name": "sr22_idle",
+          "peak": 1791,
+          "rms": 884.9667804723986,
+          "strongest_frequency_hz": 69.0,
+          "clipped_samples": 0
+        },
+        {
+          "name": "sr22_power",
+          "peak": 4558,
+          "rms": 2564.339279132814,
+          "strongest_frequency_hz": 135.0,
+          "clipped_samples": 0
+        },
+        {
+          "name": "sf50_idle",
+          "peak": 2189,
+          "rms": 706.3620435073905,
+          "strongest_frequency_hz": 335.0,
+          "clipped_samples": 0
+        },
+        {
+          "name": "sf50_power",
+          "peak": 6027,
+          "rms": 2001.2145296874594,
+          "strongest_frequency_hz": 1380.0,
+          "clipped_samples": 0
+        },
+        {
+          "name": "wind",
+          "peak": 1172,
+          "rms": 361.81152921892493,
+          "strongest_frequency_hz": 180.0,
+          "clipped_samples": 0
+        },
+        {
+          "name": "stall_warning",
+          "peak": 4630,
+          "rms": 2525.0754962423116,
+          "strongest_frequency_hz": 850.0,
+          "clipped_samples": 0
+        }
+      ],
+      "playback_verified": false,
+      "sample_rate": 22050
+    },
+    "recorder_report.json": {
+      "checks": 11,
+      "failures": 0,
+      "firstFailure": 0,
+      "csv_rows": 51,
+      "csv_columns": 40,
+      "synthetic_fixture": true
+    }
+  },
+  "check_provenance": {
+    "terrain": "v28 unchanged numerical implementation",
+    "audio": "v28 unchanged synthesizer",
+    "recorder": "rerun for v29; 11 checks passed"
+  },
+  "airport_texture_bytes": 43648,
+  "artifacts": {
+    "CirrusFlight.3dsx": "e7998dfecfb101a07bc2dbb02d881297b24777396e5e989fc54018e80d7a5a90",
+    "CirrusFlight.smdh": "dc5821ca33dced00c76a7abc445be02c9d950d84271c43ac8a0e13a5e7b81807"
+  },
+  "source_sha256": {
+    "source/aircraft_mesh.c": "bda1d30b8c60e1af8079cf2ac0d414b10b89e8fc04f5cb4a43df6244c9c9db74",
+    "source/aircraft_render.c": "16363d613fe6457d5835c2fdf1c601fa47fd4347c31d2639b1c0269563eac560",
+    "source/aircraft_shader.v.pica": "54995f09925ec6bdd85bbe5587c6570d8a23e4f80779e4cee4a7d17bc75d4cff",
+    "source/airports.c": "b5877cc06da68d6cd2ae768f3f4cd8e54cbb9b866ff924ee54946b5bb2f50cb7",
+    "source/app_menu.c": "a747e0a741ed862098cb1e16c84de80d05dec8f64a7779ba474428fb4b25bbb7",
+    "source/audio_synth.c": "df6a6db51abbf6036c0cebd4358bc1f7a0a3bc608016f002ee86abd4ff783646",
+    "source/camera.c": "8862083ff3920cd8096e69143f1a5b41fd9a1f51eddcee56b8ed7d9b40f17309",
+    "source/cockpit.c": "ca3ea9ba097c9438baf1fedb132f892fae2c7df286cb6a314c5f5d7b52f62f41",
+    "source/cockpit_cache.c": "6281a7090de501cb2a438332e0b341089db661fb6c0cd995eaf18d42bf2ac55e",
+    "source/flight.c": "26f80b65a2e80394200df0326cf585b5a97f90a9eea84f308dde88ac38f852c6",
+    "source/flight_audio.c": "ac278ca3c47c14e3e1ca2ca926f96855ab683c326256baa9199ae2f1e3ba0171",
+    "source/flight_recorder.c": "e17d62a3c27541452b93b5e2ac4f248de3fe2500ab7e8bb78022ef9e5076ca11",
+    "source/flight_save.c": "48a75fcf988ebd0079f7d087f9e5b033d712b825c97fb8dc58728d5571daf439",
+    "source/frame_profile.c": "5b8460395d707f25a867b3d7e1b1458c0b1ef6b8c343f72c86da14991ae0f2df",
+    "source/ground.c": "6a06de1365a9667d4412fe598a26b162ab337811d08586ca502853b80cb70670",
+    "source/imagery.c": "eb4613d62dc2083bf20a55ffb0b861d1b934154bd36efaf0ace4c270d3700e72",
+    "source/instruments.c": "e3864e8af166b9cd7b24bd9069b6d91f988a690e19e83973a602374413dd8e89",
+    "source/main.c": "f67f4aa905295baf7c96a792d4674f53efe57c0202491748e7bbc154ca0769fc",
+    "source/scenery.c": "85a5fbc13bf04a33fac71c600bd15f2d8c119eb887c26b815553f56e5cc73cdb",
+    "source/scenery_stream.c": "bd8a5f28b8a743764e93635d0f0b421dae2726f777441a9d1c98b0648c3f083a",
+    "source/stream_plan.c": "9f28037b8d3c54372c8c5cf83326c7e9174d5d6194c815bf0bdad21f005ce698",
+    "source/terrain.c": "b04f5514e1b7250c33cf7b459986ca7aa561e58dc8fc53955f1ee032e23eae85",
+    "source/terrain_data.c": "f81d4d1fc95e2efa55c9ac3a0cda4662a71369939373531dca92b7e5c6a54eb9",
+    "source/weather_visual.c": "9c472a6b882dfb63ae2d062fb0eca7524305db3bab6026a2b6eeca941a9880f5",
+    "include/aircraft_mesh.h": "527be7719f94defc5dd8d56710122dc6549a0d38c6be50618ff68b859ca5347b",
+    "include/aircraft_render.h": "7ab204531906836d50ee4083013ca6bba54dae607c3d543fc3211c30b0ab8d85",
+    "include/app_menu.h": "f0f38d9dec467b390dd466ab1206f48573ec941644ee8757d99d0f1117b0458b",
+    "include/audio_synth.h": "469afccee0f360939f6f7a3d03c50e3ee4123e19a61accb9c6bef33d882105d6",
+    "include/camera.h": "5411962b2bc49dd6e77d871413a60d60162d728789066dce9000b3f60af4b7aa",
+    "include/cockpit.h": "a4fc999ecb8dfad169dc243d4f443d3600b3a058d57225fc7b06624e7b2d93a6",
+    "include/cockpit_cache.h": "1eb0637ef0b8eabc9891475da8296c4368d1a01fd38d77583aee7d6f0662326b",
+    "include/flight.h": "94f6b2471dade7c0f5e4b6b57723dfd929365623b34996d3253823240e3a14d3",
+    "include/flight_audio.h": "524281bcb081f119ee6b5b8393c611c3cbf76ef61220ef97eb1aaccd5ab61537",
+    "include/flight_recorder.h": "b4665ab8199761f73d29d32fbecd6cf8eef6f58ab956bafa86b1150a03440ef6",
+    "include/flight_save.h": "a0dde375ad7a8108bb3784b2fb185f851f8c15ef668b5ab1cceb9f08097673a3",
+    "include/frame_profile.h": "4f01e194826b809f5270f094dcbae088f4cfc9e7a06a0e388eb406d817897e52",
+    "include/imagery.h": "82c15c529077544beef7b73013743d80ee70910402859e6c58ba261fbc0a8868",
+    "include/instruments.h": "0ede05d8e689a9ef97b8c466b28448ac91389148891031dae041e8f061484197",
+    "include/scenery.h": "53882b616e5fda9a87b6d67de194b709fca07dd30829842b2f61bdeb5697d061",
+    "include/scenery_stream.h": "e3c844c3aa83bdfd9939fb0d812371421fa82a93cdeb131047816147b9b7bd2f",
+    "include/stream_plan.h": "2cd31ee1dcee48cec9fdce7f02d71c2c179b425dcda195a3f6ffc4b2ce05f8e4",
+    "include/terrain.h": "a4f552a34f3a493b7cd3caa38a01a6326020bbc7dd6d9590bcd09945786aba2e",
+    "include/terrain_data.h": "a346d099c6deed3bf23f25ec94a7fa6106adf14af9ddfdbca37c3cdf8d2e3945",
+    "include/weather_visual.h": "f3aeabf3f78537094c97748cb9dab96c3700eb0dd7bb62b454eabc6539956aee"
+  }
+}

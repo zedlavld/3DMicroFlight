@@ -1,0 +1,16 @@
+{
+  "sr22": {
+    "size": 512,
+    "mip_levels": 7,
+    "bytes": 699008,
+    "sha256": "f8c03ac805cd02dbebc2cfcf90e5bafbb270a82b130ef3fefb4e73cc37696710",
+    "all_pixels_verified": true
+  },
+  "sf50": {
+    "size": 512,
+    "mip_levels": 7,
+    "bytes": 699008,
+    "sha256": "5956e7c5e48175fc72598c4c50f8803ef152e648da8e07bc97190fcb92b7195f",
+    "all_pixels_verified": true
+  }
+}

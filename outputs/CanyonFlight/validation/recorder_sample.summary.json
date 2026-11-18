@@ -1,0 +1,18 @@
+{
+  "file": "outputs\\CanyonFlight\\validation\\recorder_sample.csv",
+  "samples": 51,
+  "segments": [
+    {
+      "aircraft": "SF50",
+      "start_profile": "approach",
+      "duration_s": 10.0,
+      "height_change_m": 0.0,
+      "average_climb_fpm": 0.0,
+      "min_ias_approx_kcas": 123.4,
+      "max_ias_approx_kcas": 123.4,
+      "max_stall_warning": 0.0,
+      "ground_samples": 51,
+      "crashed": false
+    }
+  ]
+}

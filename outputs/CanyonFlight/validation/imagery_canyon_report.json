@@ -1,0 +1,27 @@
+{
+  "files": 8,
+  "mip_levels_per_file": [
+    8,
+    8,
+    8,
+    8,
+    7,
+    7,
+    7,
+    7
+  ],
+  "format": "RGB565",
+  "all_morton_pixels_verified": true,
+  "header_lengths_and_sha256_verified": true,
+  "shared_gutter_max_channel_difference": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "total_pack_bytes": 13980928
+}

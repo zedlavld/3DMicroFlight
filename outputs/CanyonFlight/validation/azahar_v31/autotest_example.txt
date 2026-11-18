@@ -1,0 +1,6 @@
+# name           aircraft airport stage  view render warmup interval shots
+kgcn_climb_ext    SF50 KGCN CLIMB  ext 0 12 0.4 6
+kgcn_climb_cockpit SF50 KGCN CLIMB cockpit 0 10 0.4 3
+kgcn_nophoto_ext  SF50 KGCN CLIMB  ext 5 10 0.4 3
+kgcn_strip_ext    SF50 KGCN CLIMB  ext 6 14 0.4 3
+kphx_cruise_ext   SF50 KPHX CRUISE ext 0 14 0.5 4

@@ -1,0 +1,14 @@
+{
+  "tiles": 538,
+  "fine": 415,
+  "coarse": 123,
+  "bytes": 1246401600,
+  "checks": 18109,
+  "route_samples": 1472,
+  "all_morton_mips_verified": true,
+  "neighbor_seams": 938,
+  "maximum_source_seam_channel_difference": 110,
+  "p95_mean_source_seam_channel_difference": 0.0,
+  "mean_source_seam_channel_difference": 0.04212839957578181,
+  "failures": 0
+}

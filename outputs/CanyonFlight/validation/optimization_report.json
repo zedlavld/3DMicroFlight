@@ -1,0 +1,35 @@
+{
+  "checks": 62,
+  "failures": 0,
+  "firstFailure": 0,
+  "baseline_source_sha256": "268d32a76af28210ef4a16906f0d1003c5026298fa227622c82383546c0fadfe",
+  "aircraft": [
+    {
+      "name": "SR22",
+      "total_triangles": 787,
+      "cached_static_triangles": 590,
+      "live_triangles": 197,
+      "baseline_bytes_per_changing_frame": 84780,
+      "optimized_bytes_per_changing_frame": 21276,
+      "reduction_percent": 74.90445859872612,
+      "unchanged_frame_upload_bytes": 0,
+      "static_initialization_bytes_both_buffers": 127440,
+      "existing_geometry_matches_v21_to_micrometre": true,
+      "added_footwell_triangles": 2
+    },
+    {
+      "name": "SF50",
+      "total_triangles": 701,
+      "cached_static_triangles": 544,
+      "live_triangles": 157,
+      "baseline_bytes_per_changing_frame": 75492,
+      "optimized_bytes_per_changing_frame": 16956,
+      "reduction_percent": 77.53934191702432,
+      "unchanged_frame_upload_bytes": 0,
+      "static_initialization_bytes_both_buffers": 117504,
+      "existing_geometry_matches_v21_to_micrometre": true,
+      "added_footwell_triangles": 2
+    }
+  ],
+  "limitations": "Counts and geometry measured in ARM tests. GPU synchronization, total frame time and hardware FPS are not measured."
+}

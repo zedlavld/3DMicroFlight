@@ -1,0 +1,11 @@
+{
+  "checks": 898254,
+  "failures": 0,
+  "firstFailure": 0,
+  "boundaryVertices": 21889,
+  "largestJob": 2016,
+  "skirts": 16384,
+  "sharedJoins": 21889,
+  "runtime_gpu_verified": false,
+  "baseline_v25": false
+}

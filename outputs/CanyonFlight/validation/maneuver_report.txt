@@ -1,0 +1,56 @@
+checks 413, failures 0, first failure line 0
+SR22 KSEZ STALL: stage 3 nz 0.41/1.80 alpha 25.7 cas 71-108 bank 2 p 1 alt -58/+0 end -47 stall 5.8 prot 0.0 yaw 1 
+SR22 KSEZ TURN: stage 2 nz 0.86/1.40 alpha 4.6 cas 123-128 bank 45 p 21 alt -1/+8 end +2 stall 0.0 prot 0.0 yaw 12 
+SR22 KSEZ PULL: stage 4 nz -1.54/3.09 alpha 34.2 cas 96-125 bank 1 p 0 alt +0/+114 end +11 stall 3.9 prot 0.0 yaw 1 
+SR22 KSEZ ROLL: stage 5 nz 0.04/3.08 alpha 14.3 cas 119-133 bank 77 p 75 alt -82/+0 end -32 stall 0.5 prot 0.0 yaw 49 
+SR22 KSEZ CONFIG: stage 0 nz 0.89/1.09 alpha 6.5 cas 84-112 bank 2 p 1 alt -3/+5 end +2 stall 0.0 prot 0.0 yaw 0 
+SR22 KSEZ GOAROUND: stage 1 nz 0.44/1.47 alpha 14.1 cas 80-88 bank 2 p 1 alt -11/+84 end +84 stall 1.2 prot 0.0 yaw 1 
+SF50 KFLG STALL: stage 3 nz 0.51/1.55 alpha 17.6 cas 87-137 bank 0 p 0 alt -72/+0 end -67 stall 6.4 prot 0.0 yaw 0 
+SF50 KFLG TURN: stage 2 nz 0.92/1.42 alpha 1.3 cas 196-205 bank 45 p 21 alt -3/+8 end +6 stall 0.0 prot 0.0 yaw 10 
+SF50 KFLG PULL: stage 4 nz -1.84/5.20 alpha 16.2 cas 137-200 bank 0 p 0 alt +0/+395 end +374 stall 1.5 prot 0.0 yaw 0 
+SF50 KFLG ROLL: stage 5 nz 0.19/2.39 alpha 3.7 cas 195-207 bank 79 p 68 alt -105/+0 end -39 stall 0.0 prot 0.0 yaw 40 
+SF50 KFLG CONFIG: stage 0 nz 0.74/1.23 alpha 4.2 cas 121-159 bank 0 p 0 alt -9/+18 end -0 stall 0.0 prot 0.0 yaw 0 
+SF50 KFLG GOAROUND: stage 1 nz 0.87/1.50 alpha 7.2 cas 87-110 bank 0 p 0 alt -14/+129 end +129 stall 0.0 prot 0.0 yaw 0 
+B737 KPHX STALL: stage 3 nz 0.61/1.41 alpha 16.0 cas 149-185 bank 0 p 0 alt -106/+0 end -106 stall 2.9 prot 0.0 yaw 0 
+B737 KPHX TURN: stage 2 nz 0.77/1.49 alpha 4.5 cas 264-290 bank 47 p 11 alt -20/+22 end +22 stall 0.0 prot 0.0 yaw 3 
+B737 KPHX PULL: stage 4 nz -2.19/3.59 alpha 26.7 cas 245-280 bank 0 p 0 alt +0/+182 end +150 stall 3.4 prot 0.0 yaw 0 
+B737 KPHX ROLL: stage 5 nz 0.51/2.28 alpha 6.9 cas 272-291 bank 71 p 25 alt -172/+0 end -33 stall 0.0 prot 0.0 yaw 6 
+B737 KPHX CONFIG: stage 0 nz 0.68/1.21 alpha 10.3 cas 160-192 bank 0 p 0 alt -27/+37 end +8 stall 0.0 prot 0.0 yaw 0 
+B737 KPHX GOAROUND: stage 1 nz 0.61/1.35 alpha 9.7 cas 143-177 bank 0 p 0 alt -26/+147 end +147 stall 0.0 prot 0.0 yaw 0 
+A321 KLAS STALL: stage 3 nz 0.63/1.25 alpha 10.4 cas 161-200 bank 0 p 0 alt -120/+9 end -119 stall 0.0 prot 28.9 yaw 0 
+A321 KLAS TURN: stage 2 nz 0.96/1.48 alpha 4.5 cas 277-297 bank 45 p 14 alt -4/+4 end +4 stall 0.0 prot 0.0 yaw 3 
+A321 KLAS PULL: stage 4 nz -0.01/2.40 alpha 9.2 cas 251-290 bank 0 p 0 alt +0/+326 end +326 stall 0.0 prot 0.2 yaw 0 
+A321 KLAS ROLL: stage 5 nz 0.94/1.83 alpha 5.7 cas 288-290 bank 54 p 15 alt -5/+3 end +3 stall 0.0 prot 0.0 yaw 5 
+A321 KLAS CONFIG: stage 0 nz 0.82/1.15 alpha 10.0 cas 159-195 bank 0 p 0 alt -13/+5 end +5 stall 0.0 prot 12.4 yaw 0 
+A321 KLAS GOAROUND: stage 1 nz 0.82/1.27 alpha 9.4 cas 139-183 bank 0 p 0 alt -20/+139 end +139 stall 0.0 prot 2.0 yaw 0 
+F16 KTUS STALL: stage 3 nz 0.51/1.46 alpha 24.8 cas 118-223 bank 0 p 0 alt -0/+30 end +26 stall 0.0 prot 2.6 yaw 0 
+F16 KTUS TURN: stage 2 nz 0.96/1.74 alpha 1.8 cas 404-451 bank 52 p 78 alt -16/+7 end +7 stall 0.0 prot 0.0 yaw 3 
+F16 KTUS PULL: stage 4 nz -1.37/9.23 alpha 24.9 cas 118-420 bank 180 p 64 alt -0/+1362 end +1362 stall 0.0 prot 2.5 yaw 17 
+F16 KTUS ROLL: stage 5 nz 0.99/2.68 alpha 2.8 cas 420-423 bank 180 p 304 alt -55/+0 end -30 stall 0.0 prot 0.0 yaw 13 
+F16 KTUS CONFIG: stage 0 nz 0.94/1.01 alpha 6.1 cas 206-269 bank 0 p 0 alt -2/+4 end +0 stall 0.0 prot 0.0 yaw 0 
+F16 KTUS GOAROUND: stage 1 nz 0.97/1.08 alpha 12.9 cas 150-270 bank 0 p 0 alt -25/+296 end +296 stall 0.0 prot 0.0 yaw 0 
+SR22 KSEZ DIVE: stage 3 nz -0.24/3.33 alpha 4.4 cas 112-216 bank 1 p 0 alt -909/+0 end -909 stall 0.0 prot 0.0 yaw 0 peak 216 kt, VMO 200 (+16), 21 s to reach it
+SR22 KSEZ SPIN: stage 5 nz -1.38/3.72 alpha 59.0 cas 61-147 bank 177 p 31 alt -797/+0 end -782 stall 9.1 prot 0.0 yaw 48 0.1 turns, recovery 1.4 s
+SR22 KSEZ SPIRAL: stage 4 nz 0.07/3.49 alpha 4.6 cas 115-207 bank 138 p 70 alt -926/+0 end -925 stall 0.0 prot 0.0 yaw 30 hands off to bank 123 pitch -52
+SR22 KSEZ MAXTURN: stage 2 nz 0.32/2.72 alpha 11.7 cas 97-128 bank 83 p 20 alt -1/+104 end +1 stall 0.0 prot 0.0 yaw 13 360 deg in 26.4 s, 13.6 deg/s
+SF50 KFLG DIVE: stage 3 nz 0.29/3.08 alpha 2.1 cas 180-269 bank 0 p 0 alt -863/+0 end -450 stall 0.0 prot 0.0 yaw 0 peak 269 kt, VMO 250 (+19), 20 s to reach it
+SF50 KFLG SPIN: stage 5 nz -1.41/3.34 alpha 53.4 cas 84-200 bank 180 p 33 alt -1029/+0 end -714 stall 7.3 prot 0.0 yaw 37 0.1 turns, recovery 1.9 s
+SF50 KFLG SPIRAL: stage 4 nz 0.24/3.25 alpha 2.3 cas 182-279 bank 141 p 71 alt -1193/+0 end -1024 stall 0.0 prot 0.0 yaw 20 hands off to bank 136 pitch -31
+SF50 KFLG MAXTURN: stage 2 nz -0.51/3.31 alpha 8.8 cas 162-206 bank 90 p 19 alt -1/+220 end -0 stall 0.0 prot 0.0 yaw 10 360 deg in 25.0 s, 14.4 deg/s
+B737 KPHX DIVE: stage 3 nz 0.08/2.76 alpha 7.1 cas 254-363 bank 0 p 0 alt -1076/+0 end -958 stall 0.0 prot 0.0 yaw 0 peak 363 kt, VMO 340 (+23), 26 s to reach it
+B737 KPHX SPIN: stage 5 nz -0.87/2.97 alpha 61.0 cas 133-289 bank 110 p 14 alt -1560/+0 end -1318 stall 11.7 prot 0.0 yaw 19 0.1 turns, recovery 1.4 s
+B737 KPHX SPIRAL: stage 4 nz 0.10/2.77 alpha 7.5 cas 260-356 bank 102 p 25 alt -2052/+0 end -1931 stall 0.0 prot 0.0 yaw 7 hands off to bank 101 pitch -24
+B737 KPHX MAXTURN: stage 2 nz 0.63/2.87 alpha 9.2 cas 264-328 bank 89 p 10 alt -246/+172 end -5 stall 0.0 prot 0.0 yaw 6 360 deg in 51.5 s, 7.0 deg/s
+A321 KLAS DIVE: stage 3 nz 0.43/2.58 alpha 7.9 cas 262-373 bank 0 p 0 alt -876/+0 end -682 stall 0.0 prot 13.6 yaw 0 peak 373 kt, VMO 350 (+23), 25 s to reach it
+A321 KLAS SPIN: stage 5 nz 0.45/1.85 alpha 23.2 cas 135-302 bank 82 p 20 alt -926/+261 end -779 stall 5.3 prot 50.0 yaw 15 0.1 turns, recovery 5.9 s
+A321 KLAS SPIRAL: stage 4 nz 0.86/1.61 alpha 8.3 cas 269-304 bank 55 p 15 alt -156/+0 end -156 stall 0.0 prot 0.9 yaw 4 hands off to bank 34 pitch -2
+A321 KLAS MAXTURN: stage 2 nz 0.98/2.46 alpha 10.3 cas 250-337 bank 69 p 15 alt -7/+353 end -1 stall 0.0 prot 16.2 yaw 7 360 deg in 52.7 s, 6.8 deg/s
+F16 KTUS DIVE: stage 3 nz 0.02/8.88 alpha 4.3 cas 382-700 bank 0 p 0 alt -2960/+0 end -2498 stall 0.0 prot 0.0 yaw 0 peak 700 kt, VMO 700 (+0), 26 s to reach it
+F16 KTUS SPIN: stage 5 nz 0.13/1.81 alpha 25.5 cas 85-446 bank 4 p 2 alt -129/+568 end +568 stall 4.2 prot 16.6 yaw 3 0.0 turns, recovery 1.4 s
+F16 KTUS SPIRAL: stage 4 nz -0.61/8.53 alpha 14.9 cas 382-453 bank 163 p 303 alt -589/+0 end -458 stall 0.0 prot 0.1 yaw 10 hands off to bank 121 pitch -17
+F16 KTUS MAXTURN: stage 2 nz 0.67/8.82 alpha 23.8 cas 179-462 bank 91 p 69 alt -474/+569 end -1 stall 0.0 prot 16.5 yaw 17 360 deg in 20.0 s, 18.0 deg/s
+F16 KTUS LOOP: stage 3 nz 0.82/6.19 alpha 23.5 cas 239-660 bank 180 p 9 alt -288/+1784 end -286 stall 0.0 prot 9.1 yaw 9 pull 21.2 s, heading change -17 deg
+F16 KTUS IMMELMANN: stage 3 nz -2.27/6.19 alpha 19.9 cas 266-544 bank 180 p 68 alt +0/+2580 end +2580 stall 0.0 prot 0.0 yaw 22 pull 11.7 s, heading change 178 deg
+F16 KTUS SPLITS: stage 3 nz -2.07/4.59 alpha 24.1 cas 191-456 bank 180 p 81 alt -1930/+0 end -1906 stall 0.0 prot 10.3 yaw 8 height used 1095 m, heading change -162 deg
+F16 KTUS INVERTED: stage 4 nz -2.42/1.70 alpha 1.3 cas 405-447 bank 173 p 80 alt -26/+56 end +13 stall 0.0 prot 0.0 yaw 8 inverted 10 s, height within 52 m
+F16 KTUS VERTICAL: stage 6 nz -1.59/5.65 alpha 24.6 cas 182-559 bank 180 p 64 alt +0/+3841 end +3841 stall 0.0 prot 3.1 yaw 22 vertical line to 300 kt, 2697 m up

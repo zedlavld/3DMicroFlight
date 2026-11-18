@@ -1,0 +1,39 @@
+{
+  "sources": [
+    {
+      "file": "sr22.glb",
+      "sha256": "4f39ffdfaf0e02ce49aec40bd206d1cbf428d592b25822e63cbc802a6907dc61"
+    },
+    {
+      "file": "sf50.glb",
+      "sha256": "f2c8a0f20581a7e3d534b3196e88f2c8e2ad689b47aa4731cdd9713f25cf4ed5"
+    },
+    {
+      "file": "b737.glb",
+      "sha256": "af6e04780555e21ff03b022ef7c00b7a5b5b29132b4f87c2796c967b92012fe2",
+      "title": "737 MAX Lion Air",
+      "author": "Sofyan Kurniawan",
+      "url": "https://sketchfab.com/3d-models/737-max-lion-air-2747cad8b4c64122abe992c9ad1e8bd1",
+      "license": "CC-BY-4.0"
+    },
+    {
+      "file": "f16_rickslash.glb",
+      "sha256": "f707efcc3727c71d301300f8bdcafc9e80ecb355ba02ca954807d7a2908d62e3",
+      "title": "F-16 jet",
+      "author": "rickslash",
+      "url": "https://sketchfab.com/3d-models/f-16-jet-69c32a15b8e24d6ebf276b76dde3ab95",
+      "license": "CC-BY-4.0",
+      "modified": "landing gear added by tools/import_aircraft_v33.py (original work)"
+    },
+    {
+      "file": "a321.glb",
+      "sha256": "7d53a37a62a54687d4b09aa8a54b710d2b1fc3686691c7e0ce90746a669b1fbd",
+      "title": "Airbus A321-232",
+      "author": "piggyrockstarYT",
+      "url": "https://sketchfab.com/3d-models/airbus-a321-232-22721a53dabc4ca282fbda3b8cd7f030",
+      "license": "CC-BY-4.0",
+      "modified": "cleaned by tools/clean_a321.py"
+    }
+  ],
+  "license": "Per source entry; sr22.glb and sf50.glb CC-BY-4.0 as identified by the source listings and official download dialogs"
+}

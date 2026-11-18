@@ -1,0 +1,58 @@
+{
+  "version": 18,
+  "application": "CirrusFlight",
+  "built_at": "2026-10-25T11:27:58.619309-05:00",
+  "scenery_version": 15,
+  "runtime_device_emulator_verified": false,
+  "dynamics_unchanged_from_version": 17,
+  "save_format_version": 1,
+  "checks": {
+    "menu_save_report.json": {
+      "checks": 178,
+      "failures": 0,
+      "firstFailure": 0,
+      "filesystem": "in-memory fault injection; real SD behavior not verified"
+    },
+    "menu_layout_report.json": {
+      "method": "Execute the actual menu/splash drawing functions on ARM, then rasterize their\ndraw commands with Pillow. Font rasterization approximates the 3DS system font;\nthis is a layout preview, not a GPU/emulator screenshot.\n",
+      "commands_per_screen": [
+        42,
+        11,
+        17,
+        18,
+        11,
+        18
+      ],
+      "text_right_edge_overflow": []
+    },
+    "recorder_report.json": {
+      "checks": 11,
+      "failures": 0,
+      "firstFailure": 0,
+      "csv_rows": 51,
+      "csv_columns": 40,
+      "synthetic_fixture": true
+    }
+  },
+  "artifacts": {
+    "CirrusFlight.3dsx": "f60f7f45f0293e764fb0987f2df8c324c519f1c4703f10ea9d114b6cae0b1280",
+    "CirrusFlight.smdh": "48287fb649710e72293e3ff6059afbb25808131d92dfbead3763f09bd8d10741"
+  },
+  "source_sha256": {
+    "source/main.c": "0701271a111a0862c591e51f764278314a6485a36833156ae1e5dbecc8efe517",
+    "source/app_menu.c": "79976fec45368a9db29d034004ac38b15f2cd132ae1623efe606ce0aa8fb1fa1",
+    "source/flight_save.c": "48a75fcf988ebd0079f7d087f9e5b033d712b825c97fb8dc58728d5571daf439",
+    "source/flight_recorder.c": "a9e507fba89afee34f2a4f1cd1bffeb9666d87e9a4618b90883a2d73f7c8fe60",
+    "include/app_menu.h": "9ecb001fbe0b3e3cb37a003a3c3852dee7a6860693b7f71398d06711e21e42ad",
+    "include/flight_save.h": "a0dde375ad7a8108bb3784b2fb185f851f8c15ef668b5ab1cceb9f08097673a3",
+    "include/flight.h": "94f6b2471dade7c0f5e4b6b57723dfd929365623b34996d3253823240e3a14d3",
+    "include/camera.h": "769c968cc21318137ea896cec8580da81a005930f657a562a830b788ea758542",
+    "tests/menu_save_test.c": "9ff098f3261109854b8c2bd279c92f97c708f67c846f08bd00543338c36ccac9",
+    "tests/recorder_test.c": "4058294f9ad1bdbd13fee8fd774ca4c9970fc8d4eba25e090f28012e67760587",
+    "tools/test_menu_save.py": "f37b808aa62a7dbb6f59c4c88467a74260052acc3d382f5f1da2e4d5c001fc5f",
+    "tools/test_recorder.py": "8e8ef5d08bc561cfd0bcde677d970184993c70cabb92f09fd51e400900615198",
+    "tools/preview_menu.py": "e681d9a22bfd80c581f36dec0a8541968ea4af04f409010ab29cbeef178f4de9",
+    "tools/analyze_flight_log.py": "4f5264cee5f325fdf236d7c2ce5d479f4f5923b964ec87554515afeb0878ad0c",
+    "Makefile": "0ffa99aad8ac4dd24e3648e5958cc85feb138216deb12bb47ef04585a22dd6f6"
+  }
+}

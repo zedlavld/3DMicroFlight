@@ -1,0 +1,12 @@
+{
+  "method": "Execute the actual menu/splash drawing functions on ARM, then rasterize their\ndraw commands with Pillow. Font rasterization approximates the 3DS system font;\nthis is a layout preview, not a GPU/emulator screenshot.\n",
+  "commands_per_screen": [
+    42,
+    13,
+    17,
+    20,
+    11,
+    12
+  ],
+  "text_right_edge_overflow": []
+}

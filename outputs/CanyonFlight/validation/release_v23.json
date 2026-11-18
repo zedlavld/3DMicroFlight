@@ -1,0 +1,234 @@
+{
+  "version": 23,
+  "application": "CirrusFlight",
+  "built_at": "2026-10-25T17:31:05.281785-05:00",
+  "scenery_version": 15,
+  "runtime_device_emulator_verified": false,
+  "dynamics_unchanged_from_version": 17,
+  "save_format_version": 1,
+  "checks": {
+    "menu_save_report.json": {
+      "checks": 217,
+      "failures": 0,
+      "firstFailure": 0,
+      "filesystem": "in-memory fault injection; real SD behavior not verified"
+    },
+    "menu_layout_report.json": {
+      "method": "Execute the actual menu/splash drawing functions on ARM, then rasterize their\ndraw commands with Pillow. Font rasterization approximates the 3DS system font;\nthis is a layout preview, not a GPU/emulator screenshot.\n",
+      "commands_per_screen": [
+        42,
+        13,
+        17,
+        20,
+        11,
+        12
+      ],
+      "text_right_edge_overflow": []
+    },
+    "recorder_report.json": {
+      "checks": 11,
+      "failures": 0,
+      "firstFailure": 0,
+      "csv_rows": 51,
+      "csv_columns": 40,
+      "synthetic_fixture": true
+    },
+    "cockpit_report.json": {
+      "checks": 60198,
+      "failures": 0,
+      "firstFailure": 0,
+      "mesh_triangles": [
+        785,
+        699
+      ],
+      "gpu_runtime_verified": false
+    },
+    "optimization_report.json": {
+      "checks": 62,
+      "failures": 0,
+      "firstFailure": 0,
+      "baseline_source_sha256": "268d32a76af28210ef4a16906f0d1003c5026298fa227622c82383546c0fadfe",
+      "aircraft": [
+        {
+          "name": "SR22",
+          "total_triangles": 785,
+          "cached_static_triangles": 588,
+          "live_triangles": 197,
+          "baseline_bytes_per_changing_frame": 84780,
+          "optimized_bytes_per_changing_frame": 21276,
+          "reduction_percent": 74.90445859872612,
+          "unchanged_frame_upload_bytes": 0,
+          "static_initialization_bytes_both_buffers": 127008,
+          "geometry_matches_v21_to_micrometre": true
+        },
+        {
+          "name": "SF50",
+          "total_triangles": 699,
+          "cached_static_triangles": 542,
+          "live_triangles": 157,
+          "baseline_bytes_per_changing_frame": 75492,
+          "optimized_bytes_per_changing_frame": 16956,
+          "reduction_percent": 77.53934191702432,
+          "unchanged_frame_upload_bytes": 0,
+          "static_initialization_bytes_both_buffers": 117072,
+          "geometry_matches_v21_to_micrometre": true
+        }
+      ],
+      "limitations": "Counts and geometry measured in ARM tests. GPU synchronization, total frame time and hardware FPS are not measured."
+    },
+    "audio_report.json": {
+      "checks": 6167,
+      "failures": 0,
+      "firstFailure": 0,
+      "scenarios": [
+        {
+          "name": "sr22_idle",
+          "peak": 1791,
+          "rms": 884.9667804723986,
+          "strongest_frequency_hz": 69.0,
+          "clipped_samples": 0
+        },
+        {
+          "name": "sr22_power",
+          "peak": 4558,
+          "rms": 2564.339279132814,
+          "strongest_frequency_hz": 135.0,
+          "clipped_samples": 0
+        },
+        {
+          "name": "sf50_idle",
+          "peak": 2189,
+          "rms": 706.3620435073905,
+          "strongest_frequency_hz": 335.0,
+          "clipped_samples": 0
+        },
+        {
+          "name": "sf50_power",
+          "peak": 6027,
+          "rms": 2001.2145296874594,
+          "strongest_frequency_hz": 1380.0,
+          "clipped_samples": 0
+        },
+        {
+          "name": "wind",
+          "peak": 1172,
+          "rms": 361.81152921892493,
+          "strongest_frequency_hz": 180.0,
+          "clipped_samples": 0
+        },
+        {
+          "name": "stall_warning",
+          "peak": 4630,
+          "rms": 2525.0754962423116,
+          "strongest_frequency_hz": 850.0,
+          "clipped_samples": 0
+        }
+      ],
+      "playback_verified": false,
+      "sample_rate": 22050
+    },
+    "test_report.json": {
+      "checks": 3416280,
+      "failures": 0,
+      "firstFailure": 0,
+      "diagnostic": [
+        70.008056640625,
+        64.01174926757812,
+        60.00770950317383,
+        86.0132064819336,
+        77.00184631347656,
+        67.00582122802734,
+        2.044921875,
+        112.10943603515625,
+        -0.004895193036645651,
+        1.9833984375,
+        164.08375549316406,
+        -3.120900146313943e-06,
+        1430.2020263671875,
+        1299.74072265625,
+        1048.7730712890625,
+        -3.7703731060028076,
+        -3.9731905460357666,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maxSceneryJobVertices": 3024,
+      "worldVertices": [
+        52296,
+        52446,
+        51540
+      ],
+      "imageryVertices": [
+        56976,
+        54240,
+        52308
+      ],
+      "maxImageryMaterialJobVertices": 2196,
+      "regionalPhotoTerrainVertices": [
+        52002,
+        47877
+      ],
+      "meshTriangles": [
+        7102,
+        7628
+      ]
+    },
+    "stream_report.json": {
+      "checks": 1076338,
+      "failures": 0,
+      "firstFailure": 0,
+      "maxResident": 20971008,
+      "maxFrameUpload": 65536,
+      "completedTiles": 177,
+      "failureTiles": 2,
+      "readyFrames": 58655,
+      "pressureTransitions": 0
+    }
+  },
+  "artifacts": {
+    "CirrusFlight.3dsx": "2940146a15fa4afb62af257e3ab77f2f764726304f8e3946874ec8fa42e4ecec",
+    "CirrusFlight.smdh": "82bbf9b3685ddb375b9b88b98decda63730e9d8247c7b3b80e260bf13195f314"
+  },
+  "source_sha256": {
+    "source/main.c": "dcae7149b26b729130deb209bfe08ab9e3ec222b674f29edce85b2480f3df771",
+    "source/audio_synth.c": "6d978b942092fcf0f404cf14d481e779fb094d820077cdd589a44f983b472f92",
+    "source/flight_audio.c": "c165d665d0be281946825d16ff181d375c75c2762aee4ff252982f87fdf4f827",
+    "include/audio_synth.h": "9ac6640a7fddf1043deabe2c484d6a6c3258151e3dc75f9d7a1c7b34176a6f3a",
+    "include/flight_audio.h": "524281bcb081f119ee6b5b8393c611c3cbf76ef61220ef97eb1aaccd5ab61537",
+    "tests/audio_test.c": "2cc1603bd27ada7f6694d5659b3b9899dd56ab8fe456e4385213cc2c113a9bbf",
+    "tools/test_audio.py": "0c8f1e37ab569a83353197b5d5658e9b1ca9a05362fde9bb327670fc4cb51a7d",
+    "source/cockpit.c": "353190a4e2e6dcd30a7edd11c699f8dead54720fa1019f8dbd46919ac4ee7ce1",
+    "source/cockpit_cache.c": "6281a7090de501cb2a438332e0b341089db661fb6c0cd995eaf18d42bf2ac55e",
+    "include/cockpit_cache.h": "1eb0637ef0b8eabc9891475da8296c4368d1a01fd38d77583aee7d6f0662326b",
+    "tests/cockpit_cache_test.c": "cf4eed7cc5a2f89c2a50e51d5399ffb76bb374d907328dd9af40b747e45f4d83",
+    "tests/references/cockpit_v21.c": "268d32a76af28210ef4a16906f0d1003c5026298fa227622c82383546c0fadfe",
+    "tools/test_cockpit_cache.py": "d749b5e9de883a7b00e72de65e4fd5bf2287bbfa9310f3d0dfd56812e3dcb02c",
+    "data/cockpit_material.bin": "817951ab3283e30a03de0ccd29a5776971bd31184b45281b0890f5389e342f6a",
+    "tools/build_cockpit_material.py": "413bd8507819d46e66f0af681c7a2e4b201114f03d8e479159d5a760ab4c8c70",
+    "source/camera.c": "655dadea5092449d77e742ac5a53799e3598b8aa5996eedc67bf252c8e7c913c",
+    "source/aircraft_render.c": "c7e392f449f82e73b4c6baf791389bb6e388a554b753600ceb45cc9857c40c3c",
+    "include/cockpit.h": "a4fc999ecb8dfad169dc243d4f443d3600b3a058d57225fc7b06624e7b2d93a6",
+    "include/aircraft_render.h": "86462101308dd141856b9dc2693e7757c16afdf0cfe447a7e2f64ee9ed0d7072",
+    "tests/cockpit_test.c": "296b416307c7cc50a5fe86eeb0280524e768abcb1bd270b13dbf39fcf3767931",
+    "tools/test_cockpit.py": "3fa9ef48d43835d963b0d27a0b17a89a6e526e3b51c5528a97043c5c10090fb5",
+    "source/app_menu.c": "a747e0a741ed862098cb1e16c84de80d05dec8f64a7779ba474428fb4b25bbb7",
+    "source/flight_save.c": "48a75fcf988ebd0079f7d087f9e5b033d712b825c97fb8dc58728d5571daf439",
+    "source/flight_recorder.c": "22079e4ff879132f0fd0c66738e3eb9d66341586427fcc935feba2de1477d89b",
+    "include/app_menu.h": "f0f38d9dec467b390dd466ab1206f48573ec941644ee8757d99d0f1117b0458b",
+    "include/flight_save.h": "a0dde375ad7a8108bb3784b2fb185f851f8c15ef668b5ab1cceb9f08097673a3",
+    "include/flight.h": "94f6b2471dade7c0f5e4b6b57723dfd929365623b34996d3253823240e3a14d3",
+    "include/camera.h": "769c968cc21318137ea896cec8580da81a005930f657a562a830b788ea758542",
+    "tests/menu_save_test.c": "176909bf4a1a7a1d3002a0690748fcc644783838fc6d37ca1645f4dec9666cfc",
+    "tests/recorder_test.c": "4058294f9ad1bdbd13fee8fd774ca4c9970fc8d4eba25e090f28012e67760587",
+    "tools/test_menu_save.py": "f37b808aa62a7dbb6f59c4c88467a74260052acc3d382f5f1da2e4d5c001fc5f",
+    "tools/test_recorder.py": "d1be171e93a3069926c1fa585860baca9927df4d2219f0da40a8f0bb2b96d00b",
+    "tools/preview_menu.py": "0cee2d1735d64c5db9a251a56ac3cec074e9f6d02365909b105199e5ad5d5268",
+    "tools/analyze_flight_log.py": "0ba70566a7277ae829b12363c0788b943ff5c8b719dd46174908d3669e3be9d5",
+    "Makefile": "123b0414d95faf51213766861d5e32ff2defd9e23fb753894bce0fd45e371e6f"
+  }
+}

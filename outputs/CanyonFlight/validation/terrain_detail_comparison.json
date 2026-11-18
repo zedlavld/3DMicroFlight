@@ -1,0 +1,47 @@
+{
+  "description": "Fixed random sample locations within 16km of each validation scene, excluding 2km around airports. Absolute mesh interpolation error against packaged elevation grids; not survey accuracy.",
+  "scenes": [
+    {
+      "scene": 0,
+      "samples": 1182,
+      "v07": {
+        "mean_abs_m": 17.873625000536272,
+        "p95_abs_m": 73.78005481006518,
+        "max_abs_m": 287.8806437732835
+      },
+      "v08": {
+        "mean_abs_m": 13.840162506721494,
+        "p95_abs_m": 59.712583703795275,
+        "max_abs_m": 240.43087201836943
+      }
+    },
+    {
+      "scene": 1,
+      "samples": 1183,
+      "v07": {
+        "mean_abs_m": 12.138042189533932,
+        "p95_abs_m": 46.49426920112947,
+        "max_abs_m": 195.2026270203187
+      },
+      "v08": {
+        "mean_abs_m": 9.871931518868067,
+        "p95_abs_m": 35.537463883272494,
+        "max_abs_m": 139.95752613969762
+      }
+    },
+    {
+      "scene": 2,
+      "samples": 1182,
+      "v07": {
+        "mean_abs_m": 34.84489100284366,
+        "p95_abs_m": 173.17030910885313,
+        "max_abs_m": 562.6851920353495
+      },
+      "v08": {
+        "mean_abs_m": 29.687294622857053,
+        "p95_abs_m": 160.72429766107777,
+        "max_abs_m": 345.20468350874216
+      }
+    }
+  ]
+}

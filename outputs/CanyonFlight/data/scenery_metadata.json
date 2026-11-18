@@ -1,0 +1,346 @@
+{
+  "source": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+  "download_date": "2026-10-24",
+  "source_description": "USGS multi-resolution 3DEP bare-earth DEM, raw F32, bilinear resampling",
+  "vertical_units": "meters",
+  "origin": {
+    "latitude": 34.848598480225,
+    "longitude": -111.78800201416
+  },
+  "projection": "local equirectangular, spherical R=6371000m",
+  "grids": [
+    {
+      "name": "arizona500",
+      "east": -281600,
+      "north": -409600,
+      "spacing": 500,
+      "width": 1076,
+      "height": 1332,
+      "min_m": -2,
+      "max_m": 3763,
+      "sha256": "a7a637235a025a8c83d71101d128bbcd95faf22c8bffa716d450c5d92374ace2",
+      "derived_from": "statewide 100 m stream, [1,4,6,4,1] binomial low-pass, decimated x5"
+    },
+    {
+      "name": "sedona",
+      "east": -12000,
+      "north": -12000,
+      "spacing": 30,
+      "width": 801,
+      "height": 801,
+      "min_m": 1017,
+      "max_m": 2168,
+      "sha256": "505a3e0a2e2028f2859cbde5a45564b2465facec6528e21fb23bd7b50fc1d077",
+      "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-111.91966781323367%2C34.740544989273864%2C-111.65633621508633%2C34.956651971176136&bboxSR=4326&imageSR=4326&size=801%2C801&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+    },
+    {
+      "name": "flagstaff",
+      "east": -12000,
+      "north": 18000,
+      "spacing": 60,
+      "width": 801,
+      "height": 801,
+      "min_m": 1664,
+      "max_m": 3839,
+      "sha256": "cb482ddea27ba7c9fa06888b50ec62cca37a542fa5ce06fa1ec9a81a1589d431",
+      "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-111.91983219001153%2C35.0102065728086%2C-111.39316899371686%2C35.442420536613135&bboxSR=4326&imageSR=4326&size=801%2C801&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+    },
+    {
+      "name": "canyon",
+      "east": -90000,
+      "north": 95000,
+      "spacing": 100,
+      "width": 901,
+      "height": 651,
+      "min_m": 621,
+      "max_m": 2705,
+      "sha256": "65e5110dffdb8b1353febd1375bfba6fa9bc8d2cc0dfddc0a82f2c9baf91904a",
+      "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-112.7748106039714%2C35.70250434504484%2C-111.7874540915671%2C36.28796271049793&bboxSR=4326&imageSR=4326&size=901%2C651&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+    },
+    {
+      "name": "nevada500",
+      "east": -793600,
+      "north": -43100,
+      "spacing": 500,
+      "width": 1298,
+      "height": 1725,
+      "min_m": -85,
+      "max_m": 4269,
+      "sha256": "42769aa5a55a9a100bf13106dd6a8d78700dbbe52f6c321a52879328482f8157",
+      "derived_from": "v32 100 m grid over Nevada + 60 km, [1,4,6,4,1] low-pass, decimated x5"
+    }
+  ],
+  "download_date_statewide": "2026-11-04",
+  "statewide_stream": {
+    "spacing": 100,
+    "tile_cells": 256,
+    "tile_samples": 257,
+    "east": -281600,
+    "north": -409600,
+    "tiles_x": 21,
+    "tiles_y": 26,
+    "bytes": 72134244,
+    "format": "16-byte header '<4sHHHHI' (AZEL, version 1, i, j, 257, crc32) + 257*257 int16 LE, row 0 = south",
+    "no_coverage_fill": "push-pull multi-scale average; Mexico cells are placeholders",
+    "valid_fraction": 0.9832,
+    "chunks": [
+      {
+        "name": "az100_0_0",
+        "east": -281600,
+        "north": -409600,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 0.9789,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-114.87444997996103%2C31.16452752157892%2C-112.62906319426023%2C33.0072374921064&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_1_0",
+        "east": -76800,
+        "north": -409600,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-112.63015903944603%2C31.16452752157892%2C-110.38477225374523%2C33.0072374921064&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_2_0",
+        "east": 128000,
+        "north": -409600,
+        "width": 1281,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-110.38586809893103%2C31.16452752157892%2C-108.98209041592335%2C33.0072374921064&bboxSR=4326&imageSR=4326&size=1281%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_0_1",
+        "east": -281600,
+        "north": -204800,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-114.87444997996103%2C33.00633817050048%2C-112.62906319426023%2C34.84904814102796&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_1_1",
+        "east": -76800,
+        "north": -204800,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-112.63015903944603%2C33.00633817050048%2C-110.38477225374523%2C34.84904814102796&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_2_1",
+        "east": 128000,
+        "north": -204800,
+        "width": 1281,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-110.38586809893103%2C33.00633817050048%2C-108.98209041592335%2C34.84904814102796&bboxSR=4326&imageSR=4326&size=1281%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_0_2",
+        "east": -281600,
+        "north": 0,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-114.87444997996103%2C34.84814881942204%2C-112.62906319426023%2C36.69085878994952&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_1_2",
+        "east": -76800,
+        "north": 0,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-112.63015903944603%2C34.84814881942204%2C-110.38477225374523%2C36.69085878994952&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_2_2",
+        "east": 128000,
+        "north": 0,
+        "width": 1281,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-110.38586809893103%2C34.84814881942204%2C-108.98209041592335%2C36.69085878994952&bboxSR=4326&imageSR=4326&size=1281%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_0_3",
+        "east": -281600,
+        "north": 204800,
+        "width": 2049,
+        "height": 513,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-114.87444997996103%2C36.6899594683436%2C-112.62906319426023%2C37.15131145217991&bboxSR=4326&imageSR=4326&size=2049%2C513&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_1_3",
+        "east": -76800,
+        "north": 204800,
+        "width": 2049,
+        "height": 513,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-112.63015903944603%2C36.6899594683436%2C-110.38477225374523%2C37.15131145217991&bboxSR=4326&imageSR=4326&size=2049%2C513&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "az100_2_3",
+        "east": 128000,
+        "north": 204800,
+        "width": 1281,
+        "height": 513,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-110.38586809893103%2C36.6899594683436%2C-108.98209041592335%2C37.15131145217991&bboxSR=4326&imageSR=4326&size=1281%2C513&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      }
+    ]
+  },
+  "statewide_stream_v32": {
+    "spacing": 100,
+    "tile_cells": 256,
+    "east": -793600,
+    "north": -409600,
+    "tiles_x": 41,
+    "tiles_y": 48,
+    "tiles_written": 1190,
+    "bytes": 157215660,
+    "folder": "scenery/elevation32",
+    "download_date": "2026-11-11",
+    "chunks": [
+      {
+        "name": "nv100_0_3",
+        "east": -793600,
+        "north": 204800,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-120.48517733124852%2C36.6899594683436%2C-118.23979054554772%2C38.53266943887108&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_0_4",
+        "east": -793600,
+        "north": 409600,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-120.48517733124852%2C38.53177011726516%2C-118.23979054554772%2C40.37448008779264&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_0_5",
+        "east": -793600,
+        "north": 614400,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-120.48517733124852%2C40.37358076618672%2C-118.23979054554772%2C42.2162907367142&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_1_2",
+        "east": -588800,
+        "north": 0,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-118.24088639073352%2C34.84814881942204%2C-115.99549960503272%2C36.69085878994952&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_1_3",
+        "east": -588800,
+        "north": 204800,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-118.24088639073352%2C36.6899594683436%2C-115.99549960503272%2C38.53266943887108&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_1_4",
+        "east": -588800,
+        "north": 409600,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-118.24088639073352%2C38.53177011726516%2C-115.99549960503272%2C40.37448008779264&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_1_5",
+        "east": -588800,
+        "north": 614400,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-118.24088639073352%2C40.37358076618672%2C-115.99549960503272%2C42.2162907367142&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_2_1",
+        "east": -384000,
+        "north": -204800,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-115.99659545021852%2C33.00633817050048%2C-113.75120866451772%2C34.84904814102796&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_2_2",
+        "east": -384000,
+        "north": 0,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-115.99659545021852%2C34.84814881942204%2C-113.75120866451772%2C36.69085878994952&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_2_3",
+        "east": -384000,
+        "north": 204800,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-115.99659545021852%2C36.6899594683436%2C-113.75120866451772%2C38.53266943887108&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_2_4",
+        "east": -384000,
+        "north": 409600,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-115.99659545021852%2C38.53177011726516%2C-113.75120866451772%2C40.37448008779264&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_2_5",
+        "east": -384000,
+        "north": 614400,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-115.99659545021852%2C40.37358076618672%2C-113.75120866451772%2C42.2162907367142&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_3_3",
+        "east": -179200,
+        "north": 204800,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-113.75230450970352%2C36.6899594683436%2C-111.50691772400273%2C38.53266943887108&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_3_4",
+        "east": -179200,
+        "north": 409600,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-113.75230450970352%2C38.53177011726516%2C-111.50691772400273%2C40.37448008779264&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      },
+      {
+        "name": "nv100_3_5",
+        "east": -179200,
+        "north": 614400,
+        "width": 2049,
+        "height": 2049,
+        "valid_fraction": 1.0,
+        "export_request": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage?f=json&bbox=-113.75230450970352%2C40.37358076618672%2C-111.50691772400273%2C42.2162907367142&bboxSR=4326&imageSR=4326&size=2049%2C2049&format=tiff&pixelType=F32&renderingRule=%7B%22rasterFunction%22%3A+%22None%22%7D&interpolation=RSP_BilinearInterpolation&adjustAspectRatio=false"
+      }
+    ]
+  }
+}

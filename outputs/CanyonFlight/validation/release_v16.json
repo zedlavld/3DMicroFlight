@@ -1,0 +1,381 @@
+{
+  "version": 16,
+  "built_at": "2026-10-25T09:59:41.168999-05:00",
+  "scenery_version": 15,
+  "runtime_visual_verification": false,
+  "new_3ds_performance_verified": false,
+  "phase_scenarios": 31,
+  "artifacts": {
+    "CanyonFlight.3dsx": "a4108237135ccabed1e6545792fa9c47d20baedf4dae6af8cbe835134d4af065",
+    "CanyonFlight.smdh": "4400ba5efdb3b6516f8ffd9f19957992764a83eeab26378cddb5f31f782fa123"
+  },
+  "source_sha256": {
+    "source/flight.c": "d8b990c2ca2ff4ecb296435789cd3af676cb2b4dea182bf7ef7175cb74baccef",
+    "source/ground.c": "6a06de1365a9667d4412fe598a26b162ab337811d08586ca502853b80cb70670",
+    "source/flight_recorder.c": "dd3fa11f26b4d609eb32d5605f388ef4914b0f5dbe00c24a30dd647939438039",
+    "source/main.c": "098b9eddcd5ad81ca0bd3a73f6d82a30d69fbe53a148b38d05a9086517cc4d38",
+    "include/flight.h": "94f6b2471dade7c0f5e4b6b57723dfd929365623b34996d3253823240e3a14d3",
+    "include/flight_recorder.h": "b4665ab8199761f73d29d32fbecd6cf8eef6f58ab956bafa86b1150a03440ef6",
+    "tests/phase_test.c": "af51f1bc7f6f42d7f4f41099721a1e557cecf0c8b021a31239b91697957f34d0",
+    "tests/recorder_test.c": "c069783b6db4774d375613ffd550c3266939c4db323b8a5776078e5a6304299c"
+  },
+  "checks": {
+    "test_report.json": {
+      "checks": 3416280,
+      "failures": 0,
+      "firstFailure": 0,
+      "diagnostic": [
+        70.008056640625,
+        64.01174926757812,
+        60.00770950317383,
+        86.0132064819336,
+        77.00184631347656,
+        67.00582122802734,
+        2.044921875,
+        112.10943603515625,
+        -0.004895193036645651,
+        1.9833984375,
+        164.08375549316406,
+        -3.120900146313943e-06,
+        1430.2020263671875,
+        1299.74072265625,
+        1048.7730712890625,
+        -3.7703731060028076,
+        -3.9731905460357666,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maxSceneryJobVertices": 3024,
+      "worldVertices": [
+        52296,
+        52446,
+        51540
+      ],
+      "imageryVertices": [
+        56976,
+        54240,
+        52308
+      ],
+      "maxImageryMaterialJobVertices": 2196,
+      "regionalPhotoTerrainVertices": [
+        52002,
+        47877
+      ],
+      "meshTriangles": [
+        7102,
+        7628
+      ]
+    },
+    "stream_report.json": {
+      "checks": 1076338,
+      "failures": 0,
+      "firstFailure": 0,
+      "maxResident": 20971008,
+      "maxFrameUpload": 65536,
+      "completedTiles": 177,
+      "failureTiles": 2,
+      "readyFrames": 58655,
+      "pressureTransitions": 0
+    },
+    "phases_report.json": {
+      "checks": 69,
+      "failures": 0,
+      "firstFailure": 0,
+      "caseCount": 31,
+      "cases": [
+        {
+          "aircraft": "SR22",
+          "phase": "climb",
+          "initial_altitude_m": 0.0,
+          "target_kcas": 101.0,
+          "average_fpm": 1423.5931396484375,
+          "final_kcas": 100.54167175292969,
+          "roll_rad": 2.0805415260838345e-05
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "climb",
+          "initial_altitude_m": 609.5999755859375,
+          "target_kcas": 100.0,
+          "average_fpm": 1293.8775634765625,
+          "final_kcas": 99.5943832397461,
+          "roll_rad": 2.0815325115108863e-05
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "climb",
+          "initial_altitude_m": 1828.800048828125,
+          "target_kcas": 98.0,
+          "average_fpm": 1044.6275634765625,
+          "final_kcas": 97.69127655029297,
+          "roll_rad": 1.9496963432175107e-05
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "cruise",
+          "target_kcas": 135.0,
+          "average_fpm": 0.0,
+          "final_kcas": 135.00184631347656,
+          "throttle": 0.8389315009117126,
+          "roll_rad": 1.6801984656922286e-06
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "descent",
+          "target_kcas": 135.0,
+          "average_fpm": -940.3075561523438,
+          "final_kcas": 135.45272827148438,
+          "throttle": 0.21711164712905884,
+          "roll_rad": -1.3485236195265315e-05
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "engine_out_glide",
+          "target_kcas": 88.0,
+          "glide_ratio": 9.729310035705566,
+          "sink_fpm": 1164.23046875,
+          "final_kcas": 88.17782592773438,
+          "initial_path_rad": -0.10407242178916931
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "approach",
+          "final_kcas": 80.10162353515625,
+          "average_fpm": -472.97760009765625,
+          "flaps": 1.0,
+          "gear": 1.0,
+          "mass_kg": 1542.2139892578125
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "go_around",
+          "height_gain_m": 117.998291015625,
+          "final_kcas": 101.92996215820312,
+          "flaps": 0.0,
+          "gear": 1.0,
+          "stall_warning": 0.0
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "banked_turn",
+          "height_change_m": -22.116455078125,
+          "bank_rad": 0.5227609872817993,
+          "heading_change_rad": 2.7379040718078613,
+          "final_kcas": 135.8357391357422,
+          "beta_rad": 0.012805798090994358
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "stall_recovery",
+          "max_warning": 1.0,
+          "max_alpha_rad": 0.6352095603942871,
+          "minimum_kcas": 64.40460968017578,
+          "recovered_kcas": 142.49964904785156,
+          "final_warning": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "climb",
+          "initial_altitude_m": 0.0,
+          "target_kcas": 140.0,
+          "average_fpm": 2947.229736328125,
+          "final_kcas": 138.83567810058594,
+          "roll_rad": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "climb",
+          "initial_altitude_m": 609.5999755859375,
+          "target_kcas": 140.0,
+          "average_fpm": 2849.240234375,
+          "final_kcas": 138.872314453125,
+          "roll_rad": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "climb",
+          "initial_altitude_m": 1828.800048828125,
+          "target_kcas": 140.0,
+          "average_fpm": 2648.337158203125,
+          "final_kcas": 138.94598388671875,
+          "roll_rad": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "cruise",
+          "target_kcas": 180.0,
+          "average_fpm": 0.0,
+          "final_kcas": 180.0,
+          "throttle": 0.660397469997406,
+          "roll_rad": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "descent",
+          "target_kcas": 180.0,
+          "average_fpm": -1227.9232177734375,
+          "final_kcas": 180.76425170898438,
+          "throttle": 0.3722890019416809,
+          "roll_rad": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "engine_out_glide",
+          "target_kcas": 120.0,
+          "glide_ratio": 13.319707870483398,
+          "sink_fpm": 1161.14990234375,
+          "final_kcas": 120.29934692382812,
+          "initial_path_rad": -0.07702089846134186
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "approach",
+          "final_kcas": 90.11739349365234,
+          "average_fpm": -531.1019897460938,
+          "flaps": 1.0,
+          "gear": 1.0,
+          "mass_kg": 2517.437744140625
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "go_around",
+          "height_gain_m": 317.111328125,
+          "final_kcas": 140.0337371826172,
+          "flaps": 0.0,
+          "gear": 0.0,
+          "stall_warning": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "banked_turn",
+          "height_change_m": -19.8515625,
+          "bank_rad": 0.5221294164657593,
+          "heading_change_rad": 2.0628905296325684,
+          "final_kcas": 180.00852966308594,
+          "beta_rad": 0.00882510095834732
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "stall_recovery",
+          "max_warning": 1.0,
+          "max_alpha_rad": 0.5793207883834839,
+          "minimum_kcas": 79.5455093383789,
+          "recovered_kcas": 195.04150390625,
+          "final_warning": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "sf50_mct_reference_probe",
+          "altitude_m": 0.0,
+          "target_kias_approx_cas": 176.5,
+          "reference_gradient_ft_nm": 632.5,
+          "full_lever_model_gradient_ft_nm": 1139.3817138671875,
+          "model_setting_required": 0.8352554440498352
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "sf50_mct_reference_probe",
+          "altitude_m": 609.5999755859375,
+          "target_kias_approx_cas": 172.86000061035156,
+          "reference_gradient_ft_nm": 626.4400024414062,
+          "full_lever_model_gradient_ft_nm": 1080.1629638671875,
+          "model_setting_required": 0.8465089201927185
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "sf50_mct_reference_probe",
+          "altitude_m": 1828.800048828125,
+          "target_kias_approx_cas": 176.9499969482422,
+          "reference_gradient_ft_nm": 589.1400146484375,
+          "full_lever_model_gradient_ft_nm": 904.682373046875,
+          "model_setting_required": 0.8838886618614197
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "ground_settle",
+          "cg_height_m": 1.169921875,
+          "groundspeed_mps": 5.517432146007195e-05,
+          "roll_rad": -2.282571074374573e-07,
+          "pitch_rad": 0.02698102593421936,
+          "ground_load_g": 1.0004370212554932
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "takeoff",
+          "distance_to_8m_agl_m": 765.5227661132812,
+          "airspeed_at_8m_kcas": 85.08806610107422,
+          "height_m": 8.013671875,
+          "final_kcas": 85.08806610107422,
+          "crashed": 0.0
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "landing",
+          "distance_to_stop_m": 237.86936950683594,
+          "max_contact_sink_mps": 1.2966961860656738,
+          "final_groundspeed_mps": 0.17511282861232758,
+          "pitch_rad": -0.01078181155025959,
+          "crashed": 0.0
+        },
+        {
+          "aircraft": "SR22",
+          "phase": "differential_braking",
+          "heading_change_rad": -3.744673013687134,
+          "final_groundspeed_mps": 1.054632544517517,
+          "roll_rad": 0.006946424022316933,
+          "pitch_rad": 0.02336844429373741,
+          "crashed": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "ground_settle",
+          "cg_height_m": 1.16455078125,
+          "groundspeed_mps": 1.13908945422736e-05,
+          "roll_rad": 2.0495361852113092e-08,
+          "pitch_rad": 0.024728640913963318,
+          "ground_load_g": 0.9998459815979004
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "takeoff",
+          "distance_to_8m_agl_m": 840.3383178710938,
+          "airspeed_at_8m_kcas": 98.45394897460938,
+          "height_m": 8.0072021484375,
+          "final_kcas": 98.45394897460938,
+          "crashed": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "landing",
+          "distance_to_stop_m": 330.2470397949219,
+          "max_contact_sink_mps": 0.9990606307983398,
+          "final_groundspeed_mps": 0.16683706641197205,
+          "pitch_rad": 0.003145640017464757,
+          "crashed": 0.0
+        },
+        {
+          "aircraft": "SF50",
+          "phase": "differential_braking",
+          "heading_change_rad": -3.8187289237976074,
+          "final_groundspeed_mps": 1.4135743379592896,
+          "roll_rad": 0.007013069931417704,
+          "pitch_rad": 0.02291961759328842,
+          "crashed": 0.0
+        }
+      ]
+    },
+    "recorder_report.json": {
+      "checks": 11,
+      "failures": 0,
+      "firstFailure": 0,
+      "csv_rows": 51,
+      "csv_columns": 34,
+      "synthetic_fixture": true
+    }
+  }
+}

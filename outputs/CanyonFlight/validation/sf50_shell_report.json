@@ -1,0 +1,8 @@
+{
+  "source_shell_triangles": 7294,
+  "restored_body_triangles": 1149,
+  "old_body_boundary_edges": 537,
+  "repaired_body_boundary_edges": 440,
+  "preserved_all_source_triangle_positions": true,
+  "note": "Retains original source openings; no claim of a watertight source model. Additional fan and gear are generated at runtime."
+}

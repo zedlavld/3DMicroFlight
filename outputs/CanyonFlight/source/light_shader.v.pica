@@ -1,0 +1,24 @@
+; v34.02 night lights, vertex stage: one vertex per lamp.
+; inpos is relative to the buffer's origin; eyeOffset = eye - origin, so the
+; subtraction happens on small numbers (same float24 reasoning as the world
+; shader). modelView is the camera rotation only. Output: view-space centre
+; (x right, y up, -z forward) and the colour scaled to 0..1, alpha = raw
+; size code for the geometry stage.
+.fvec modelView[4], eyeOffset, colorScale
+.constf constants(0.0, 1.0, 0.0, 0.0)
+.out outpos position
+.out outclr color
+.alias inpos v0
+.alias inclr v1
+.entry light_vmain
+.proc light_vmain
+ add r0.xyz, -eyeOffset, inpos
+ mov r0.w, constants.y
+ dp4 r1.x, modelView[0], r0
+ dp4 r1.y, modelView[1], r0
+ dp4 r1.z, modelView[2], r0
+ mov r1.w, constants.y
+ mov outpos, r1
+ mul outclr, colorScale, inclr
+ end
+.end

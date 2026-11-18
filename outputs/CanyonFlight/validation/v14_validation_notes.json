@@ -1,0 +1,12 @@
+{
+  "pfd": "Compiled ARM drawing commands inspected with approximate desktop font; not GPU screenshot",
+  "emulator_capture": "Failed twice: IGraphicsCaptureItemInterop.CreateForMonitor 0x80070057",
+  "hardware": "Not tested",
+  "new_photo_regions": [
+    "flagstaff",
+    "canyon"
+  ],
+  "resident_photo_regions": 1,
+  "tile_files": 24,
+  "production_source": "Normal flight; no auto-camera inspection harness included in main.c"
+}

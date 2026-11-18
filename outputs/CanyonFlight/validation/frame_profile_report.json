@@ -1,0 +1,8 @@
+{
+  "checks": 14,
+  "failures": 0,
+  "firstFailure": 0,
+  "csv_rows": 300,
+  "synthetic_fixture": true,
+  "runtime_fps_measured": false
+}

@@ -1,0 +1,49 @@
+; Original compact textured-aircraft vertex shader.
+.fvec projection[4], modelView[4], coarseUv, eyeOffset
+.constf constants(0.0,1.0,0.0,0.0)
+; v31.1 guard: x = max |clip x,y| / w (4 = four half-screens), y = minimum w
+; (metres in front of the eye) for the clamp to apply.
+; v31.9: a uniform so the hole probe can switch the clamp off (y = 1e9).
+.fvec guard
+.out outpos position
+.out outtc0 texcoord0
+.out outtc1 texcoord1
+.out outclr color
+.alias inpos v0
+.alias intex v1
+.alias inclr v2
+.proc main
+; World scenery: eyeOffset is the camera position relative to the scene
+; anchor and modelView carries rotation only. Subtracting first keeps PICA
+; float24 arithmetic on camera-relative metres, not kilometre-scale terms
+; whose rounding moved pavement layers each frame. Other passes use zero.
+ add r0.xyz,-eyeOffset,inpos
+ mov r0.w,constants.y
+ dp4 r1.x,modelView[0],r0
+ dp4 r1.y,modelView[1],r0
+ dp4 r1.z,modelView[2],r0
+ dp4 r1.w,modelView[3],r0
+ dp4 r3.x,projection[0],r1
+ dp4 r3.y,projection[1],r1
+ dp4 r3.z,projection[2],r1
+ dp4 r3.w,projection[3],r1
+; Vertices far off screen wrap the PICA200 rasterizer's fixed-point range and
+; streak across the frame on hardware. For vertices more than guard.y metres
+; in front, clamp x,y to +/-guard.x*w: they stay off screen, so wholly hidden
+; triangles are unchanged visually. Nearer vertices are left exactly as they
+; were so hardware near-plane clipping of nearby geometry is unaffected.
+ mul r4.x,guard.x,r3.w
+ min r6.xy,r3.xy,r4.xx
+ max r6.xy,r6.xy,-r4.xx
+ slt r5.x,guard.y,r3.w
+ add r6.xy,r6.xy,-r3.xy
+ mad r3.xy,r6.xy,r5.xx,r3.xy
+ mov outpos,r3
+ mov outtc1,constants
+ mul r2.xy,coarseUv,intex
+ add outtc1.xy,coarseUv.zw,r2
+ mov outtc0,intex
+ mov outclr,inclr
+ end
+.end
+

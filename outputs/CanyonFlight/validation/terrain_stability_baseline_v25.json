@@ -1,0 +1,9 @@
+{
+  "checks": 883354,
+  "failures": 198275,
+  "firstFailure": 38,
+  "boundaryVertices": 11914,
+  "largestJob": 1968,
+  "runtime_gpu_verified": false,
+  "baseline_v25": true
+}

@@ -1,0 +1,108 @@
+{
+  "objectIdFieldName": "OBJECTID",
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "domain": null
+    },
+    {
+      "name": "Name",
+      "type": "esriFieldTypeString",
+      "alias": "Name",
+      "domain": null,
+      "length": 200
+    },
+    {
+      "name": "DEM_Type",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "DEM_Type",
+      "domain": null
+    },
+    {
+      "name": "Source",
+      "type": "esriFieldTypeString",
+      "alias": "Source",
+      "domain": null,
+      "length": 32
+    },
+    {
+      "name": "VerticalDatum",
+      "type": "esriFieldTypeString",
+      "alias": "VerticalDatum",
+      "domain": null,
+      "length": 100
+    },
+    {
+      "name": "Resolution_X",
+      "type": "esriFieldTypeString",
+      "alias": "Resolution_X",
+      "domain": null,
+      "length": 50
+    },
+    {
+      "name": "Resolution_Y",
+      "type": "esriFieldTypeDouble",
+      "alias": "Resolution_Y",
+      "domain": null
+    },
+    {
+      "name": "URL",
+      "type": "esriFieldTypeString",
+      "alias": "URL",
+      "domain": null,
+      "length": 1000
+    }
+  ],
+  "features": [
+    {
+      "attributes": {
+        "OBJECTID": 2571,
+        "Name": "n35w112",
+        "DEM_Type": 1,
+        "Source": "USGS",
+        "VerticalDatum": "North American Vertical Datum of 1988 (NAVD 88)",
+        "Resolution_X": "2.77777777787015E-04",
+        "Resolution_Y": -0.00027777777803598015,
+        "URL": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1/TIFF/current/n35w112/USGS_1_n35w112.tif"
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 5376,
+        "Name": "n35w112",
+        "DEM_Type": 1,
+        "Source": "USGS",
+        "VerticalDatum": "North American Vertical Datum of 1988 (NAVD 88)",
+        "Resolution_X": "9.25925926922017E-05",
+        "Resolution_Y": -9.25925927753796e-05,
+        "URL": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/current/n35w112/USGS_13_n35w112.tif"
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 35443,
+        "Name": "AZ_NorthCentral_B23",
+        "DEM_Type": 1,
+        "Source": "USGS",
+        "VerticalDatum": "North American Vertical Datum of 1988 (NAVD 88)",
+        "Resolution_X": null,
+        "Resolution_Y": null,
+        "URL": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/AZ_NorthCentral_B23/TIFF/USGS_1M_12_x42y386_AZ_NorthCentral_B23.tif"
+      }
+    },
+    {
+      "attributes": {
+        "OBJECTID": 53201,
+        "Name": "AZ_Coconino_2019_B19",
+        "DEM_Type": 1,
+        "Source": "USGS",
+        "VerticalDatum": "North American Vertical Datum of 1988 (NAVD 88)",
+        "Resolution_X": null,
+        "Resolution_Y": null,
+        "URL": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/1m/Projects/AZ_Coconino_2019_B19/TIFF/USGS_1M_12_x42y386_AZ_Coconino_2019_B19.tif"
+      }
+    }
+  ]
+}

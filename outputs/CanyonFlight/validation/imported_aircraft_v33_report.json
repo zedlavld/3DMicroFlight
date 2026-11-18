@@ -1,0 +1,1680 @@
+{
+ "b737": {
+  "source": "b737.glb",
+  "source_sha256": "af6e04780555e21ff03b022ef7c00b7a5b5b29132b4f87c2796c967b92012fe2",
+  "converted_sha256": "4dc65cf8edee3205899afe42bbcaab28910cb3d822249563bc416ccd6fa143bb",
+  "triangles": 13332,
+  "gear_triangles": 3676,
+  "scale": [
+   5.124530199354459,
+   5.107295082532673,
+   5.124530199354459
+  ],
+  "gear_split_x": 6.62897861597094,
+  "nose_gear_top": 0.6958132386207581,
+  "main_gear_top": -0.12146422266960144,
+  "extent_min": [
+   -21.02339744567871,
+   -17.959999084472656,
+   -10.05158805847168
+  ],
+  "extent_max": [
+   18.49660301208496,
+   17.959999084472656,
+   2.5999999046325684
+  ],
+  "parts": [
+   {
+    "part": 0,
+    "node": "Circle.036_Body 737_0",
+    "material": "Body_737",
+    "triangles": 1030,
+    "gear": false
+   },
+   {
+    "part": 1,
+    "node": "Circle.036_Jendela_0",
+    "material": "Jendela",
+    "triangles": 74,
+    "gear": false
+   },
+   {
+    "part": 2,
+    "node": "Circle.033_Wings 737._0",
+    "material": "Wings_737.",
+    "triangles": 870,
+    "gear": false
+   },
+   {
+    "part": 3,
+    "node": "Circle.033_Engine.001_0",
+    "material": "Engine.001",
+    "triangles": 48,
+    "gear": false
+   },
+   {
+    "part": 4,
+    "node": "Cube.032_White_0",
+    "material": "White",
+    "triangles": 448,
+    "gear": false
+   },
+   {
+    "part": 5,
+    "node": "Circle.037_Body 737_0",
+    "material": "Body_737",
+    "triangles": 92,
+    "gear": false
+   },
+   {
+    "part": 6,
+    "node": "Circle.038_Egnine 737_0",
+    "material": "Egnine_737",
+    "triangles": 1184,
+    "gear": false
+   },
+   {
+    "part": 7,
+    "node": "Circle.038_Engine.001_0",
+    "material": "Engine.001",
+    "triangles": 1472,
+    "gear": false
+   },
+   {
+    "part": 8,
+    "node": "Cone.001_Black_0",
+    "material": "Black",
+    "triangles": 30,
+    "gear": false
+   },
+   {
+    "part": 9,
+    "node": "Plane.002_Engine.001_0",
+    "material": "Engine.001",
+    "triangles": 1288,
+    "gear": false
+   },
+   {
+    "part": 10,
+    "node": "Plane.002_Engine_0",
+    "material": "Engine",
+    "triangles": 2392,
+    "gear": false
+   },
+   {
+    "part": 11,
+    "node": "Circle.001_Engine.001_0",
+    "material": "Engine.001",
+    "triangles": 132,
+    "gear": false
+   },
+   {
+    "part": 12,
+    "node": "Circle.040_White_0",
+    "material": "White",
+    "triangles": 56,
+    "gear": true
+   },
+   {
+    "part": 13,
+    "node": "Cylinder.029_Roda_0",
+    "material": "Roda",
+    "triangles": 540,
+    "gear": true
+   },
+   {
+    "part": 14,
+    "node": "Cylinder.029_Landing Gear_0",
+    "material": "Landing_Gear",
+    "triangles": 92,
+    "gear": true
+   },
+   {
+    "part": 15,
+    "node": "Cylinder.030_Landing Gear_0",
+    "material": "Landing_Gear",
+    "triangles": 476,
+    "gear": true
+   },
+   {
+    "part": 16,
+    "node": "Cylinder.031_Roda_0",
+    "material": "Roda",
+    "triangles": 1080,
+    "gear": true
+   },
+   {
+    "part": 17,
+    "node": "Cylinder.031_Plane Egnine_0",
+    "material": "Plane_Egnine",
+    "triangles": 440,
+    "gear": true
+   },
+   {
+    "part": 18,
+    "node": "Cylinder.032_Landing Gear_0",
+    "material": "Landing_Gear",
+    "triangles": 824,
+    "gear": true
+   },
+   {
+    "part": 19,
+    "node": "Cube.033_White_0",
+    "material": "White",
+    "triangles": 168,
+    "gear": true
+   },
+   {
+    "part": 20,
+    "node": "Cube.034_White_0",
+    "material": "White",
+    "triangles": 264,
+    "gear": false
+   },
+   {
+    "part": 21,
+    "node": "Cube.035_White_0",
+    "material": "White",
+    "triangles": 12,
+    "gear": false
+   },
+   {
+    "part": 22,
+    "node": "Cube.036_White_0",
+    "material": "White",
+    "triangles": 12,
+    "gear": false
+   },
+   {
+    "part": 23,
+    "node": "Cube.037_White_0",
+    "material": "White",
+    "triangles": 12,
+    "gear": false
+   },
+   {
+    "part": 24,
+    "node": "Cube.038_White_0",
+    "material": "White",
+    "triangles": 12,
+    "gear": false
+   },
+   {
+    "part": 25,
+    "node": "Cube.039_White_0",
+    "material": "White",
+    "triangles": 12,
+    "gear": false
+   },
+   {
+    "part": 26,
+    "node": "Cube.040_White_0",
+    "material": "White",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 27,
+    "node": "Cube.041_Landing Gear_0",
+    "material": "Landing_Gear",
+    "triangles": 208,
+    "gear": false
+   }
+  ],
+  "transparency": "opaque approximation of glass materials"
+ },
+ "f16": {
+  "source": "f16_rickslash.glb",
+  "source_sha256": "f707efcc3727c71d301300f8bdcafc9e80ecb355ba02ca954807d7a2908d62e3",
+  "converted_sha256": "5b336b5096aaa6525056ed264f1d7230960d1423292cdeb84fd5c9f75fb295fc",
+  "triangles": 15638,
+  "gear_triangles": 348,
+  "scale": [
+   7.530000072320957,
+   8.007717999020679,
+   7.530000072320957
+  ],
+  "gear_split_x": 1.45,
+  "nose_gear_top": 0.4403448700904846,
+  "main_gear_top": 0.5737372636795044,
+  "extent_min": [
+   -6.019999980926514,
+   -4.980000019073486,
+   -3.5054314136505127
+  ],
+  "extent_max": [
+   9.039999961853027,
+   4.980000019073486,
+   1.600000023841858
+  ],
+  "parts": [
+   {
+    "part": 0,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 220,
+    "gear": false
+   },
+   {
+    "part": 1,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 10,
+    "gear": false
+   },
+   {
+    "part": 2,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 144,
+    "gear": false
+   },
+   {
+    "part": 3,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 4,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 5,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 6,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 96,
+    "gear": false
+   },
+   {
+    "part": 7,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 13,
+    "gear": false
+   },
+   {
+    "part": 8,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 140,
+    "gear": false
+   },
+   {
+    "part": 9,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 10,
+    "gear": false
+   },
+   {
+    "part": 10,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 10,
+    "gear": false
+   },
+   {
+    "part": 11,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 108,
+    "gear": false
+   },
+   {
+    "part": 12,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 108,
+    "gear": false
+   },
+   {
+    "part": 13,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 68,
+    "gear": false
+   },
+   {
+    "part": 14,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 486,
+    "gear": false
+   },
+   {
+    "part": 15,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 96,
+    "gear": false
+   },
+   {
+    "part": 16,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 17,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 18,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 210,
+    "gear": false
+   },
+   {
+    "part": 19,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 92,
+    "gear": false
+   },
+   {
+    "part": 20,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 232,
+    "gear": false
+   },
+   {
+    "part": 21,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 156,
+    "gear": false
+   },
+   {
+    "part": 22,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 220,
+    "gear": false
+   },
+   {
+    "part": 23,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 10,
+    "gear": false
+   },
+   {
+    "part": 24,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 25,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 26,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 27,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 144,
+    "gear": false
+   },
+   {
+    "part": 28,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 96,
+    "gear": false
+   },
+   {
+    "part": 29,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 13,
+    "gear": false
+   },
+   {
+    "part": 30,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 10,
+    "gear": false
+   },
+   {
+    "part": 31,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 10,
+    "gear": false
+   },
+   {
+    "part": 32,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 140,
+    "gear": false
+   },
+   {
+    "part": 33,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 68,
+    "gear": false
+   },
+   {
+    "part": 34,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 108,
+    "gear": false
+   },
+   {
+    "part": 35,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 108,
+    "gear": false
+   },
+   {
+    "part": 36,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 96,
+    "gear": false
+   },
+   {
+    "part": 37,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 486,
+    "gear": false
+   },
+   {
+    "part": 38,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 39,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 40,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 210,
+    "gear": false
+   },
+   {
+    "part": 41,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 92,
+    "gear": false
+   },
+   {
+    "part": 42,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 232,
+    "gear": false
+   },
+   {
+    "part": 43,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 156,
+    "gear": false
+   },
+   {
+    "part": 44,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 144,
+    "gear": false
+   },
+   {
+    "part": 45,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 10,
+    "gear": false
+   },
+   {
+    "part": 46,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 218,
+    "gear": false
+   },
+   {
+    "part": 47,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 264,
+    "gear": false
+   },
+   {
+    "part": 48,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 380,
+    "gear": false
+   },
+   {
+    "part": 49,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 180,
+    "gear": false
+   },
+   {
+    "part": 50,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 10,
+    "gear": false
+   },
+   {
+    "part": 51,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 10,
+    "gear": false
+   },
+   {
+    "part": 52,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 464,
+    "gear": false
+   },
+   {
+    "part": 53,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 18,
+    "gear": false
+   },
+   {
+    "part": 54,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 18,
+    "gear": false
+   },
+   {
+    "part": 55,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 6,
+    "gear": false
+   },
+   {
+    "part": 56,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 136,
+    "gear": false
+   },
+   {
+    "part": 57,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 940,
+    "gear": false
+   },
+   {
+    "part": 58,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 754,
+    "gear": false
+   },
+   {
+    "part": 59,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 80,
+    "gear": false
+   },
+   {
+    "part": 60,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 61,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 62,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 4,
+    "gear": false
+   },
+   {
+    "part": 63,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 36,
+    "gear": false
+   },
+   {
+    "part": 64,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 140,
+    "gear": false
+   },
+   {
+    "part": 65,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 88,
+    "gear": false
+   },
+   {
+    "part": 66,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 1132,
+    "gear": false
+   },
+   {
+    "part": 67,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 1120,
+    "gear": false
+   },
+   {
+    "part": 68,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 112,
+    "gear": false
+   },
+   {
+    "part": 69,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 112,
+    "gear": false
+   },
+   {
+    "part": 70,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 164,
+    "gear": false
+   },
+   {
+    "part": 71,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 3148,
+    "gear": false
+   },
+   {
+    "part": 72,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 148,
+    "gear": false
+   },
+   {
+    "part": 73,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 528,
+    "gear": false
+   },
+   {
+    "part": 74,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 280,
+    "gear": false
+   },
+   {
+    "part": 75,
+    "node": "defaultMaterial",
+    "material": "lambert2",
+    "triangles": 200,
+    "gear": false
+   },
+   {
+    "part": "procedural gear",
+    "triangles": 348,
+    "gear": true
+   }
+  ],
+  "transparency": "opaque approximation of glass materials"
+ },
+ "a321": {
+  "source": "a321.glb",
+  "source_sha256": "7d53a37a62a54687d4b09aa8a54b710d2b1fc3686691c7e0ce90746a669b1fbd",
+  "converted_sha256": "e210df54ed92cb3d94fe15ac74f99e37653733137dfa3a309205b87a5ca1a07e",
+  "triangles": 10603,
+  "gear_triangles": 1744,
+  "scale": [
+   7.349365020723871,
+   7.213867898603501,
+   7.349365020723871
+  ],
+  "gear_split_x": 7.404995700041018,
+  "nose_gear_top": 0.39230936765670776,
+  "main_gear_top": -0.4962104856967926,
+  "extent_min": [
+   -22.45527458190918,
+   -17.899999618530273,
+   -9.400182723999023
+  ],
+  "extent_max": [
+   22.054725646972656,
+   17.899999618530273,
+   2.700000047683716
+  ],
+  "parts": [
+   {
+    "part": 0,
+    "node": "Object_4",
+    "material": "airbus_a321-200.001",
+    "triangles": 1502,
+    "gear": false
+   },
+   {
+    "part": 1,
+    "node": "Object_5",
+    "material": "Material.066",
+    "triangles": 92,
+    "gear": false
+   },
+   {
+    "part": 2,
+    "node": "Object_13",
+    "material": "airbus_a321-200.001",
+    "triangles": 2,
+    "gear": true
+   },
+   {
+    "part": 3,
+    "node": "Object_15",
+    "material": "airbus_a321-200.001",
+    "triangles": 2,
+    "gear": true
+   },
+   {
+    "part": 4,
+    "node": "Object_17",
+    "material": "airbus_a321-200.001",
+    "triangles": 2,
+    "gear": true
+   },
+   {
+    "part": 5,
+    "node": "Object_19",
+    "material": "airbus_a321-200.001",
+    "triangles": 2,
+    "gear": true
+   },
+   {
+    "part": 6,
+    "node": "Object_21",
+    "material": "airbus_a321-200.001",
+    "triangles": 124,
+    "gear": true
+   },
+   {
+    "part": 7,
+    "node": "Object_23",
+    "material": "airbus_a321-200.001",
+    "triangles": 124,
+    "gear": true
+   },
+   {
+    "part": 8,
+    "node": "Object_25",
+    "material": "airbus_a321-200.001",
+    "triangles": 124,
+    "gear": true
+   },
+   {
+    "part": 9,
+    "node": "Object_27",
+    "material": "airbus_a321-200.001",
+    "triangles": 124,
+    "gear": true
+   },
+   {
+    "part": 10,
+    "node": "Object_29",
+    "material": "airbus_a321-200.001",
+    "triangles": 496,
+    "gear": true
+   },
+   {
+    "part": 11,
+    "node": "Object_31",
+    "material": "airbus_a321-200.001",
+    "triangles": 124,
+    "gear": true
+   },
+   {
+    "part": 12,
+    "node": "Object_33",
+    "material": "airbus_a321-200.001",
+    "triangles": 124,
+    "gear": true
+   },
+   {
+    "part": 13,
+    "node": "Object_35",
+    "material": "airbus_a321-200.001",
+    "triangles": 124,
+    "gear": true
+   },
+   {
+    "part": 14,
+    "node": "Object_37",
+    "material": "airbus_a321-200.001",
+    "triangles": 124,
+    "gear": true
+   },
+   {
+    "part": 15,
+    "node": "Object_39",
+    "material": "airbus_a321-200.001",
+    "triangles": 124,
+    "gear": true
+   },
+   {
+    "part": 16,
+    "node": "Object_41",
+    "material": "airbus_a321-200.001",
+    "triangles": 124,
+    "gear": true
+   },
+   {
+    "part": 17,
+    "node": "Object_43",
+    "material": "airbus_a321-200.001",
+    "triangles": 156,
+    "gear": false
+   },
+   {
+    "part": 18,
+    "node": "Object_45",
+    "material": "airbus_a321-200.001",
+    "triangles": 19,
+    "gear": false
+   },
+   {
+    "part": 19,
+    "node": "Object_47",
+    "material": "airbus_a321-200.001",
+    "triangles": 17,
+    "gear": false
+   },
+   {
+    "part": 20,
+    "node": "Object_49",
+    "material": "airbus_a321-200.001",
+    "triangles": 36,
+    "gear": false
+   },
+   {
+    "part": 21,
+    "node": "Object_53",
+    "material": "airbus_a321-200.001",
+    "triangles": 36,
+    "gear": false
+   },
+   {
+    "part": 22,
+    "node": "Object_75",
+    "material": "airbus_a321-200.001",
+    "triangles": 36,
+    "gear": false
+   },
+   {
+    "part": 23,
+    "node": "Object_79",
+    "material": "Material.066",
+    "triangles": 2700,
+    "gear": false
+   },
+   {
+    "part": 24,
+    "node": "Object_81",
+    "material": "airbus_a321-200.001",
+    "triangles": 90,
+    "gear": false
+   },
+   {
+    "part": 25,
+    "node": "Object_85",
+    "material": "airbus_a321-200.001",
+    "triangles": 18,
+    "gear": false
+   },
+   {
+    "part": 26,
+    "node": "Object_87",
+    "material": "airbus_a321-200.001",
+    "triangles": 18,
+    "gear": false
+   },
+   {
+    "part": 27,
+    "node": "Object_89",
+    "material": "airbus_a321-200.001",
+    "triangles": 18,
+    "gear": false
+   },
+   {
+    "part": 28,
+    "node": "Object_101",
+    "material": "airbus_a321-200.001",
+    "triangles": 32,
+    "gear": false
+   },
+   {
+    "part": 29,
+    "node": "Object_103",
+    "material": "airbus_a321-200.001",
+    "triangles": 256,
+    "gear": false
+   },
+   {
+    "part": 30,
+    "node": "Object_104",
+    "material": "engine_cowling.001",
+    "triangles": 128,
+    "gear": false
+   },
+   {
+    "part": 31,
+    "node": "Object_105",
+    "material": "Material.066",
+    "triangles": 128,
+    "gear": false
+   },
+   {
+    "part": 32,
+    "node": "Object_106",
+    "material": "Material.1181",
+    "triangles": 128,
+    "gear": false
+   },
+   {
+    "part": 33,
+    "node": "Object_108",
+    "material": "Material.066",
+    "triangles": 195,
+    "gear": false
+   },
+   {
+    "part": 34,
+    "node": "Object_109",
+    "material": "Material.008",
+    "triangles": 33,
+    "gear": false
+   },
+   {
+    "part": 35,
+    "node": "Object_110",
+    "material": "Material.2167",
+    "triangles": 128,
+    "gear": false
+   },
+   {
+    "part": 36,
+    "node": "Object_112",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 37,
+    "node": "Object_114",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 38,
+    "node": "Object_116",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 39,
+    "node": "Object_118",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 40,
+    "node": "Object_120",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 41,
+    "node": "Object_122",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 42,
+    "node": "Object_124",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 43,
+    "node": "Object_126",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 44,
+    "node": "Object_128",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 45,
+    "node": "Object_130",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 46,
+    "node": "Object_132",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 47,
+    "node": "Object_134",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 48,
+    "node": "Object_136",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 49,
+    "node": "Object_138",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 50,
+    "node": "Object_140",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 51,
+    "node": "Object_142",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 52,
+    "node": "Object_144",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 53,
+    "node": "Object_146",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 54,
+    "node": "Object_148",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 55,
+    "node": "Object_150",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 56,
+    "node": "Object_152",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 57,
+    "node": "Object_154",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 58,
+    "node": "Object_156",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 59,
+    "node": "Object_158",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 60,
+    "node": "Object_160",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 61,
+    "node": "Object_162",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 62,
+    "node": "Object_164",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 63,
+    "node": "Object_166",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 64,
+    "node": "Object_168",
+    "material": "Material.1176",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 65,
+    "node": "Object_170",
+    "material": "Material.1178",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 66,
+    "node": "Object_172",
+    "material": "airbus_a321-200.001",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 67,
+    "node": "Object_173",
+    "material": "engine_cowling.001",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 68,
+    "node": "Object_175",
+    "material": "Material.1179",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 69,
+    "node": "Object_177",
+    "material": "airbus_a321-200.001",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 70,
+    "node": "Object_179",
+    "material": "airbus_a321-200.001_0",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 71,
+    "node": "Object_181",
+    "material": "airbus_a321-200.001",
+    "triangles": 90,
+    "gear": false
+   },
+   {
+    "part": 72,
+    "node": "Object_183",
+    "material": "airbus_a321-200.001",
+    "triangles": 19,
+    "gear": false
+   },
+   {
+    "part": 73,
+    "node": "Object_187",
+    "material": "airbus_a321-200.001",
+    "triangles": 18,
+    "gear": false
+   },
+   {
+    "part": 74,
+    "node": "Object_189",
+    "material": "airbus_a321-200.001",
+    "triangles": 18,
+    "gear": false
+   },
+   {
+    "part": 75,
+    "node": "Object_191",
+    "material": "airbus_a321-200.001",
+    "triangles": 19,
+    "gear": false
+   },
+   {
+    "part": 76,
+    "node": "Object_193",
+    "material": "airbus_a321-200.001",
+    "triangles": 18,
+    "gear": false
+   },
+   {
+    "part": 77,
+    "node": "Object_195",
+    "material": "airbus_a321-200.001",
+    "triangles": 19,
+    "gear": false
+   },
+   {
+    "part": 78,
+    "node": "Object_201",
+    "material": "airbus_a321-200.001",
+    "triangles": 32,
+    "gear": false
+   },
+   {
+    "part": 79,
+    "node": "Object_203",
+    "material": "airbus_a321-200.001_1",
+    "triangles": 256,
+    "gear": false
+   },
+   {
+    "part": 80,
+    "node": "Object_204",
+    "material": "engine_cowling.001",
+    "triangles": 128,
+    "gear": false
+   },
+   {
+    "part": 81,
+    "node": "Object_205",
+    "material": "Material.066",
+    "triangles": 128,
+    "gear": false
+   },
+   {
+    "part": 82,
+    "node": "Object_206",
+    "material": "Material.1181",
+    "triangles": 128,
+    "gear": false
+   },
+   {
+    "part": 83,
+    "node": "Object_208",
+    "material": "Material.066",
+    "triangles": 195,
+    "gear": false
+   },
+   {
+    "part": 84,
+    "node": "Object_209",
+    "material": "Material.008",
+    "triangles": 33,
+    "gear": false
+   },
+   {
+    "part": 85,
+    "node": "Object_210",
+    "material": "Material.2167",
+    "triangles": 128,
+    "gear": false
+   },
+   {
+    "part": 86,
+    "node": "Object_212",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 87,
+    "node": "Object_214",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 88,
+    "node": "Object_216",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 89,
+    "node": "Object_218",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 90,
+    "node": "Object_220",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 91,
+    "node": "Object_222",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 92,
+    "node": "Object_224",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 93,
+    "node": "Object_226",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 94,
+    "node": "Object_228",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 95,
+    "node": "Object_230",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 96,
+    "node": "Object_232",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 97,
+    "node": "Object_234",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 98,
+    "node": "Object_236",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 99,
+    "node": "Object_238",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 100,
+    "node": "Object_240",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 101,
+    "node": "Object_242",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 102,
+    "node": "Object_244",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 103,
+    "node": "Object_246",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 104,
+    "node": "Object_248",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 105,
+    "node": "Object_250",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 106,
+    "node": "Object_252",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 107,
+    "node": "Object_254",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 108,
+    "node": "Object_256",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 109,
+    "node": "Object_258",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 110,
+    "node": "Object_260",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 111,
+    "node": "Object_262",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 112,
+    "node": "Object_264",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 113,
+    "node": "Object_266",
+    "material": "Material.1493",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 114,
+    "node": "Object_268",
+    "material": "Material.1179",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 115,
+    "node": "Object_270",
+    "material": "airbus_a321-200.001_1",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 116,
+    "node": "Object_271",
+    "material": "engine_cowling.001",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 117,
+    "node": "Object_273",
+    "material": "Material.1178",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 118,
+    "node": "Object_275",
+    "material": "Material.1176",
+    "triangles": 64,
+    "gear": false
+   },
+   {
+    "part": 119,
+    "node": "Object_277",
+    "material": "airbus_a321-200.001_0",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 120,
+    "node": "Object_279",
+    "material": "airbus_a321-200.001_1",
+    "triangles": 20,
+    "gear": false
+   },
+   {
+    "part": 121,
+    "node": "flap_panel_R",
+    "material": "airbus_a321-200.001",
+    "triangles": 12,
+    "gear": false
+   },
+   {
+    "part": 122,
+    "node": "flap_panel_L",
+    "material": "airbus_a321-200.001",
+    "triangles": 12,
+    "gear": false
+   }
+  ],
+  "transparency": "opaque approximation of glass materials"
+ }
+}

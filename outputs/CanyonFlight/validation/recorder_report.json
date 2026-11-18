@@ -1,0 +1,8 @@
+{
+  "checks": 11,
+  "failures": 0,
+  "firstFailure": 0,
+  "csv_rows": 51,
+  "csv_columns": 40,
+  "synthetic_fixture": true
+}

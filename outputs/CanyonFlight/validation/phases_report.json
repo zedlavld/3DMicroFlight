@@ -1,0 +1,503 @@
+{
+  "checks": 185,
+  "failures": 0,
+  "firstFailure": 0,
+  "caseCount": 55,
+  "cases": [
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 0.0,
+      "isa_offset_c": 0.0,
+      "mass_kg": 1542.2139892578125,
+      "clean_stall_kcas": 70.0,
+      "thrust_n": 3113.3623046875
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 0.0,
+      "isa_offset_c": 20.0,
+      "mass_kg": 1542.2139892578125,
+      "clean_stall_kcas": 70.0,
+      "thrust_n": 2887.16748046875
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 609.5999755859375,
+      "isa_offset_c": 0.0,
+      "mass_kg": 1542.2139892578125,
+      "clean_stall_kcas": 70.0,
+      "thrust_n": 2860.858642578125
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 609.5999755859375,
+      "isa_offset_c": 20.0,
+      "mass_kg": 1542.2139892578125,
+      "clean_stall_kcas": 70.0,
+      "thrust_n": 2648.643310546875
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 1828.800048828125,
+      "isa_offset_c": 0.0,
+      "mass_kg": 1542.2139892578125,
+      "clean_stall_kcas": 70.0,
+      "thrust_n": 2399.5556640625
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 1828.800048828125,
+      "isa_offset_c": 20.0,
+      "mass_kg": 1542.2139892578125,
+      "clean_stall_kcas": 70.0,
+      "thrust_n": 2213.508056640625
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 0.0,
+      "isa_offset_c": 0.0,
+      "mass_kg": 1632.9324951171875,
+      "clean_stall_kcas": 72.02940368652344,
+      "thrust_n": 3113.3623046875
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 0.0,
+      "isa_offset_c": 20.0,
+      "mass_kg": 1632.9324951171875,
+      "clean_stall_kcas": 72.02940368652344,
+      "thrust_n": 2887.16748046875
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 609.5999755859375,
+      "isa_offset_c": 0.0,
+      "mass_kg": 1632.9324951171875,
+      "clean_stall_kcas": 72.02940368652344,
+      "thrust_n": 2860.858642578125
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 609.5999755859375,
+      "isa_offset_c": 20.0,
+      "mass_kg": 1632.9324951171875,
+      "clean_stall_kcas": 72.02940368652344,
+      "thrust_n": 2648.643310546875
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 1828.800048828125,
+      "isa_offset_c": 0.0,
+      "mass_kg": 1632.9324951171875,
+      "clean_stall_kcas": 72.02940368652344,
+      "thrust_n": 2399.5556640625
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 1828.800048828125,
+      "isa_offset_c": 20.0,
+      "mass_kg": 1632.9324951171875,
+      "clean_stall_kcas": 72.02940368652344,
+      "thrust_n": 2213.508056640625
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 0.0,
+      "isa_offset_c": 0.0,
+      "mass_kg": 2517.437744140625,
+      "clean_stall_kcas": 82.712158203125,
+      "thrust_n": 7654.92138671875
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 0.0,
+      "isa_offset_c": 20.0,
+      "mass_kg": 2517.437744140625,
+      "clean_stall_kcas": 82.712158203125,
+      "thrust_n": 7311.34375
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 609.5999755859375,
+      "isa_offset_c": 0.0,
+      "mass_kg": 2517.437744140625,
+      "clean_stall_kcas": 82.712158203125,
+      "thrust_n": 7317.40087890625
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 609.5999755859375,
+      "isa_offset_c": 20.0,
+      "mass_kg": 2517.437744140625,
+      "clean_stall_kcas": 82.712158203125,
+      "thrust_n": 6985.30908203125
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 1828.800048828125,
+      "isa_offset_c": 0.0,
+      "mass_kg": 2517.437744140625,
+      "clean_stall_kcas": 82.712158203125,
+      "thrust_n": 6671.3818359375
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 1828.800048828125,
+      "isa_offset_c": 20.0,
+      "mass_kg": 2517.437744140625,
+      "clean_stall_kcas": 82.712158203125,
+      "thrust_n": 6361.76611328125
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 0.0,
+      "isa_offset_c": 0.0,
+      "mass_kg": 2721.553955078125,
+      "clean_stall_kcas": 86.0,
+      "thrust_n": 7654.92138671875
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 0.0,
+      "isa_offset_c": 20.0,
+      "mass_kg": 2721.553955078125,
+      "clean_stall_kcas": 86.0,
+      "thrust_n": 7311.34375
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 609.5999755859375,
+      "isa_offset_c": 0.0,
+      "mass_kg": 2721.553955078125,
+      "clean_stall_kcas": 86.0,
+      "thrust_n": 7317.40087890625
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 609.5999755859375,
+      "isa_offset_c": 20.0,
+      "mass_kg": 2721.553955078125,
+      "clean_stall_kcas": 86.0,
+      "thrust_n": 6985.30908203125
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 1828.800048828125,
+      "isa_offset_c": 0.0,
+      "mass_kg": 2721.553955078125,
+      "clean_stall_kcas": 86.0,
+      "thrust_n": 6671.3818359375
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "reference_condition_matrix",
+      "altitude_m": 1828.800048828125,
+      "isa_offset_c": 20.0,
+      "mass_kg": 2721.553955078125,
+      "clean_stall_kcas": 86.0,
+      "thrust_n": 6361.76611328125
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "climb",
+      "initial_altitude_m": 0.0,
+      "target_kcas": 101.0,
+      "average_fpm": 1423.5865478515625,
+      "final_kcas": 100.53973388671875,
+      "roll_rad": 4.288641503080726e-05
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "climb",
+      "initial_altitude_m": 609.5999755859375,
+      "target_kcas": 100.0,
+      "average_fpm": 1293.8876953125,
+      "final_kcas": 99.59585571289062,
+      "roll_rad": 4.5840344682801515e-05
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "climb",
+      "initial_altitude_m": 1828.800048828125,
+      "target_kcas": 98.0,
+      "average_fpm": 1044.6263427734375,
+      "final_kcas": 97.69007110595703,
+      "roll_rad": 4.4618012907449156e-05
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "cruise",
+      "target_kcas": 135.0,
+      "average_fpm": 0.0,
+      "final_kcas": 135.00430297851562,
+      "throttle": 0.8389315009117126,
+      "roll_rad": 1.0059226042358205e-05
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "descent",
+      "target_kcas": 135.0,
+      "average_fpm": -940.3130493164062,
+      "final_kcas": 135.4525909423828,
+      "throttle": 0.21711164712905884,
+      "roll_rad": -2.9604083465528674e-05
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "engine_out_glide",
+      "target_kcas": 88.0,
+      "glide_ratio": 9.729310035705566,
+      "sink_fpm": 1164.23046875,
+      "final_kcas": 88.17782592773438,
+      "initial_path_rad": -0.10407242178916931
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "approach",
+      "final_kcas": 80.10127258300781,
+      "average_fpm": -472.9952697753906,
+      "flaps": 1.0,
+      "gear": 1.0,
+      "mass_kg": 1542.2139892578125
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "go_around",
+      "height_gain_m": 117.986083984375,
+      "final_kcas": 101.92972564697266,
+      "flaps": 0.0,
+      "gear": 1.0,
+      "stall_warning": 0.0
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "banked_turn",
+      "height_change_m": -22.020263671875,
+      "bank_rad": 0.5210273861885071,
+      "heading_change_rad": 2.7017416954040527,
+      "final_kcas": 135.83802795410156,
+      "beta_rad": 0.013148334808647633
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "stall_recovery",
+      "max_warning": 1.0,
+      "max_alpha_rad": 0.6145936846733093,
+      "minimum_kcas": 64.40522003173828,
+      "recovered_kcas": 141.92308044433594,
+      "final_warning": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "climb",
+      "initial_altitude_m": 0.0,
+      "target_kcas": 140.0,
+      "average_fpm": 2947.229736328125,
+      "final_kcas": 138.83567810058594,
+      "roll_rad": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "climb",
+      "initial_altitude_m": 609.5999755859375,
+      "target_kcas": 140.0,
+      "average_fpm": 2849.240234375,
+      "final_kcas": 138.872314453125,
+      "roll_rad": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "climb",
+      "initial_altitude_m": 1828.800048828125,
+      "target_kcas": 140.0,
+      "average_fpm": 2648.337158203125,
+      "final_kcas": 138.94598388671875,
+      "roll_rad": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "cruise",
+      "target_kcas": 180.0,
+      "average_fpm": 0.0,
+      "final_kcas": 180.0,
+      "throttle": 0.660397469997406,
+      "roll_rad": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "descent",
+      "target_kcas": 180.0,
+      "average_fpm": -1227.9232177734375,
+      "final_kcas": 180.76425170898438,
+      "throttle": 0.3722890019416809,
+      "roll_rad": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "engine_out_glide",
+      "target_kcas": 120.0,
+      "glide_ratio": 13.319707870483398,
+      "sink_fpm": 1161.14990234375,
+      "final_kcas": 120.29934692382812,
+      "initial_path_rad": -0.07702089846134186
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "approach",
+      "final_kcas": 90.11739349365234,
+      "average_fpm": -531.1019897460938,
+      "flaps": 1.0,
+      "gear": 1.0,
+      "mass_kg": 2517.437744140625
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "go_around",
+      "height_gain_m": 317.111328125,
+      "final_kcas": 140.0337371826172,
+      "flaps": 0.0,
+      "gear": 0.0,
+      "stall_warning": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "banked_turn",
+      "height_change_m": -19.75439453125,
+      "bank_rad": 0.519050657749176,
+      "heading_change_rad": 2.0244603157043457,
+      "final_kcas": 180.03392028808594,
+      "beta_rad": 0.009295433759689331
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "stall_recovery",
+      "max_warning": 1.0,
+      "max_alpha_rad": 0.5734140872955322,
+      "minimum_kcas": 79.5455093383789,
+      "recovered_kcas": 194.94918823242188,
+      "final_warning": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "sf50_mct_reference_probe",
+      "altitude_m": 0.0,
+      "target_kias_approx_cas": 176.5,
+      "reference_gradient_ft_nm": 632.5,
+      "full_lever_model_gradient_ft_nm": 1139.3817138671875,
+      "model_setting_required": 0.8352554440498352
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "sf50_mct_reference_probe",
+      "altitude_m": 609.5999755859375,
+      "target_kias_approx_cas": 172.86000061035156,
+      "reference_gradient_ft_nm": 626.4400024414062,
+      "full_lever_model_gradient_ft_nm": 1080.1629638671875,
+      "model_setting_required": 0.8465089201927185
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "sf50_mct_reference_probe",
+      "altitude_m": 1828.800048828125,
+      "target_kias_approx_cas": 176.9499969482422,
+      "reference_gradient_ft_nm": 589.1400146484375,
+      "full_lever_model_gradient_ft_nm": 904.682373046875,
+      "model_setting_required": 0.8838886618614197
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "ground_settle",
+      "cg_height_m": 1.169921875,
+      "groundspeed_mps": 5.517432146007195e-05,
+      "roll_rad": -2.282571074374573e-07,
+      "pitch_rad": 0.02698102593421936,
+      "ground_load_g": 1.0004370212554932
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "takeoff",
+      "distance_to_8m_agl_m": 765.4668579101562,
+      "airspeed_at_8m_kcas": 85.08468627929688,
+      "height_m": 8.0137939453125,
+      "final_kcas": 85.08468627929688,
+      "crashed": 0.0
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "landing",
+      "distance_to_stop_m": 237.8693389892578,
+      "max_contact_sink_mps": 1.2966961860656738,
+      "final_groundspeed_mps": 0.17510217428207397,
+      "pitch_rad": -0.010781239718198776,
+      "crashed": 0.0
+    },
+    {
+      "aircraft": "SR22",
+      "phase": "differential_braking",
+      "heading_change_rad": -3.744673013687134,
+      "final_groundspeed_mps": 1.054632544517517,
+      "roll_rad": 0.006946424022316933,
+      "pitch_rad": 0.02336844429373741,
+      "crashed": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "ground_settle",
+      "cg_height_m": 1.16455078125,
+      "groundspeed_mps": 1.13908945422736e-05,
+      "roll_rad": 2.0495361852113092e-08,
+      "pitch_rad": 0.024728640913963318,
+      "ground_load_g": 0.9998459815979004
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "takeoff",
+      "distance_to_8m_agl_m": 840.3377685546875,
+      "airspeed_at_8m_kcas": 98.45394897460938,
+      "height_m": 8.0072021484375,
+      "final_kcas": 98.45394897460938,
+      "crashed": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "landing",
+      "distance_to_stop_m": 330.2471923828125,
+      "max_contact_sink_mps": 0.9990606307983398,
+      "final_groundspeed_mps": 0.1668674498796463,
+      "pitch_rad": 0.003146114991977811,
+      "crashed": 0.0
+    },
+    {
+      "aircraft": "SF50",
+      "phase": "differential_braking",
+      "heading_change_rad": -3.8187289237976074,
+      "final_groundspeed_mps": 1.4135743379592896,
+      "roll_rad": 0.007013069931417704,
+      "pitch_rad": 0.02291961759328842,
+      "crashed": 0.0
+    }
+  ]
+}

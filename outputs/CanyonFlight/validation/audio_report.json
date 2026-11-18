@@ -1,0 +1,51 @@
+{
+  "checks": 6680,
+  "failures": 0,
+  "firstFailure": 0,
+  "scenarios": [
+    {
+      "name": "sr22_idle",
+      "peak": 1791,
+      "rms": 884.9667804723986,
+      "strongest_frequency_hz": 69.0,
+      "clipped_samples": 0
+    },
+    {
+      "name": "sr22_power",
+      "peak": 4558,
+      "rms": 2564.339279132814,
+      "strongest_frequency_hz": 135.0,
+      "clipped_samples": 0
+    },
+    {
+      "name": "sf50_idle",
+      "peak": 2189,
+      "rms": 706.3620435073905,
+      "strongest_frequency_hz": 335.0,
+      "clipped_samples": 0
+    },
+    {
+      "name": "sf50_power",
+      "peak": 6027,
+      "rms": 2001.2145296874594,
+      "strongest_frequency_hz": 1380.0,
+      "clipped_samples": 0
+    },
+    {
+      "name": "wind",
+      "peak": 1172,
+      "rms": 361.81152921892493,
+      "strongest_frequency_hz": 180.0,
+      "clipped_samples": 0
+    },
+    {
+      "name": "stall_warning",
+      "peak": 4630,
+      "rms": 2525.0754962423116,
+      "strongest_frequency_hz": 850.0,
+      "clipped_samples": 0
+    }
+  ],
+  "playback_verified": false,
+  "sample_rate": 22050
+}

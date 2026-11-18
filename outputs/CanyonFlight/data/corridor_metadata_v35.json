@@ -1,0 +1,16 @@
+{
+ "build_date": "2026-11-16",
+ "v32_keys": 10190,
+ "west_keys": 124842,
+ "west_fine": 7911,
+ "west_coarse": 116931,
+ "elevation_grid": {
+  "east": -1228800,
+  "north": -1177600,
+  "tiles_x": 209,
+  "tiles_y": 110,
+  "folder": "scenery/elevation36"
+ },
+ "source": "F:/CirrusFlightData/us (tools/download_us_scenery.py)",
+ "attribution": "USGS, USDA, The National Map"
+}

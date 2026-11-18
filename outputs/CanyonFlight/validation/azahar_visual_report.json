@@ -1,0 +1,30 @@
+{
+  "emulator": "Azahar 2126.2",
+  "date": "2026-10-24",
+  "test": "isolated paused exterior harness; production controls retained",
+  "observed": [
+    "Sedona NAIP loaded",
+    "SF50 belly/wing-root surfaces visible in inspected views",
+    "vertical packing reversal isolated and corrected",
+    "SF50 white upper body/red belly/dark windows",
+    "SR22 white/green livery/dark windows",
+    "persistent lower PFD"
+  ],
+  "representative_paused_app_fps": 60,
+  "representative_cpu_ms_approx": [
+    3,
+    4
+  ],
+  "representative_gpu_ms_approx": [
+    3,
+    4
+  ],
+  "not_verified": [
+    "actual New 3DS XL FPS",
+    "controlled before/after speedup",
+    "manual keyboard/C-stick behavior",
+    "physical stereo",
+    "all-airport moving-flight test"
+  ],
+  "screenshots": "inspected through Computer Use; none exported"
+}

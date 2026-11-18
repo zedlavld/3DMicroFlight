@@ -1,0 +1,76 @@
+{
+  "sr22": {
+    "source_sha256": "4f39ffdfaf0e02ce49aec40bd206d1cbf428d592b25822e63cbc802a6907dc61",
+    "converted_sha256": "9aad3dd51025e8add7b80866179c1cc35033259162b7e6e5163b8d109dbae249",
+    "triangles": 7102,
+    "parts": [
+      {
+        "mesh": 14,
+        "material": 12,
+        "triangles": 4199
+      },
+      {
+        "mesh": 15,
+        "material": 12,
+        "triangles": 1599
+      },
+      {
+        "mesh": 12,
+        "material": 7,
+        "triangles": 480
+      },
+      {
+        "mesh": 16,
+        "material": 13,
+        "triangles": 274
+      },
+      {
+        "mesh": 10,
+        "material": 17,
+        "triangles": 250
+      },
+      {
+        "mesh": 9,
+        "material": 15,
+        "triangles": 300
+      }
+    ],
+    "length_scale": 0.6819427508846745,
+    "span_scale": 0.6871268246359589,
+    "prop_first": 6802,
+    "prop_count": 300,
+    "prop_pivot": [
+      2.678110122680664,
+      -0.0015165507793426514,
+      -0.1391579508781433
+    ],
+    "transparency": "opaque glass approximation; source interiors omitted"
+  },
+  "sf50": {
+    "source_sha256": "f2c8a0f20581a7e3d534b3196e88f2c8e2ad689b47aa4731cdd9713f25cf4ed5",
+    "converted_sha256": "e67f06ac89b3d26f83ba4a0f17eaab956bfe6172bdaae50c9d68d5e5ee9a1526",
+    "triangles": 7294,
+    "parts": [
+      {
+        "mesh": 0,
+        "material": 0,
+        "triangles": 230
+      },
+      {
+        "mesh": 1,
+        "material": 1,
+        "triangles": 7064
+      }
+    ],
+    "length_scale": 2.3225843004367728,
+    "span_scale": 2.2346005366039963,
+    "prop_first": 0,
+    "prop_count": 0,
+    "prop_pivot": [
+      0,
+      0,
+      0
+    ],
+    "transparency": "opaque glass approximation; source interiors omitted"
+  }
+}

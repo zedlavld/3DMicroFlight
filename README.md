@@ -11,6 +11,17 @@ New 2DS XL). Formerly CirrusFlight.
 - Clouds and weather, stereoscopic 3D, a touchscreen flight display, engine and wind
   sound, and three save slots.
 
+## Screenshots
+
+Captured on New 3DS hardware (top screen, 400 x 240).
+
+| | |
+|---|---|
+| ![Cirrus SR22 over the red rocks of Sedona, Arizona](docs/screenshots/sr22-sedona.png)<br>Cirrus SR22 over the red rocks of Sedona, Arizona | ![F-16 lined up at Sedona](docs/screenshots/f16-sedona-runway.png)<br>F-16 lined up at Sedona |
+| ![Boeing 737 on short final at Las Vegas](docs/screenshots/737-las-vegas-final.png)<br>Boeing 737 on short final at Las Vegas | ![F-16 approaching Las Vegas at night](docs/screenshots/f16-las-vegas-night.png)<br>F-16 approaching Las Vegas at night |
+| ![Boeing 737 over Seattle](docs/screenshots/737-seattle.png)<br>Boeing 737 over Seattle | ![737 cockpit over Phoenix at night](docs/screenshots/737-cockpit-phoenix-night.png)<br>737 cockpit over Phoenix at night |
+| ![Airbus A321 near Denver](docs/screenshots/a321-denver.png)<br>Airbus A321 near Denver | ![F-16 cockpit and head-up display at Phoenix](docs/screenshots/f16-cockpit-phoenix.png)<br>F-16 cockpit and head-up display at Phoenix |
+
 ## Download and install
 
 Get the game and the scenery from the

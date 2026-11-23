@@ -748,7 +748,8 @@ void nightLightFrameStats(float *ms,float *vertices,float *cityConsidered){
 #define BLD_MISSES 512
 typedef struct {int x,y,used,vertices,buildings;Vec origin;GPUVertex *v;} BldSlot;
 static BldSlot bldSlots[BLD_SLOTS];static int bldMiss[BLD_MISSES][2],bldMissCount,bldMissNext;static unsigned bldFrame;
-static int bldDrawnVertices,bldDrawnTiles;static float bldLoadMs;
+static int bldDrawnVertices,bldDrawnTiles,bldOff;static float bldLoadMs;
+void setCityBuildingsEnabled(int on){bldOff=!on;}
 static float bldTileDistance(int x,int y,Vec p){
  float w=x*BLD_SPAN,s=y*BLD_SPAN,dx=fmaxf(fmaxf(w-p.x,p.x-(w+BLD_SPAN)),0),dy=fmaxf(fmaxf(s-p.y,p.y-(s+BLD_SPAN)),0);return fmaxf(dx,dy);
 }
@@ -797,7 +798,7 @@ static void bldUpdate(Vec p){
 void drawCityBuildings(const Flight *s,const CameraPose *camera){
  if(!ready)return;
  if(bldFrame!=renderFrame){bldFrame=renderFrame;bldLoadMs=0;bldUpdate(s->pos);bldDrawnVertices=bldDrawnTiles=0;}
- int any=0;for(int i=0;i<BLD_SLOTS;i++)any|=bldSlots[i].used;if(!any)return;
+ int any=0;for(int i=0;i<BLD_SLOTS;i++)any|=bldSlots[i].used;if(!any||bldOff)return;
  C2D_Flush();C3D_BindProgram(&program);C3D_SetAttrInfo(&attributes);
  C3D_Mtx projection;projectionForEye(&projection);C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,projectionLocation,&projection);
  float rows[4][4];cameraViewRows(camera,camera->eye,rows);C3D_Mtx modelView;

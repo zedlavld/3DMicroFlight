@@ -420,7 +420,7 @@ static void lidWatch(float dt){
    were unavailable, and never added twice. */
 static void lidWatchStop(void){if(lidHooked){aptUnhook(&lidHook);lidHooked=0;}if(!lidServices)return;lidLog("run end");GSPLCD_PowerOnAllBacklights();gspLcdExit();ptmuExit();lidServices=0;}
 static void startAutotestCase(const AutotestCase *c,Flight *s,AppMenu *menu,int *paused){
- resetFlightPhase(s,c->aircraft,c->airport,c->phase);if(c->destination==AUTOTEST_AT_POSITION)autotestPlace(s,c->atEast,c->atNorth);setWeather(s,c->weather);daylightSet(c->hours);{float a,b,d;nightLightFrameStats(&a,&b,&d);}beginSceneryHold();spikeCount=0;memset(caseSum,0,sizeof(caseSum));memset(caseStage,0,sizeof(caseStage));caseFrames=0;{int h,m;sceneryPartCacheStats(&h,&m);}
+ resetFlightPhase(s,c->aircraft,c->airport,c->phase);if(c->destination==AUTOTEST_AT_POSITION)autotestPlace(s,c->atEast,c->atNorth);{size_t nl=strlen(c->name);setCityBuildingsEnabled(!(nl>4&&!strcmp(c->name+nl-4,"_nob")));}setWeather(s,c->weather);daylightSet(c->hours);{float a,b,d;nightLightFrameStats(&a,&b,&d);}beginSceneryHold();spikeCount=0;memset(caseSum,0,sizeof(caseSum));memset(caseStage,0,sizeof(caseStage));caseFrames=0;{int h,m;sceneryPartCacheStats(&h,&m);}
  autopilotOn=c->destination>=0;if(autopilotOn)autopilotBegin(&autopilot,s,c->destination);
  maneuverOn=c->destination<=AUTOTEST_MANEUVER_BASE-1;if(maneuverOn)maneuverBegin(&maneuver,AUTOTEST_MANEUVER_BASE-c->destination,s);
  fbwReset();dynStatsBegin(&dynStats,s);dynCount=0;dynNext=0;dynClock=0;

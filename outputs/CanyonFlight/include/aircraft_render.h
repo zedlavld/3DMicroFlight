@@ -49,6 +49,7 @@ void drawWeatherClouds(const Flight *s,const CameraPose *camera);
 /* Prototype: city buildings from scenery/buildings (tools/build_3ds_buildings.py). */
 void drawCityBuildings(const Flight *s,const CameraPose *camera);
 void cityBuildingStats(int *tiles,int *triangles,int *resident,float *loadMs);
+void setCityBuildingsEnabled(int on); /* autotest: cases named *_nob draw none (control) */
 /* v34: runway edge lights at night; navigation lights, beacon and strobes
    on the aircraft in exterior view. */
 void drawNightLights(const Flight *s,const CameraPose *camera,int exterior);

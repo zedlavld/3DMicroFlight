@@ -52,6 +52,48 @@ def box_building(e, n, yaw, length, width, height, roof, wall):
         verts += [((pts[k][0], pts[k][1], top), rc) for k in t]
     return round(e * 10), round(n * 10), verts, length * width, height
 
+def hull(points):
+    pts = sorted(set(points))
+    if len(pts) < 3:
+        return pts
+    def cross(o, a, b): return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lo, hi = [], []
+    for q in pts:
+        while len(lo) >= 2 and cross(lo[-2], lo[-1], q) <= 0: lo.pop()
+        lo.append(q)
+    for q in reversed(pts):
+        while len(hi) >= 2 and cross(hi[-2], hi[-1], q) <= 0: hi.pop()
+        hi.append(q)
+    return lo[:-1] + hi[:-1]
+
+def min_rect(points):
+    """Minimum-area rectangle around points (dm), corners anticlockwise."""
+    h = hull(points); best = None
+    for i in range(len(h)):
+        ax, ay = h[i]; bx, by = h[(i + 1) % len(h)]; l = math.hypot(bx - ax, by - ay)
+        if l < 1e-6:
+            continue
+        ux, uy = (bx - ax) / l, (by - ay) / l
+        us = [x * ux + y * uy for x, y in h]; vs = [-x * uy + y * ux for x, y in h]
+        area = (max(us) - min(us)) * (max(vs) - min(vs))
+        if best is None or area < best[0]:
+            best = (area, ux, uy, min(us), max(us), min(vs), max(vs))
+    if best is None:
+        return None
+    _, ux, uy, u0, u1, v0, v1 = best
+    return [(round(u * ux - v * uy), round(u * uy + v * ux)) for u, v in ((u0, v0), (u1, v0), (u1, v1), (u0, v1))]
+
+def box_tier(rect, top, roof, wall):
+    verts = []
+    for i in range(4):
+        verts += wall_tris(*rect[i], *rect[(i + 1) % 4], top, wall)
+    rc = shade(roof, 0, 0, 1)
+    for t in ((0, 1, 2), (0, 2, 3)):
+        verts += [((rect[k][0], rect[k][1], top), rc) for k in t]
+    return verts
+
+SIMPLE = 8   # outer rings with more corners become their minimum-area rectangle
+
 def read_tile(path):
     b = path.read_bytes()
     magic = b[:8]
@@ -75,6 +117,13 @@ def read_tile(path):
                 pts = [struct.unpack_from('<2h', b, q + k * 4) for k in range(total)]; q += total * 4
                 idx = struct.unpack_from(f'<{tris * 3}H', b, q); q += tris * 6
                 top = top_dm; tallest = max(tallest, top / 10)
+                if lens and lens[0] > SIMPLE:
+                    ring = pts[:lens[0]]
+                    area = max(area, abs(sum(ring[k][0] * ring[(k + 1) % len(ring)][1] - ring[(k + 1) % len(ring)][0] * ring[k][1] for k in range(len(ring)))) / 200.0)
+                    rect = min_rect(ring)
+                    if rect:
+                        verts += box_tier(rect, top, roof, wall)
+                    continue
                 base = 0
                 for r, ln in enumerate(lens):
                     ring = pts[base:base + ln]
@@ -92,7 +141,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--src', default='F:/CirrusFlightData/objects_thor')
     ap.add_argument('--out', default='F:/CirrusFlightData/buildings3ds')
-    ap.add_argument('--box', type=int, nargs=4, default=[-152, 68, -146, 75], help='tile x0 y0 x1 y1 (default: Las Vegas)')
+    ap.add_argument('--box', type=int, nargs=4, default=[-152, 65, -146, 75], help='tile x0 y0 x1 y1 (default: Las Vegas)')
     ap.add_argument('--cap', type=int, default=3000, help='triangles per tile')
     a = ap.parse_args()
     src, out = Path(a.src), Path(a.out); out.mkdir(parents=True, exist_ok=True)

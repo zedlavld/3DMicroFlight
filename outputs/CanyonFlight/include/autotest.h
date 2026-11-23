@@ -42,7 +42,7 @@
    over that point instead of the airport: the phase's height above the
    ground and the runway heading are kept. For checking new scenery. */
 #define AUTOTEST_AT_POSITION (-5)
-#define AUTOTEST_BUILD "v1.1p1"
+#define AUTOTEST_BUILD "v1.1p2"
 typedef struct {char name[32];int aircraft,airport,phase,exterior,renderTest,shots,destination,weather;float warmup,interval,lookYaw,lookPitch,hours;
  float atEast,atNorth;} AutotestCase;
 /* Parses the script; returns the number of valid cases (0 when absent).

@@ -740,12 +740,18 @@ void nightLightFrameStats(float *ms,float *vertices,float *cityConsidered){
    scenery/buildings). Tiles within BLD_LOAD of the aircraft load one per frame into their
    own linear buffer, vertices relative to the tile's corner and ground, so the shader's
    eye-offset subtraction stays on small numbers. Drawn opaque after the terrain. */
-#define BLD_SLOTS 12
+#define BLD_SLOTS 24
 #define BLD_SPAN 2048.f
-#define BLD_LOAD 2600.f /* Chebyshev distance from the aircraft to the tile */
-#define BLD_KEEP 3400.f
-#define BLD_DRAW 3200.f /* camera to tile edge */
+/* v1.1p2: only buildings 20 m and taller (a few thousand triangles per city), so they load
+   and draw from much farther: the skyline shows on the approach. */
+#define BLD_LOAD 6000.f /* Chebyshev distance from the aircraft to the tile */
+#define BLD_KEEP 7000.f
+#define BLD_DRAW 8000.f /* camera to tile edge */
+#define BLD_REACH 3 /* tiles searched around the aircraft */
 #define BLD_MISSES 512
+#ifndef BLD_CULL
+#define BLD_CULL GPU_CULL_BACK_CCW
+#endif
 typedef struct {int x,y,used,vertices,buildings;Vec origin;GPUVertex *v;} BldSlot;
 static BldSlot bldSlots[BLD_SLOTS];static int bldMiss[BLD_MISSES][2],bldMissCount,bldMissNext;static unsigned bldFrame;
 static int bldDrawnVertices,bldDrawnTiles,bldOff;static float bldLoadMs;
@@ -783,7 +789,7 @@ static int bldLoad(BldSlot *t,int x,int y){
 static void bldUpdate(Vec p){
  for(int i=0;i<BLD_SLOTS;i++)if(bldSlots[i].used&&bldTileDistance(bldSlots[i].x,bldSlots[i].y,p)>BLD_KEEP)bldFree(&bldSlots[i]);
  int cx=(int)floorf(p.x/BLD_SPAN),cy=(int)floorf(p.y/BLD_SPAN),bx=0,by=0;float best=1e30f;
- for(int y=cy-2;y<=cy+2;y++)for(int x=cx-2;x<=cx+2;x++){
+ for(int y=cy-BLD_REACH;y<=cy+BLD_REACH;y++)for(int x=cx-BLD_REACH;x<=cx+BLD_REACH;x++){
   float d=bldTileDistance(x,y,p);if(d>BLD_LOAD||d>=best||bldKnownMissing(x,y))continue;
   int have=0;for(int i=0;i<BLD_SLOTS;i++)if(bldSlots[i].used&&bldSlots[i].x==x&&bldSlots[i].y==y){have=1;break;}
   if(!have){best=d;bx=x;by=y;}
@@ -799,12 +805,16 @@ void drawCityBuildings(const Flight *s,const CameraPose *camera){
  if(!ready)return;
  if(bldFrame!=renderFrame){bldFrame=renderFrame;bldLoadMs=0;bldUpdate(s->pos);bldDrawnVertices=bldDrawnTiles=0;}
  int any=0;for(int i=0;i<BLD_SLOTS;i++)any|=bldSlots[i].used;if(!any||bldOff)return;
+ /* v1.1p2: at full night the unlit boxes are near black against the ground and the city
+    lights carry the scene, so skip them (they stay loaded for dawn). */
+ if(daylightNight()>.85f)return;
  C2D_Flush();C3D_BindProgram(&program);C3D_SetAttrInfo(&attributes);
  C3D_Mtx projection;projectionForEye(&projection);C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,projectionLocation,&projection);
  float rows[4][4];cameraViewRows(camera,camera->eye,rows);C3D_Mtx modelView;
  for(int i=0;i<4;i++)modelView.r[i]=FVec4_New(rows[i][0],rows[i][1],rows[i][2],rows[i][3]);
  C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,viewLocation,&modelView);
- C3D_CullFace(GPU_CULL_NONE);C3D_DepthTest(true,GPU_GREATER,GPU_WRITE_ALL);C3D_AlphaTest(false,GPU_ALWAYS,0);C3D_LightEnvBind(NULL);
+ /* v1.1p2: walls and roofs are anticlockwise seen from outside (tools/build_3ds_buildings.py). */
+ C3D_CullFace(BLD_CULL);C3D_DepthTest(true,GPU_GREATER,GPU_WRITE_ALL);C3D_AlphaTest(false,GPU_ALWAYS,0);C3D_LightEnvBind(NULL);
  for(int i=0;i<6;i++)C3D_TexEnvInit(C3D_GetTexEnv(i));
  C3D_TexEnv *env=C3D_GetTexEnv(0);C3D_TexEnvSrc(env,C3D_Both,GPU_PRIMARY_COLOR,0,0);C3D_TexEnvFunc(env,C3D_Both,GPU_REPLACE);
  weatherLight(s,1);

@@ -12,8 +12,10 @@ USGS lidar heights, public domain) and writes one small file per tile for the 3D
                   baked from a fixed sun), u8 0                                (10 B)
   Vertices are plain triangle lists (three per triangle), walls then roof.
 
-Each tile keeps its most prominent buildings (height x sqrt(footprint area)) until the
-triangle cap is reached, so downtown towers and casinos come first and houses last.
+Only buildings at least --min-height tall are kept (20 m: the skyline, not the houses), and
+each tile keeps the most prominent of them (height x sqrt(footprint area)) until the triangle
+cap is reached. Every wall and roof is wound anticlockwise seen from outside, so the game can
+cull back faces.
 
     python -P tools/build_3ds_buildings.py [--src F:/CirrusFlightData/objects_thor]
         [--out F:/CirrusFlightData/buildings3ds] [--box X0 Y0 X1 Y1] [--cap 3000]
@@ -127,13 +129,23 @@ def read_tile(path):
                 base = 0
                 for r, ln in enumerate(lens):
                     ring = pts[base:base + ln]
+                    signed = sum(ring[k][0] * ring[(k + 1) % ln][1] - ring[(k + 1) % ln][0] * ring[k][1] for k in range(ln))
+                    if (r == 0) != (signed > 0):   # outer ring anticlockwise, holes clockwise: walls face out
+                        ring = ring[::-1]
                     for k in range(ln):
                         verts += wall_tris(*ring[k], *ring[(k + 1) % ln], top, wall)
                     if r == 0 and ln >= 3:   # footprint area of the outer ring (m^2)
                         area = max(area, abs(sum(ring[k][0] * ring[(k + 1) % ln][1] - ring[(k + 1) % ln][0] * ring[k][1] for k in range(ln))) / 200.0)
                     base += ln
                 rc = shade(roof, 0, 0, 1)
-                verts += [((pts[i][0], pts[i][1], top), rc) for i in idx if i < total]
+                for t in range(0, len(idx) - 2, 3):   # roof triangles anticlockwise from above
+                    a, bq, c = idx[t:t + 3]
+                    if a >= total or bq >= total or c >= total:
+                        continue
+                    pa, pb, pc = pts[a], pts[bq], pts[c]
+                    if (pb[0] - pa[0]) * (pc[1] - pa[1]) - (pb[1] - pa[1]) * (pc[0] - pa[0]) < 0:
+                        pb, pc = pc, pb
+                    verts += [((q[0], q[1], top), rc) for q in (pa, pb, pc)]
             out.append((round(e * 10), round(n * 10), verts, area, tallest))
     return out
 
@@ -142,7 +154,8 @@ def main():
     ap.add_argument('--src', default='F:/CirrusFlightData/objects_thor')
     ap.add_argument('--out', default='F:/CirrusFlightData/buildings3ds')
     ap.add_argument('--box', type=int, nargs=4, default=[-152, 65, -146, 75], help='tile x0 y0 x1 y1 (default: Las Vegas)')
-    ap.add_argument('--cap', type=int, default=3000, help='triangles per tile')
+    ap.add_argument('--cap', type=int, default=2000, help='triangles per tile (v1.1p1 used 3000)')
+    ap.add_argument('--min-height', type=float, default=20.0, help='metres; lower buildings are left out (v1.1p1: 0)')
     a = ap.parse_args()
     src, out = Path(a.src), Path(a.out); out.mkdir(parents=True, exist_ok=True)
     x0, y0, x1, y1 = a.box; tiles = kept = tris_all = 0
@@ -151,7 +164,7 @@ def main():
             p = src / f'o_{x}_{y}.bin'
             if not p.exists():
                 continue
-            blds = [bd for bd in read_tile(p) if bd[2]]
+            blds = [bd for bd in read_tile(p) if bd[2] and bd[4] >= a.min_height]
             blds.sort(key=lambda bd: -bd[4] * math.sqrt(max(bd[3], 1.0)))
             chosen, tris = [], 0
             for bd in blds:

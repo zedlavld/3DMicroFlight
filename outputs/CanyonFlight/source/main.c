@@ -476,6 +476,7 @@ static void scenery(const Flight *s,int showHints){
     otherwise missing terrain shows the sky gradient, not the clear colour. */
  if(renderTest!=RENDER_NO_SKY&&!MAGENTA_MODE(renderTest))drawSky(&activeCamera,s);
  if(texturedReady&&renderTest!=RENDER_NO_WORLD)drawWorldScenery(s,&activeCamera);
+ if(texturedReady&&renderTest!=RENDER_NO_WORLD)drawCityBuildings(s,&activeCamera);
  else {count=0;for(int i=0;i<AIRPORT_COUNT;i++)runway(s,&airports[i]);if(view.exterior)aircraftModel(s);
  qsort(triangles,count,sizeof(Tri),farFirst);for(int i=0;i<count;i++)raster(&triangles[i]);}
  int drawModel=renderTest!=RENDER_NO_MODEL;
@@ -1049,6 +1050,9 @@ int main(void){
     {float lms,lverts,lcity;nightLightFrameStats(&lms,&lverts,&lcity);
      if(lverts>0&&autoSummaryLen<(int)sizeof(autoSummary)-100)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
       "%s: night lights %.1f ms/frame, %.0f vertices, %.0f city lights considered\n",c->name,lms,lverts,lcity);}
+    {int bt,btri,bres;float bms;cityBuildingStats(&bt,&btri,&bres,&bms);
+     if(bres>0&&autoSummaryLen<(int)sizeof(autoSummary)-100)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
+      "%s: buildings %d tiles drawn, %d triangles, %d tiles resident\n",c->name,bt,btri,bres);}
     if(caseFrames&&autoSummaryLen<(int)sizeof(autoSummary)-160)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
      "%s: avg ms/frame %.1f = input+terrain %.1f, physics %.1f, gpu wait %.1f, draw %.1f, stream %.1f, scene build %.1f\n",c->name,
      caseSum[0]/caseFrames,caseSum[1]/caseFrames,caseSum[2]/caseFrames,caseSum[3]/caseFrames,caseSum[4]/caseFrames,caseSum[5]/caseFrames,caseSum[6]/caseFrames);

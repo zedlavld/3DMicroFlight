@@ -25,9 +25,10 @@ Open the latest release on the
 
 | File | What it is |
 |---|---|
-| `3DMicroFlight-v1.0.cia` | The game, installed to the HOME Menu |
+| `3DMicroFlight-v1.0.1.cia` | The game, installed to the HOME Menu |
 | `3DMicroFlight-scenery-01-of-NN.zip` ... `-NN-of-NN.zip` | The scenery: elevation, ground colours and aerial photos of the 48 states, split into parts under 2 GB. Download **all** of them. |
-| `3DMicroFlight-v1.0.3dsx` | Optional: the same game for the Homebrew Launcher, if you don't want a HOME Menu icon |
+| `3DMicroFlight-buildings-v1.0.1.zip` | Optional, small (0.3 MB): city buildings for Las Vegas, Tucson and Duluth. Extract it to the SD root like the scenery. |
+| `3DMicroFlight-v1.0.1.3dsx` | Optional: the same game for the Homebrew Launcher, if you don't want a HOME Menu icon |
 | `SHA256SUMS.txt` | Optional: checksums to confirm the downloads aren't damaged |
 
 The scenery parts can be downloaded in any order and at different times.
@@ -54,6 +55,7 @@ The scenery parts can be downloaded in any order and at different times.
            └── scenery
                ├── elevation36\        (about 15,000 files)
                ├── stream32\           (about 136,000 files in ~1,240 folders)
+               ├── buildings\          (186 files, optional)
                ├── ground_us4000.bin
                └── (24 .cft files)
    ```
@@ -64,9 +66,9 @@ Copying about 150,000 files takes a while: expect 30 to 90 minutes depending on 
 
 ## Step 3: Install the game
 
-1. Copy `3DMicroFlight-v1.0.cia` to the root of the SD card.
+1. Copy `3DMicroFlight-v1.0.1.cia` to the root of the SD card.
 2. Safely eject the card, put it back in the console and turn it on.
-3. Open **FBI**, choose **SD**, select `3DMicroFlight-v1.0.cia`, then
+3. Open **FBI**, choose **SD**, select `3DMicroFlight-v1.0.1.cia`, then
    **Install and delete CIA** (or **Install CIA** to keep the file).
 4. Go back to the HOME Menu. 3DMicroFlight appears as a new icon. Start it.
 
@@ -81,6 +83,8 @@ setup, or from <https://github.com/zoogie/DSP1/releases>), which creates
 
 - To update the game, install the new `.cia` with FBI over the old one. Your saves are kept.
 - Only download new scenery when the release notes say the scenery changed.
+- From v1.0 to v1.0.1: install the new CIA, and extract `3DMicroFlight-buildings-v1.0.1.zip`
+  to the SD root for the city buildings. The 13 scenery zips are unchanged.
 
 ## Saves and settings
 

@@ -7,6 +7,7 @@ New 2DS XL). Formerly CirrusFlight.
   each with its own flight model, exterior model and cockpit.
 - **All 48 contiguous US states** in aerial photos (USDA NAIP) on USGS elevation, with
   real airports and runways.
+- **City buildings** (v1.0.1) in Las Vegas, Tucson and Duluth, with lidar heights.
 - **Day and night:** runway lights, city lights and aircraft navigation lights after dark.
 - Clouds and weather, stereoscopic 3D, a touchscreen flight display, engine and wind
   sound, and three save slots.

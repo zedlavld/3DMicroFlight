@@ -39,6 +39,13 @@ project.)
 | Elevation | USGS 3D Elevation Program (3DEP) | US public domain |
 | Night city lights and roads | US Census Bureau TIGER/Line 2023 | US public domain |
 | Airports and runways | [OurAirports](https://ourairports.com/data/) | Public domain |
+| City buildings (Las Vegas, Tucson, Duluth; since v1.0.1): footprints | [Microsoft US Building Footprints](https://github.com/microsoft/USBuildingFootprints) (2022), © Microsoft | [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/) |
+| City buildings: airport buildings left out | © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors | ODbL 1.0 |
+| City buildings: heights and roof colours | USGS 3DEP lidar; USDA NAIP | US public domain |
+
+The building tiles (`3DMicroFlight-buildings-*.zip`, `scenery/buildings/`) are a derived
+database and are shared under the ODbL 1.0; the zip carries `LICENSE-buildings.txt` with
+these credits. They are made by `outputs/CanyonFlight/tools/build_3ds_buildings.py`.
 
 Credit is not legally required for public-domain data, but we give it: imagery
 "NAIP, USDA Farm Service Agency"; elevation "USGS 3DEP". Neither agency endorses

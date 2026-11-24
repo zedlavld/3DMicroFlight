@@ -735,7 +735,7 @@ void drawNightLights(const Flight *s,const CameraPose *camera,int exterior){
 void nightLightFrameStats(float *ms,float *vertices,float *cityConsidered){
  float dyn;lightPassStats(ms,&dyn,cityConsidered);*vertices=dyn; /* now lamps, one vertex each */
 }
-/* ------------------------------------------------------------------ prototype: city buildings
+/* ------------------------------------------------------------------ city buildings (v1.0.1)
    Thor building tiles thinned for the 3DS (tools/build_3ds_buildings.py, b_x_y.bin in
    scenery/buildings). Tiles within BLD_LOAD of the aircraft load one per frame into their
    own linear buffer, vertices relative to the tile's corner and ground, so the shader's

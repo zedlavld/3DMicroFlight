@@ -14,7 +14,8 @@ USGS lidar heights, public domain) and writes one small file per tile for the 3D
 
 Only buildings at least --min-height tall are kept (20 m: the skyline, not the houses), and
 each tile keeps the most prominent of them (height x sqrt(footprint area)) until the triangle
-cap is reached. Every wall and roof is wound anticlockwise seen from outside, so the game can
+cap is reached. Within a tile, buildings of FAR_MIN (30 m) and taller come first, so the game
+can draw just that group for tiles more than 2 km away. Every wall and roof is wound anticlockwise seen from outside, so the game can
 cull back faces.
 
     python -P tools/build_3ds_buildings.py [--src F:/CirrusFlightData/objects_thor]
@@ -100,6 +101,8 @@ def box_tier(rect, top, roof, wall):
 AREAS = {'las_vegas': ((-152, 65, -146, 75), 20.0), 'tucson': ((32, -149, 42, -138), 12.0),
          'duluth': ((871, 642, 881, 651), 12.0)}
 
+FAR_MIN = 30.0   # metres; must match BLD_FAR_MIN_DM in source/aircraft_render.c
+
 SIMPLE = 8   # outer rings with more corners become their minimum-area rectangle
 
 def read_tile(path):
@@ -183,6 +186,8 @@ def main():
                 chosen.append(bd); tris += t
             if not chosen:
                 continue
+            # tall buildings (FAR_MIN and up) first: the game draws only that group for far tiles
+            chosen.sort(key=lambda bd: (bd[4] < FAR_MIN, -bd[4] * math.sqrt(max(bd[3], 1.0))))
             body = bytearray()
             for cx, cy, verts, _, _ in chosen:
                 body += struct.pack('<hhH', cx, cy, len(verts))

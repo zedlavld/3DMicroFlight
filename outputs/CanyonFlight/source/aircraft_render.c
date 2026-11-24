@@ -740,7 +740,7 @@ void nightLightFrameStats(float *ms,float *vertices,float *cityConsidered){
    scenery/buildings). Tiles within BLD_LOAD of the aircraft load one per frame into their
    own linear buffer, vertices relative to the tile's corner and ground, so the shader's
    eye-offset subtraction stays on small numbers. Drawn opaque after the terrain. */
-#define BLD_SLOTS 24
+#define BLD_SLOTS 48 /* v1.1p4: 12 m cut-off in Tucson and Duluth puts 30-36 tiles within BLD_LOAD */
 #define BLD_SPAN 2048.f
 /* v1.1p2: only buildings 20 m and taller (a few thousand triangles per city), so they load
    and draw from much farther: the skyline shows on the approach. */

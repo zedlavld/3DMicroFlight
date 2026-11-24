@@ -95,8 +95,10 @@ def box_tier(rect, top, roof, wall):
         verts += [((rect[k][0], rect[k][1], top), rc) for k in t]
     return verts
 
-# Tile boxes (x0, y0, x1, y1) of the cities the Thor port has buildings for (its CITIES table).
-AREAS = {'las_vegas': (-152, 65, -146, 75), 'tucson': (32, -149, 42, -138), 'duluth': (871, 642, 881, 651)}
+# Tile boxes (x0, y0, x1, y1) of the cities the Thor port has buildings for (its CITIES table),
+# with each city's height cut-off in metres: smaller skylines keep their mid-rise blocks.
+AREAS = {'las_vegas': ((-152, 65, -146, 75), 20.0), 'tucson': ((32, -149, 42, -138), 12.0),
+         'duluth': ((871, 642, 881, 651), 12.0)}
 
 SIMPLE = 8   # outer rings with more corners become their minimum-area rectangle
 
@@ -160,18 +162,18 @@ def main():
     ap.add_argument('--area', default='all', help='"all" or comma-separated names from AREAS')
     ap.add_argument('--box', type=int, nargs=4, help='tile x0 y0 x1 y1 (instead of --area)')
     ap.add_argument('--cap', type=int, default=2000, help='triangles per tile (v1.1p1 used 3000)')
-    ap.add_argument('--min-height', type=float, default=20.0, help='metres; lower buildings are left out (v1.1p1: 0)')
+    ap.add_argument('--min-height', type=float, help='metres; lower buildings are left out (default: per area, 20 with --box)')
     a = ap.parse_args()
     src, out = Path(a.src), Path(a.out); out.mkdir(parents=True, exist_ok=True)
-    boxes = [a.box] if a.box else [AREAS[k] for k in (AREAS if a.area == 'all' else a.area.split(','))]
-    cells = [(x, y) for x0, y0, x1, y1 in boxes for x in range(x0, x1 + 1) for y in range(y0, y1 + 1)]
+    boxes = [(a.box, 20.0)] if a.box else [AREAS[k] for k in (AREAS if a.area == 'all' else a.area.split(','))]
+    cells = [(x, y, a.min_height or mh) for (x0, y0, x1, y1), mh in boxes for x in range(x0, x1 + 1) for y in range(y0, y1 + 1)]
     tiles = kept = tris_all = 0
-    for x, y in cells:
+    for x, y, min_h in cells:
         if True:
             p = src / f'o_{x}_{y}.bin'
             if not p.exists():
                 continue
-            blds = [bd for bd in read_tile(p) if bd[2] and bd[4] >= a.min_height]
+            blds = [bd for bd in read_tile(p) if bd[2] and bd[4] >= min_h]
             blds.sort(key=lambda bd: -bd[4] * math.sqrt(max(bd[3], 1.0)))
             chosen, tris = [], 0
             for bd in blds:

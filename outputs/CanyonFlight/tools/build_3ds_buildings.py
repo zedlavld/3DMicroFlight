@@ -18,7 +18,8 @@ cap is reached. Every wall and roof is wound anticlockwise seen from outside, so
 cull back faces.
 
     python -P tools/build_3ds_buildings.py [--src F:/CirrusFlightData/objects_thor]
-        [--out F:/CirrusFlightData/buildings3ds] [--box X0 Y0 X1 Y1] [--cap 3000]
+        [--out F:/CirrusFlightData/buildings3ds] [--area all|las_vegas,tucson,duluth]
+        [--box X0 Y0 X1 Y1] [--cap 2000]
 """
 from pathlib import Path
 import argparse, math, struct, sys
@@ -94,6 +95,9 @@ def box_tier(rect, top, roof, wall):
         verts += [((rect[k][0], rect[k][1], top), rc) for k in t]
     return verts
 
+# Tile boxes (x0, y0, x1, y1) of the cities the Thor port has buildings for (its CITIES table).
+AREAS = {'las_vegas': (-152, 65, -146, 75), 'tucson': (32, -149, 42, -138), 'duluth': (871, 642, 881, 651)}
+
 SIMPLE = 8   # outer rings with more corners become their minimum-area rectangle
 
 def read_tile(path):
@@ -153,14 +157,17 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--src', default='F:/CirrusFlightData/objects_thor')
     ap.add_argument('--out', default='F:/CirrusFlightData/buildings3ds')
-    ap.add_argument('--box', type=int, nargs=4, default=[-152, 65, -146, 75], help='tile x0 y0 x1 y1 (default: Las Vegas)')
+    ap.add_argument('--area', default='all', help='"all" or comma-separated names from AREAS')
+    ap.add_argument('--box', type=int, nargs=4, help='tile x0 y0 x1 y1 (instead of --area)')
     ap.add_argument('--cap', type=int, default=2000, help='triangles per tile (v1.1p1 used 3000)')
     ap.add_argument('--min-height', type=float, default=20.0, help='metres; lower buildings are left out (v1.1p1: 0)')
     a = ap.parse_args()
     src, out = Path(a.src), Path(a.out); out.mkdir(parents=True, exist_ok=True)
-    x0, y0, x1, y1 = a.box; tiles = kept = tris_all = 0
-    for x in range(x0, x1 + 1):
-        for y in range(y0, y1 + 1):
+    boxes = [a.box] if a.box else [AREAS[k] for k in (AREAS if a.area == 'all' else a.area.split(','))]
+    cells = [(x, y) for x0, y0, x1, y1 in boxes for x in range(x0, x1 + 1) for y in range(y0, y1 + 1)]
+    tiles = kept = tris_all = 0
+    for x, y in cells:
+        if True:
             p = src / f'o_{x}_{y}.bin'
             if not p.exists():
                 continue

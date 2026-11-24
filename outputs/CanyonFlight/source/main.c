@@ -420,7 +420,7 @@ static void lidWatch(float dt){
    were unavailable, and never added twice. */
 static void lidWatchStop(void){if(lidHooked){aptUnhook(&lidHook);lidHooked=0;}if(!lidServices)return;lidLog("run end");GSPLCD_PowerOnAllBacklights();gspLcdExit();ptmuExit();lidServices=0;}
 static void startAutotestCase(const AutotestCase *c,Flight *s,AppMenu *menu,int *paused){
- resetFlightPhase(s,c->aircraft,c->airport,c->phase);if(c->destination==AUTOTEST_AT_POSITION)autotestPlace(s,c->atEast,c->atNorth);setWeather(s,c->weather);daylightSet(c->hours);{float a,b,d;nightLightFrameStats(&a,&b,&d);}beginSceneryHold();spikeCount=0;memset(caseSum,0,sizeof(caseSum));memset(caseStage,0,sizeof(caseStage));caseFrames=0;{int h,m;sceneryPartCacheStats(&h,&m);}
+ resetFlightPhase(s,c->aircraft,c->airport,c->phase);if(c->destination==AUTOTEST_AT_POSITION)autotestPlace(s,c->atEast,c->atNorth);{size_t nl=strlen(c->name);setCityBuildingsEnabled(!(nl>4&&!strcmp(c->name+nl-4,"_nob")));}setWeather(s,c->weather);daylightSet(c->hours);{float a,b,d;nightLightFrameStats(&a,&b,&d);}beginSceneryHold();spikeCount=0;memset(caseSum,0,sizeof(caseSum));memset(caseStage,0,sizeof(caseStage));caseFrames=0;{int h,m;sceneryPartCacheStats(&h,&m);}
  autopilotOn=c->destination>=0;if(autopilotOn)autopilotBegin(&autopilot,s,c->destination);
  maneuverOn=c->destination<=AUTOTEST_MANEUVER_BASE-1;if(maneuverOn)maneuverBegin(&maneuver,AUTOTEST_MANEUVER_BASE-c->destination,s);
  fbwReset();dynStatsBegin(&dynStats,s);dynCount=0;dynNext=0;dynClock=0;
@@ -476,6 +476,7 @@ static void scenery(const Flight *s,int showHints){
     otherwise missing terrain shows the sky gradient, not the clear colour. */
  if(renderTest!=RENDER_NO_SKY&&!MAGENTA_MODE(renderTest))drawSky(&activeCamera,s);
  if(texturedReady&&renderTest!=RENDER_NO_WORLD)drawWorldScenery(s,&activeCamera);
+ if(texturedReady&&renderTest!=RENDER_NO_WORLD)drawCityBuildings(s,&activeCamera);
  else {count=0;for(int i=0;i<AIRPORT_COUNT;i++)runway(s,&airports[i]);if(view.exterior)aircraftModel(s);
  qsort(triangles,count,sizeof(Tri),farFirst);for(int i=0;i<count;i++)raster(&triangles[i]);}
  int drawModel=renderTest!=RENDER_NO_MODEL;
@@ -1049,6 +1050,9 @@ int main(void){
     {float lms,lverts,lcity;nightLightFrameStats(&lms,&lverts,&lcity);
      if(lverts>0&&autoSummaryLen<(int)sizeof(autoSummary)-100)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
       "%s: night lights %.1f ms/frame, %.0f vertices, %.0f city lights considered\n",c->name,lms,lverts,lcity);}
+    {int bt,btri,bres;float bms;cityBuildingStats(&bt,&btri,&bres,&bms);
+     if(bres>0&&autoSummaryLen<(int)sizeof(autoSummary)-100)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
+      "%s: buildings %d tiles drawn, %d triangles, %d tiles resident\n",c->name,bt,btri,bres);}
     if(caseFrames&&autoSummaryLen<(int)sizeof(autoSummary)-160)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
      "%s: avg ms/frame %.1f = input+terrain %.1f, physics %.1f, gpu wait %.1f, draw %.1f, stream %.1f, scene build %.1f\n",c->name,
      caseSum[0]/caseFrames,caseSum[1]/caseFrames,caseSum[2]/caseFrames,caseSum[3]/caseFrames,caseSum[4]/caseFrames,caseSum[5]/caseFrames,caseSum[6]/caseFrames);

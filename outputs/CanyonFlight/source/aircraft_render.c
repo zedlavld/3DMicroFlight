@@ -735,7 +735,110 @@ void drawNightLights(const Flight *s,const CameraPose *camera,int exterior){
 void nightLightFrameStats(float *ms,float *vertices,float *cityConsidered){
  float dyn;lightPassStats(ms,&dyn,cityConsidered);*vertices=dyn; /* now lamps, one vertex each */
 }
+/* ------------------------------------------------------------------ prototype: city buildings
+   Thor building tiles thinned for the 3DS (tools/build_3ds_buildings.py, b_x_y.bin in
+   scenery/buildings). Tiles within BLD_LOAD of the aircraft load one per frame into their
+   own linear buffer, vertices relative to the tile's corner and ground, so the shader's
+   eye-offset subtraction stays on small numbers. Drawn opaque after the terrain. */
+#define BLD_SLOTS 48 /* v1.1p4: 12 m cut-off in Tucson and Duluth puts 30-36 tiles within BLD_LOAD */
+#define BLD_SPAN 2048.f
+/* v1.1p2: only buildings 20 m and taller (a few thousand triangles per city), so they load
+   and draw from much farther: the skyline shows on the approach. */
+#define BLD_LOAD 6000.f /* Chebyshev distance from the aircraft to the tile */
+#define BLD_KEEP 7000.f
+#define BLD_DRAW 8000.f /* camera to tile edge */
+#define BLD_REACH 3 /* tiles searched around the aircraft */
+#define BLD_MISSES 512
+/* v1.1p5: tiles farther than BLD_NEAR from the camera draw only their leading buildings of
+   BLD_FAR_MIN_DM and taller (the tool writes those first); the 12-30 m blocks show close up. */
+#define BLD_NEAR 2000.f
+#define BLD_FAR_MIN_DM 300
+#ifndef BLD_CULL
+#define BLD_CULL GPU_CULL_BACK_CCW
+#endif
+typedef struct {int x,y,used,vertices,buildings;Vec origin;GPUVertex *v;int far;} BldSlot;
+static BldSlot bldSlots[BLD_SLOTS];static int bldMiss[BLD_MISSES][2],bldMissCount,bldMissNext;static unsigned bldFrame;
+static int bldDrawnVertices,bldDrawnTiles,bldOff;static float bldLoadMs;
+void setCityBuildingsEnabled(int on){bldOff=!on;}
+static float bldTileDistance(int x,int y,Vec p){
+ float w=x*BLD_SPAN,s=y*BLD_SPAN,dx=fmaxf(fmaxf(w-p.x,p.x-(w+BLD_SPAN)),0),dy=fmaxf(fmaxf(s-p.y,p.y-(s+BLD_SPAN)),0);return fmaxf(dx,dy);
+}
+static int bldKnownMissing(int x,int y){for(int i=0;i<bldMissCount;i++)if(bldMiss[i][0]==x&&bldMiss[i][1]==y)return 1;return 0;}
+static void bldMarkMissing(int x,int y){bldMiss[bldMissNext][0]=x;bldMiss[bldMissNext][1]=y;bldMissNext=(bldMissNext+1)%BLD_MISSES;if(bldMissCount<BLD_MISSES)bldMissCount++;}
+static void bldFree(BldSlot *t){if(t->v)linearFree(t->v);memset(t,0,sizeof(*t));}
+static int bldLoad(BldSlot *t,int x,int y){
+ char path[96];snprintf(path,sizeof(path),"sdmc:/3ds/CanyonFlight/scenery/buildings/b_%d_%d.bin",x,y);
+ FILE *f=fopen(path,"rb");if(!f)return 0;
+ unsigned char head[24];u32 nb=0,nv=0;int32_t key[2];
+ int ok=fread(head,1,24,f)==24&&!memcmp(head,"CFB3D001",8);
+ if(ok){memcpy(key,head+8,8);memcpy(&nb,head+16,4);memcpy(&nv,head+20,4);ok=key[0]==x&&key[1]==y&&nb<20000&&nv>0&&nv<60000;}
+ long bytes=ok?(long)nb*6+(long)nv*10:0;unsigned char *raw=ok?malloc(bytes):NULL;
+ ok=raw&&fread(raw,1,bytes,f)==(size_t)bytes;fclose(f);
+ GPUVertex *v=ok?linearAlloc(nv*sizeof(GPUVertex)):NULL;
+ if(!v){free(raw);return 0;}
+ float e0=x*BLD_SPAN,n0=y*BLD_SPAN,z0=floorf(rawElevation(e0+BLD_SPAN/2,n0+BLD_SPAN/2)/64)*64;
+ const unsigned char *q=raw;u32 written=0,farEnd=0;int tallRun=1;
+ for(u32 b=0;b<nb&&ok;b++){
+  int16_t c[2];u16 count;memcpy(c,q,4);memcpy(&count,q+4,2);q+=6;
+  if(written+count>nv){ok=0;break;}
+  float ground=rawElevation(e0+c[0]*.1f,n0+c[1]*.1f)-z0;int top=-32768;
+  for(int k=0;k<count;k++,q+=10){int16_t p[3];memcpy(p,q,6);if(p[2]>top)top=p[2];
+   v[written++]=(GPUVertex){{p[0]*.1f,p[1]*.1f,ground+p[2]*.1f},{0,0},{q[6]/255.f,q[7]/255.f,q[8]/255.f,1}};}
+  if(tallRun&&top>=BLD_FAR_MIN_DM)farEnd=written;else tallRun=0;
+ }
+ free(raw);
+ if(!ok||!written){linearFree(v);return 0;}
+ GSPGPU_FlushDataCache(v,written*sizeof(GPUVertex));
+ *t=(BldSlot){x,y,1,(int)written,(int)nb,{e0,n0,z0},v,(int)farEnd};return 1;
+}
+static void bldUpdate(Vec p){
+ for(int i=0;i<BLD_SLOTS;i++)if(bldSlots[i].used&&bldTileDistance(bldSlots[i].x,bldSlots[i].y,p)>BLD_KEEP)bldFree(&bldSlots[i]);
+ int cx=(int)floorf(p.x/BLD_SPAN),cy=(int)floorf(p.y/BLD_SPAN),bx=0,by=0;float best=1e30f;
+ for(int y=cy-BLD_REACH;y<=cy+BLD_REACH;y++)for(int x=cx-BLD_REACH;x<=cx+BLD_REACH;x++){
+  float d=bldTileDistance(x,y,p);if(d>BLD_LOAD||d>=best||bldKnownMissing(x,y))continue;
+  int have=0;for(int i=0;i<BLD_SLOTS;i++)if(bldSlots[i].used&&bldSlots[i].x==x&&bldSlots[i].y==y){have=1;break;}
+  if(!have){best=d;bx=x;by=y;}
+ }
+ if(best>=1e30f)return;
+ int slot=-1;for(int i=0;i<BLD_SLOTS;i++)if(!bldSlots[i].used){slot=i;break;}
+ if(slot<0)return;
+ u64 t0=svcGetSystemTick();
+ if(!bldLoad(&bldSlots[slot],bx,by))bldMarkMissing(bx,by);
+ bldLoadMs=(svcGetSystemTick()-t0)/(SYSCLOCK_ARM11/1000.f);
+}
+void drawCityBuildings(const Flight *s,const CameraPose *camera){
+ if(!ready)return;
+ if(bldFrame!=renderFrame){bldFrame=renderFrame;bldLoadMs=0;bldUpdate(s->pos);bldDrawnVertices=bldDrawnTiles=0;}
+ int any=0;for(int i=0;i<BLD_SLOTS;i++)any|=bldSlots[i].used;if(!any||bldOff)return;
+ /* v1.1p2: at full night the unlit boxes are near black against the ground and the city
+    lights carry the scene, so skip them (they stay loaded for dawn). */
+ if(daylightNight()>.85f)return;
+ C2D_Flush();C3D_BindProgram(&program);C3D_SetAttrInfo(&attributes);
+ C3D_Mtx projection;projectionForEye(&projection);C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,projectionLocation,&projection);
+ float rows[4][4];cameraViewRows(camera,camera->eye,rows);C3D_Mtx modelView;
+ for(int i=0;i<4;i++)modelView.r[i]=FVec4_New(rows[i][0],rows[i][1],rows[i][2],rows[i][3]);
+ C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,viewLocation,&modelView);
+ /* v1.1p2: walls and roofs are anticlockwise seen from outside (tools/build_3ds_buildings.py). */
+ C3D_CullFace(BLD_CULL);C3D_DepthTest(true,GPU_GREATER,GPU_WRITE_ALL);C3D_AlphaTest(false,GPU_ALWAYS,0);C3D_LightEnvBind(NULL);
+ for(int i=0;i<6;i++)C3D_TexEnvInit(C3D_GetTexEnv(i));
+ C3D_TexEnv *env=C3D_GetTexEnv(0);C3D_TexEnvSrc(env,C3D_Both,GPU_PRIMARY_COLOR,0,0);C3D_TexEnvFunc(env,C3D_Both,GPU_REPLACE);
+ weatherLight(s,1);
+ for(int i=0;i<BLD_SLOTS;i++){BldSlot *t=&bldSlots[i];if(!t->used)continue;
+  float dist=bldTileDistance(t->x,t->y,camera->eye);if(dist>BLD_DRAW)continue;
+  int count=dist>BLD_NEAR?t->far:t->vertices;if(!count)continue;
+  Vec centre={t->origin.x+BLD_SPAN/2,t->origin.y+BLD_SPAN/2,t->origin.z+60};
+  if(!cameraSphereVisible(camera,centre,BLD_SPAN*.75f,stereoIod,stereoScreen))continue;
+  setEyeOffset((Vec){camera->eye.x-t->origin.x,camera->eye.y-t->origin.y,camera->eye.z-t->origin.z});
+  drawIndexedSlices(t->v,count);bldDrawnVertices+=count;bldDrawnTiles++;
+ }
+}
+void cityBuildingStats(int *tiles,int *triangles,int *resident,float *loadMs){
+ int r=0;for(int i=0;i<BLD_SLOTS;i++)r+=bldSlots[i].used;
+ *tiles=bldDrawnTiles;*triangles=bldDrawnVertices/3;*resident=r;*loadMs=bldLoadMs;
+}
 void freeAircraftRenderer(void){
+ for(int i=0;i<BLD_SLOTS;i++)bldFree(&bldSlots[i]);
+ bldMissCount=bldMissNext=0;
  freeSceneryStream();freeTerrainStream();freeSceneryPartCache();freeGroundImagery();freeLightRenderer();
  if(airportTexture.data){C3D_TexDelete(&airportTexture);memset(&airportTexture,0,sizeof(airportTexture));}
  if(cockpitTexture.data){C3D_TexDelete(&cockpitTexture);memset(&cockpitTexture,0,sizeof(cockpitTexture));}

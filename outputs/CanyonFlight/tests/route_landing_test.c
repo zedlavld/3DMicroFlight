@@ -1,7 +1,13 @@
 /* Host test (v1.1p15): the test autopilot flies a route with the route options of
    autopilotRoute (cruise altitude, maximum speed, full landing) and must take off, cruise
    within the speed limit, land on the centreline and stop without crashing.
-   usage: route_landing [from] [to] [aircraft] [cruise ft] [max 0/1] [weather] [trace s] */
+   usage: route_landing [from] [to] [aircraft] [cruise ft] [max 0/1] [weather] [trace s]
+   build: gcc -O2 -Iinclude -Itests/stream_stubs source/{flight,fbw,f16_aero,ground,terrain,terrain_stream,
+          terrain_data,airports,airport_index,autopilot}.c tests/stream_stubs/pfd_limit.c tests/route_landing_test.c -lm
+   v1.1 release set (all PASS; CF_AIRPORTS_FLY for KDEN/KCOS): KLAS KTUS 2 35000 1 0 and weather 942,
+   KCOS KDEN 2 15000 0 / 0 9000 0, KPHX KDEN 2 35000 1, KPHX KLAS 3 35000 1 / 1 25000 1, KPHX KTUS 4 20000 1
+   / 3 20000 1, KSEZ KFLG 0 9000 0 / 1 9000 0, KDVT KPHX 2 8000 0, KLAS KPHX 4 30000 1, KFLG KSEZ 4 9000 1.
+   East of the Rockies the host has no terrain data (KATL-KCLT flies into it): test those on the 3DS. */
 #include "autopilot.h"
 #include "instruments.h"
 #include <stdio.h>

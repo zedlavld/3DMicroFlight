@@ -181,7 +181,10 @@ static void landingStep(Autopilot *ap,Flight *s,float dt,float *elevator,float *
     13 km, full flap inside 11 km. */
  float targetCas=v->descent;
  if(ap->stage!=AP_DESCENT){
-  targetCas=along>16000?v->approach:along>9000?fminf(v->approach,craft->flapLimit[0]-15):v->final;
+  /* v1.1: the F-16 flies its final 15 kt fast: at 150 kt it sat at 12.5 deg alpha, already at
+     the flare's pitch cap, and landed at 4.5 m/s */
+  float final=v->final+(craft->controlLaw==LAW_F16?15:0);
+  targetCas=along>16000?v->approach:along>9000?fminf(v->approach,craft->flapLimit[0]-15):final;
   if(along<22000&&s->ias<craft->flapLimit[0]-5&&s->flap<.5f)s->flap=.5f;
   if(along<13000&&craft->retractableGear&&s->ias<craft->gearLimit-10)s->gear=1;
   if(along<11000&&s->ias<craft->flapLimit[1]-5)s->flap=1;
@@ -196,12 +199,14 @@ static void landingStep(Autopilot *ap,Flight *s,float dt,float *elevator,float *
   vsCmd=clampf((ap->targetMsl-s->pos.z)*.08f-gs*AP_GLIDE*(ap->targetMsl<ap->cruiseMsl-1),-15,12);
  }else if(ap->stage==AP_APPROACH){
   float path=ap->aimZ+ap->groundAgl+fmaxf(along,0)*AP_GLIDE;   /* wheels reach the runway at the aim point */
-  vsCmd=clampf(-gs*AP_GLIDE+.12f*(path-s->pos.z),-12,4);
+  vsCmd=clampf(-gs*AP_GLIDE+.12f*(path-s->pos.z),-12,path-s->pos.z>30?0:4); /* v1.1: well below the path (short route, low cruise): level until it meets the path */
   if(wheels<150)vsCmd=fmaxf(vsCmd,-gs*AP_GLIDE-.8f);   /* no steepening late: the flare can only take out ~4 m/s */
   ap->targetMsl=path;
  }else if(ap->stage==AP_FLARE){
   /* sink eases from the approach rate to about 0.6 m/s at the wheels */
-  vsCmd=-fmaxf(.5f,fminf(ap->flareSink,wheels*.3f+.3f));pitchMax=craft->tailStrike-3*DEG;
+  vsCmd=-fmaxf(.5f,fminf(ap->flareSink,wheels*.3f+.3f));pitchMax=craft->tailStrike-(craft->controlLaw==LAW_F16?1.5f:3)*DEG; /* v1.1: the F-16 flares near 11 deg alpha; 3 deg short of the tail it ran out of pitch (KSEZ 3.9 m/s) */
+  /* v1.1: relative to the runway: KLAS 26 rises ~1% and the A321 touched 0.7 m/s harder than it sank */
+  {float ahead=terrain(s->pos.x+sinf(groundTrack)*60,s->pos.y+cosf(groundTrack)*60);vsCmd+=clampf((ahead-ground)/60,-.03f,.03f)*gs;}
  }else vsCmd=0;
  if(ap->stage==AP_ROLLOUT){
   /* Nose down, spoilers, brakes once the nose wheel is down. */
@@ -212,7 +217,9 @@ static void landingStep(Autopilot *ap,Flight *s,float dt,float *elevator,float *
   return;
  }
  if(ap->stage!=AP_FLARE){float vProt=targetCas*.85f;if(s->ias<vProt)vsCmd=fminf(vsCmd,(s->ias-vProt*.8235f)*.5f);}
- *elevator=pitchToVs(ap,s,dt,vsCmd,pitchMax,ap->stage==AP_FLARE?AP_FLARE_GAIN:.006f);
+ /* v1.1: the last 150 m of the approach track the sink command closer (.02, was .006): the A321
+    reached KLAS 0.6 m/s steeper than commanded and touched at 3.4 m/s */
+ *elevator=pitchToVs(ap,s,dt,vsCmd,pitchMax,ap->stage==AP_FLARE?AP_FLARE_GAIN:ap->stage==AP_APPROACH&&wheels<150?.02f:.006f);
  /* Speed: autothrottle; spoilers out in the descent when well over the target. */
  float casErr=targetCas-s->ias;
  ap->throttleBias=clampf(ap->throttleBias+dt*.004f*casErr,0,1);
@@ -242,13 +249,18 @@ void autopilotStep(Autopilot *ap,Flight *s,float dt,float *elevator,float *ailer
  float descentStart=(ap->cruiseMsl-ap->arrivalMsl)/.05f+4000;   /* ~3 degree path */
  if(ap->stage==AP_CRUISE&&ap->maxSpeed)targetCas=pfdAirspeedLimit(s)-5;
  /* v1.1p15 landing: descend on a 3 degree path measured along the way to the final. */
- if(ap->land){if(ap->stage==AP_CRUISE&&pathToGo(ap,s)<(ap->cruiseMsl-ap->aimZ)/AP_GLIDE+6000){chooseRunway(ap,s);planArrival(ap,s);ap->stage=AP_DESCENT;}distance=1e9f;}
+ /* v1.1: the path to go always includes the 18 km final, so from a low cruise the old test
+    (path < height / glide + 6 km) never passed (KSEZ-KFLG cruised on for ever); and a short
+    route can reach that point still climbing, or pass the final start without ever being that
+    close to it: inside 33 km of the destination the arrival begins anyway. */
+ if(ap->land){if((ap->stage==AP_CRUISE||(ap->stage==AP_CLIMB&&agl>300))&&(pathToGo(ap,s)<fmaxf((ap->cruiseMsl-ap->aimZ)/AP_GLIDE,AP_FINAL)+6000||autopilotDistance(ap,s)<AP_FINAL+15000)){chooseRunway(ap,s);planArrival(ap,s);ap->stage=AP_DESCENT;}distance=1e9f;}
  if(ap->stage==AP_CLIMB&&s->pos.z>ap->cruiseMsl-50)ap->stage=AP_CRUISE;
  /* v33: climb out to 300 m first. Airliners reach the liftoff speed still on
     the runway, and a short route (KDVT-KPHX) would start the descent there. */
  if((ap->stage==AP_CLIMB||ap->stage==AP_CRUISE)&&distance<descentStart&&agl>300)ap->stage=AP_DESCENT;
  if(ap->stage==AP_DESCENT&&distance<4000)ap->stage=AP_ORBIT;
  if(ap->stage==AP_CLIMB)targetCas=v->climb;
+ if(ap->stage!=AP_TAKEOFF)targetCas=fminf(targetCas,pfdAirspeedLimit(s)-10); /* v1.1: gear and flap limits in the climb */
  if(ap->stage==AP_DESCENT){targetMsl=fminf(ap->cruiseMsl,ap->arrivalMsl+(distance-4000)*.05f);targetCas=v->descent;}
  if(ap->stage==AP_ORBIT){targetMsl=ap->arrivalMsl;targetCas=v->orbit;}
  float floor=terrainAhead(s,s->yaw)+450;if(ap->stage!=AP_TAKEOFF)targetMsl=fmaxf(targetMsl,floor);
@@ -258,7 +270,9 @@ void autopilotStep(Autopilot *ap,Flight *s,float dt,float *elevator,float *ailer
  targetMsl=ap->targetMsl;
  /* Configuration. */
  if(ap->stage==AP_TAKEOFF){
-  s->throttle=1;
+  /* v1.1: the F-16 takes off at military power (0.77, f16Power): in afterburner it was at
+     230 kt before it left the runway and passed its 300 kt gear limit with the gear in transit */
+  s->throttle=craft->aeroModel==AERO_F16?.77f:1;
   if(s->ias>v->liftoff){
    ap->stage=AP_CLIMB;
    /* v33.06: hold the rotation attitude. A zero bias commanded ~4 deg and
@@ -267,7 +281,7 @@ void autopilotStep(Autopilot *ap,Flight *s,float dt,float *elevator,float *ailer
   }
  }
  if(ap->stage!=AP_TAKEOFF){
-  if(craft->retractableGear&&agl>60&&s->gear&&!s->onGround)s->gear=0;
+  if(craft->retractableGear&&(agl>60||(agl>15&&s->vel.z>1))&&s->gear&&!s->onGround)s->gear=0; /* v1.1: positive climb: the F-16 passed its 300 kt gear limit by 60 m */
   if(agl>250&&s->flap>0)s->flap=0;
  }
  /* Pitch: altitude error -> vertical speed -> pitch attitude -> elevator. */
@@ -284,6 +298,8 @@ void autopilotStep(Autopilot *ap,Flight *s,float dt,float *elevator,float *ailer
      737 slowed to 163 kt (clean stall 145) near FL330 at full power. */
   if(ap->stage==AP_CLIMB&&(ap->land||ap->maxSpeed)&&agl>1000)vProt=targetCas*.85f;
   if(s->ias<vProt)vsCmd=fminf(vsCmd,(s->ias-vProt*.8235f)*.5f);
+  /* v1.1: near the limit speed, climb it off (the F-16 at full afterburner outran its throttle) */
+  {float limit=pfdAirspeedLimit(s);if(s->ias>limit-6)vsCmd=fmaxf(vsCmd,fminf((s->ias-limit+6)*.8f,40));}
   float vsErr=vsCmd-s->vel.z;
   ap->pitchBias=clampf(ap->pitchBias+dt*.004f*vsErr,-8*DEG,12*DEG);
   pitchCmd=clampf(ap->pitchBias+asinf(clampf(vsCmd/fmaxf(speed,30),-.3f,.3f))+clampf(.006f*vsErr,-4*DEG,4*DEG),-10*DEG,15*DEG);
@@ -305,6 +321,6 @@ void autopilotStep(Autopilot *ap,Flight *s,float dt,float *elevator,float *ailer
   s->throttle=clampf(ap->throttleBias+.03f*casErr,0,1);
   /* Climb at full power, eased off above the climb speed (F-16: out of
      afterburner instead of 690 kt at 3 deg nose up). */
-  if(ap->stage==AP_CLIMB)s->throttle=clampf(1+.03f*casErr,.3f,1);
+  if(ap->stage==AP_CLIMB)s->throttle=clampf(1+.03f*casErr,casErr<-8?0:.3f,craft->aeroModel==AERO_F16&&s->gearActual>.05f?.77f:1); /* v1.1: idle allowed when well over; F-16 no afterburner until the gear is up */
  }
 }

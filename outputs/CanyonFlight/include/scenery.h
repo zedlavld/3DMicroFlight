@@ -18,6 +18,8 @@ int sceneryVertexMaterial(int index);
 void scenerySurfaceColor(float height,float eastGradient,float northGradient,float rgb[3]);
 void sceneryGroundColorAt(float east,float north,float rgb[3]);
 int sceneryGroundMapLoaded(void); /* v35.14: 1 when scenery/ground_us4000.bin was read from the card */
+/* v1.1p18: ground map colour (0..1) at a point for the moving map; 0 outside the map or without it. */
+int sceneryGroundColor(float east,float north,float rgb[3]);
 float sceneryHaze(float distance);
 /* Rendered ground height: terrain() lowered slightly beneath airport pavement. */
 float sceneryGroundHeight(float east,float north);
@@ -25,4 +27,7 @@ void scenerySkyColor(float elevationSine,float rgb[3]);
 /* World-aligned nested rings; the inner hole follows the finer ring exactly. */
 void sceneryLodLayout(Vec position,int level,float *east,float *north,int *innerX,int *innerY);
 int buildScenery(const Flight *s,WorldVertex *vertices,int capacity);
+/* v1.1p20: per object part (32..35), runways drawn and runways left out for the vertex budget
+   in its last build. */
+extern int sceneryRunwayStats[4][2];
 #endif

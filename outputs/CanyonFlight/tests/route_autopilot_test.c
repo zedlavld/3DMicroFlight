@@ -6,7 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-static int primary(const char *id){for(int i=0;i<AIRPORT_COUNT;i++)if(!strcmp(airports[i].id,id)&&airports[i].primary)return i;return -1;}
+#include "airport_index.h"
+/* v1.1p20: CF_AIRPORTS_FLY=<path to airports_fly.bin> adds every flyable US airport (KDEN, KORD...). */
+static int primary(const char *id){
+ static int loaded;if(!loaded){loaded=1;const char *p=getenv("CF_AIRPORTS_FLY");if(p)printf("%d card runway records from %s\n",airportsLoad(p),p);}
+ return airportFind(id);
+}
 int main(int argc,char **argv){
  const char *from=argc>1?argv[1]:"KTUS",*to=argc>2?argv[2]:"KPHX";int craft=argc>3?atoi(argv[3]):1;float trace=argc>4?atof(argv[4]):60;
  int a=primary(from),b=primary(to);if(a<0||b<0){printf("unknown airport\n");return 2;}

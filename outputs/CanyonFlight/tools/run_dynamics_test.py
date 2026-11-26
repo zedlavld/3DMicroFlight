@@ -9,7 +9,7 @@ from elftools.elf.elffile import ELFFile
 r = Path(__file__).resolve().parent.parent
 out = r / 'build/validation'; out.mkdir(parents=True, exist_ok=True); elf = out / 'dynamics_test.elf'
 cc = 'C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe'
-src = [r / 'source' / f'{n}.c' for n in ['flight', 'fbw', 'f16_aero', 'ground', 'terrain', 'terrain_stream', 'terrain_data', 'airports']]
+src = [r / 'source' / f'{n}.c' for n in ['flight', 'fbw', 'f16_aero', 'ground', 'terrain', 'terrain_stream', 'terrain_data', 'airports', 'airport_index']]
 subprocess.run([cc, '-O2', '-marm', '-march=armv6k', '-mfloat-abi=hard', '-mfpu=vfp', '-specs=nosys.specs', '-I' + str(r / 'include'),
                 *map(str, src), str(r / 'tests/dynamics_test.c'), '-Wl,-e,main', '-lm', '-o', str(elf)], check=True)
 u = Uc(UC_ARCH_ARM, UC_MODE_ARM); u.mem_map(0, 0x02000000)

@@ -6,7 +6,7 @@ from unicorn.arm_const import *
 from elftools.elf.elffile import ELFFile
 r=Path(__file__).resolve().parent.parent
 out=r/'build/airport_playtest';out.mkdir(parents=True,exist_ok=True);elf=out/'test.elf'
-subprocess.run(['C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe','-O2','-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(r/'include'),*[str(r/'source'/n) for n in ['flight.c','fbw.c','f16_aero.c','ground.c','airports.c','terrain.c','terrain_stream.c','terrain_data.c','camera.c','scenery.c']],str(r/'tests/airport_playtest.c'),'-Wl,-e,main','-lm','-o',str(elf)],check=True)
+subprocess.run(['C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe','-O2','-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(r/'include'),*[str(r/'source'/n) for n in ['flight.c','fbw.c','f16_aero.c','ground.c','airports.c','airport_index.c','terrain.c','terrain_stream.c','terrain_data.c','camera.c','cockpit.c','scenery.c']],str(r/'tests/airport_playtest.c'),'-Wl,-e,main','-lm','-o',str(elf)],check=True)
 u=Uc(UC_ARCH_ARM,UC_MODE_ARM);u.mem_map(0,0x4000000)
 with elf.open('rb') as f:
  e=ELFFile(f)

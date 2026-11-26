@@ -4,7 +4,8 @@ usage: python tools/package_release.py SRC OUT [--limit BYTES] [--extra FILE ...
 
 SRC is a folder laid out like the SD card root (it contains 3ds/CanyonFlight/scenery).
 Only what the game reads is packed: scenery/stream32 (manifest + tile folders),
-scenery/elevation36, scenery/ground_us4000.bin and the region *.cft files.
+scenery/elevation36, scenery/ground_us4000.bin, airports_us.bin (map) and airports_fly.bin (v1.1p20
+flyable runways) and the region *.cft files.
 
 Writes OUT/3DMicroFlight-scenery-01-of-NN.zip ... with paths from the SD root, so users
 extract every zip to the card root and the folders merge. Each zip is a complete archive
@@ -25,7 +26,7 @@ def files_to_pack(src):
     if not sc.is_dir():
         sys.exit(f'{sc} not found: SRC must be laid out like the SD card root')
     out = []
-    loose = sorted(p for p in sc.iterdir() if p.is_file() and (p.suffix == '.cft' or p.name == 'ground_us4000.bin'))
+    loose = sorted(p for p in sc.iterdir() if p.is_file() and (p.suffix == '.cft' or p.name in ('ground_us4000.bin', 'airports_us.bin', 'airports_fly.bin')))  # v1.1p19/p20 airport files
     if not any(p.name == 'ground_us4000.bin' for p in loose):
         sys.exit('ground_us4000.bin missing')
     out += loose

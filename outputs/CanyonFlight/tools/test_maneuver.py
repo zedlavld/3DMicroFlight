@@ -8,7 +8,7 @@ root=Path(__file__).resolve().parent.parent;out=root/'build/maneuver_tests';out.
 cc=Path(os.environ.get('DEVKITARM','C:/devkitPro/devkitARM'))/'bin/arm-none-eabi-gcc.exe'
 if not cc.exists():cc=Path('C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe')
 elfpath=out/'maneuver_test.elf'
-sources=['flight','fbw','f16_aero','ground','terrain','terrain_stream','terrain_data','airports','maneuver']
+sources=['flight','fbw','f16_aero','ground','terrain','terrain_stream','terrain_data','airports','airport_index','maneuver']
 subprocess.run([str(cc),'-O2','-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(root/'include'),
  *[str(root/'source'/f'{n}.c') for n in sources],str(root/'tests/maneuver_test.c'),'-Wl,-e,main','-lm','-o',str(elfpath)],check=True)
 u=Uc(UC_ARCH_ARM,UC_MODE_ARM);u.mem_map(0,0x4000000)

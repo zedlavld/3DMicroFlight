@@ -7,7 +7,7 @@ from elftools.elf.elffile import ELFFile
 r=Path(__file__).resolve().parent.parent;out=r/'build/menu_tests';out.mkdir(parents=True,exist_ok=True)
 cc='C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe';elf=out/'menu_test.elf'
 redirect=['-D'+n+'=test_'+n for n in ['fopen','fread','fwrite','fgetc','fclose','remove','rename']]
-subprocess.run([cc,'-Wall','-O2','-fno-builtin',*redirect,'-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(r/'include'),str(r/'source/app_menu.c'),str(r/'source/flight_save.c'),str(r/'source/airports.c'),str(r/'tests/menu_save_test.c'),'-Wl,-e,main','-lm','-o',str(elf)],check=True)
+subprocess.run([cc,'-Wall','-O2','-fno-builtin',*redirect,'-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(r/'include'),str(r/'source/app_menu.c'),str(r/'source/flight_save.c'),str(r/'source/airports.c'),str(r/'source/airport_index.c'),str(r/'tests/menu_save_test.c'),'-Wl,-e,main','-lm','-o',str(elf)],check=True)
 u=Uc(UC_ARCH_ARM,UC_MODE_ARM);u.mem_map(0,0x2000000)
 with elf.open('rb') as f:
  e=ELFFile(f)

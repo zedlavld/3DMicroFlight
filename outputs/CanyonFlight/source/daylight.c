@@ -3,16 +3,18 @@
 #include "daylight.h"
 #include "scenery.h"
 const char *const timeSettingNames[TIME_SETTING_COUNT]={"DAWN","MORNING","NOON","DUSK","NIGHT","3DS CLOCK"};
-static float hours=12;
+/* v1.1p17: double. A 1/120 s step is 2.3e-6 h, under a float's step near 16-40 h (the +24
+   wrap), so in float the clock stalled: a 55 min flight left at 16:30 still landed at 16:30. */
+static double hours=12;
 float timeSettingHours(int setting){
  static const float fixed[TIME_CLOCK]={6.35f,9.5f,12,17.25f,21.5f};
  if(setting>=0&&setting<TIME_CLOCK)return fixed[setting];
  time_t now=time(NULL);struct tm *t=gmtime(&now); /* the 3DS clock holds local time */
  return t?t->tm_hour+t->tm_min/60.f:12;
 }
-void daylightSet(float h){hours=fmodf(h+24,24);}
-float daylightHours(void){return hours;}
-void daylightAdvance(float seconds){if(seconds>0&&seconds<10)daylightSet(hours+seconds/3600);}
+void daylightSet(float h){double x=fmod((double)h,24);if(x<0)x+=24;hours=x;}
+float daylightHours(void){return (float)hours;}
+void daylightAdvance(float seconds){if(seconds>0&&seconds<10){hours+=seconds/3600.0;if(hours>=24)hours-=24;}}
 float daylightSunElevation(void){
  /* 34.5 N, declination -18 (mid November): sunrise ~6:20, sunset ~17:10 solar. */
  const float lat=34.5f*3.14159265f/180,dec=-18*3.14159265f/180;

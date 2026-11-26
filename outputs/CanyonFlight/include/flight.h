@@ -34,7 +34,13 @@ typedef struct {
    runway numbers; primary marks the airport's start runway, which also gets
    the apron and buildings, on apronSide (-1 left of heading, +1 right, 0 none: both sides blocked). */
 typedef struct {const char *id; float east,north,elevation,heading,length,width,lowElevation,highElevation;
- const char *name,*le,*he;int primary,apronSide;} Airport;
+ const char *name,*le,*he;int primary,apronSide;const char *state;int cls;} Airport;
+/* v1.1p20: state is the two-letter US state (menu grouping); cls 0 large, 1 medium, 2 small.
+   AIRPORT_COUNT is the compiled records (source/airports.c). airports[] holds them at these
+   indices (saves store runway-record indices), then every flyable US runway from the card
+   (scenery/airports_fly.bin, source/airport_index.c): airportCount records in all. Code that
+   visits airports per frame or per terrain sample goes through the spatial index
+   (include/airport_index.h), never a loop over airportCount. */
 #define AIRPORT_COUNT 49
 #define AIRPORT_START_COUNT 24
 enum {PHASE_TAKEOFF,PHASE_CLIMB,PHASE_CRUISE,PHASE_DESCENT,PHASE_APPROACH,PHASE_FINAL,PHASE_STALL,PHASE_GLIDE,PHASE_COUNT};
@@ -55,9 +61,14 @@ typedef struct {
 typedef struct {float density,pressure,temperature,sound;} Atmosphere;
 typedef struct {Vec force,moment;float cl,cd,alpha,beta,ias,thrust,stallRatio;} Aero;
 extern const Aircraft aircraft[AIRCRAFT_COUNT];
-extern const Airport airports[AIRPORT_COUNT];
+extern const Airport builtinAirports[AIRPORT_COUNT];
+extern const Airport *airports;
+extern int airportCount;
+/* The compiled start runways (also the stations of the varied weather). */
 extern const int airportStarts[AIRPORT_START_COUNT];
-/* Next/previous primary runway record after ap (dir = +1 or -1), wrapping. */
+/* Next/previous start airport (primary record) after ap (dir = +1 or -1) in the menu order:
+   by state; in a state the compiled airports first, then large, medium, small by name;
+   wrapping (source/airport_index.c). */
 int nextAirportStart(int ap,int dir);
 /* Bounding radius of the flattened runway + apron + 100 m blend. */
 float airportReach(const Airport *ap);
@@ -84,6 +95,24 @@ const char *flightPhaseName(int phase);
 void groundReaction(Flight *s,float dt,Vec external,Vec *force,Vec *moment);
 void switchAircraft(Flight *s,int type);
 void stepFlight(Flight *s,float dt,float elevator,float aileron,float rudder);
+/* v1.1p21 difficulty (Audio & controls slider), flightLevel 0..FLIGHT_LEVELS-1:
+   0 Easy      nothing crashes. An impact puts the aircraft back on a safe path instead
+               (flightEasyRescue): at landing speed it lowers the gear and sets it level on its
+               wheels; faster it lifts it clear of the ground, wings level, climbing.
+   1 Forgiving a hard or crooked touchdown is levelled and its sink cut (gear down, landing speed);
+               gear-up contact and hitting terrain at speed crash.
+   2 Normal    touchdown crashes above 4.5 m/s sink, 17 deg bank, 10 deg nose down (as before).
+   3 Hard      3.5 m/s, 14 deg, 8.6 deg; tail strike at 90% of the aircraft's limit.
+   4 Advanced  3.0 m/s, 11.5 deg, 6.9 deg; tail strike at 80%.
+   Autotests fly Normal unless the case name ends _easy (Easy) or _adv (Advanced). */
+#define FLIGHT_LEVELS 5
+#define FLIGHT_LEVEL_NORMAL 2
+extern int flightLevel;
+extern int flightEasyRescues; /* count since start, for the autotest log */
+void flightEasyRescue(Flight *s);
+/* 1 when this ground contact is rescued instead of crashing: always on Easy; on Forgiving with
+   the gear down at landing speed, sinking under 10 m/s (a hard touchdown bottoming out on the belly or a wingtip). */
+int flightForgive(const Flight *s);
 Vec bodyWorld(const Flight *s,Vec v);
 Aero evaluateAero(const Flight *s);
 float stallSpeedCAS(const Flight *s,float bank);

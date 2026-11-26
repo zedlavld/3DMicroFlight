@@ -11,3 +11,4 @@ void threadJoin(Thread,u64);void threadFree(Thread);
 void LightEvent_Init(LightEvent*,int);void LightEvent_Signal(LightEvent*);void LightEvent_Wait(LightEvent*);
 void GSPGPU_FlushDataCache(void*,size_t);
 typedef uint32_t u32;u32 linearSpaceFree(void);
+typedef int64_t s64;void svcSleepThread(s64 ns); /* v35.06 retry sleep in scenery_stream.c */

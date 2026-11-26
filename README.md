@@ -5,10 +5,16 @@ New 2DS XL). Formerly CirrusFlight.
 
 - **Five aircraft:** Cirrus SR22, Cirrus Vision SF50, Boeing 737, Airbus A321 and F-16,
   each with its own flight model, exterior model and cockpit.
-- **All 48 contiguous US states** in aerial photos (USDA NAIP) on USGS elevation, with
-  real airports and runways.
-- **City buildings** (v1.0.1) in Las Vegas, Tucson and Duluth, with lidar heights.
-- **Day and night:** runway lights, city lights and aircraft navigation lights after dark.
+- **All 48 contiguous US states** in aerial photos (USDA NAIP) on USGS elevation.
+- **About 3,900 airports you can start from** (v1.1), chosen by state, and every one of
+  some 15,000 US airports on the moving map.
+- **Moving map** (v1.1) on the lower screen next to the flight data, with the route line.
+- **City buildings in 32 US cities** (v1.1) and 38 landmarks, from the Golden Gate Bridge to
+  the Gateway Arch.
+- **Day and night:** the time of day moves on in flight; runway lights, street lights across
+  all 48 states (v1.1), and round aircraft navigation lights after dark.
+- **Difficulty** from Easy (no crashes) to Advanced (v1.1), and an autopilot that can fly a
+  route from takeoff to landing.
 - Clouds and weather, stereoscopic 3D, a touchscreen flight display, engine and wind
   sound, and three save slots.
 

@@ -225,60 +225,60 @@
       "phase": "climb",
       "initial_altitude_m": 0.0,
       "target_kcas": 101.0,
-      "average_fpm": 1423.5865478515625,
+      "average_fpm": 1423.5863037109375,
       "final_kcas": 100.53973388671875,
-      "roll_rad": 4.288641503080726e-05
+      "roll_rad": 4.288653508410789e-05
     },
     {
       "aircraft": "SR22",
       "phase": "climb",
       "initial_altitude_m": 609.5999755859375,
       "target_kcas": 100.0,
-      "average_fpm": 1293.8876953125,
-      "final_kcas": 99.59585571289062,
-      "roll_rad": 4.5840344682801515e-05
+      "average_fpm": 1293.888916015625,
+      "final_kcas": 99.5958480834961,
+      "roll_rad": 4.5839868107577786e-05
     },
     {
       "aircraft": "SR22",
       "phase": "climb",
       "initial_altitude_m": 1828.800048828125,
       "target_kcas": 98.0,
-      "average_fpm": 1044.6263427734375,
+      "average_fpm": 1044.6082763671875,
       "final_kcas": 97.69007110595703,
-      "roll_rad": 4.4618012907449156e-05
+      "roll_rad": 4.461724529392086e-05
     },
     {
       "aircraft": "SR22",
       "phase": "cruise",
       "target_kcas": 135.0,
-      "average_fpm": 0.0,
-      "final_kcas": 135.00430297851562,
+      "average_fpm": 0.19784362614154816,
+      "final_kcas": 135.00418090820312,
       "throttle": 0.8389315009117126,
-      "roll_rad": 1.0059226042358205e-05
+      "roll_rad": 1.0084207133331802e-05
     },
     {
       "aircraft": "SR22",
       "phase": "descent",
       "target_kcas": 135.0,
-      "average_fpm": -940.3130493164062,
-      "final_kcas": 135.4525909423828,
+      "average_fpm": -940.33154296875,
+      "final_kcas": 135.45233154296875,
       "throttle": 0.21711164712905884,
-      "roll_rad": -2.9604083465528674e-05
+      "roll_rad": -2.9599070330732502e-05
     },
     {
       "aircraft": "SR22",
       "phase": "engine_out_glide",
       "target_kcas": 88.0,
-      "glide_ratio": 9.729310035705566,
-      "sink_fpm": 1164.23046875,
-      "final_kcas": 88.17782592773438,
+      "glide_ratio": 9.727721214294434,
+      "sink_fpm": 1164.4195556640625,
+      "final_kcas": 88.17768859863281,
       "initial_path_rad": -0.10407242178916931
     },
     {
       "aircraft": "SR22",
       "phase": "approach",
       "final_kcas": 80.10127258300781,
-      "average_fpm": -472.9952697753906,
+      "average_fpm": -473.00164794921875,
       "flaps": 1.0,
       "gear": 1.0,
       "mass_kg": 1542.2139892578125
@@ -286,8 +286,8 @@
     {
       "aircraft": "SR22",
       "phase": "go_around",
-      "height_gain_m": 117.986083984375,
-      "final_kcas": 101.92972564697266,
+      "height_gain_m": 117.967041015625,
+      "final_kcas": 101.92981719970703,
       "flaps": 0.0,
       "gear": 1.0,
       "stall_warning": 0.0
@@ -295,19 +295,19 @@
     {
       "aircraft": "SR22",
       "phase": "banked_turn",
-      "height_change_m": -22.020263671875,
-      "bank_rad": 0.5210273861885071,
-      "heading_change_rad": 2.7017416954040527,
-      "final_kcas": 135.83802795410156,
-      "beta_rad": 0.013148334808647633
+      "height_change_m": -22.02685546875,
+      "bank_rad": 0.5210274457931519,
+      "heading_change_rad": 2.701742649078369,
+      "final_kcas": 135.83804321289062,
+      "beta_rad": 0.013148297555744648
     },
     {
       "aircraft": "SR22",
       "phase": "stall_recovery",
       "max_warning": 1.0,
       "max_alpha_rad": 0.6145936846733093,
-      "minimum_kcas": 64.40522003173828,
-      "recovered_kcas": 141.92308044433594,
+      "minimum_kcas": 64.40523529052734,
+      "recovered_kcas": 141.92306518554688,
       "final_warning": 0.0
     },
     {
@@ -315,7 +315,7 @@
       "phase": "climb",
       "initial_altitude_m": 0.0,
       "target_kcas": 140.0,
-      "average_fpm": 2947.229736328125,
+      "average_fpm": 2947.229248046875,
       "final_kcas": 138.83567810058594,
       "roll_rad": 0.0
     },
@@ -324,8 +324,8 @@
       "phase": "climb",
       "initial_altitude_m": 609.5999755859375,
       "target_kcas": 140.0,
-      "average_fpm": 2849.240234375,
-      "final_kcas": 138.872314453125,
+      "average_fpm": 2849.24853515625,
+      "final_kcas": 138.87229919433594,
       "roll_rad": 0.0
     },
     {
@@ -334,7 +334,7 @@
       "initial_altitude_m": 1828.800048828125,
       "target_kcas": 140.0,
       "average_fpm": 2648.337158203125,
-      "final_kcas": 138.94598388671875,
+      "final_kcas": 138.94601440429688,
       "roll_rad": 0.0
     },
     {
@@ -350,8 +350,8 @@
       "aircraft": "SF50",
       "phase": "descent",
       "target_kcas": 180.0,
-      "average_fpm": -1227.9232177734375,
-      "final_kcas": 180.76425170898438,
+      "average_fpm": -1227.8856201171875,
+      "final_kcas": 180.7642059326172,
       "throttle": 0.3722890019416809,
       "roll_rad": 0.0
     },
@@ -359,16 +359,16 @@
       "aircraft": "SF50",
       "phase": "engine_out_glide",
       "target_kcas": 120.0,
-      "glide_ratio": 13.319707870483398,
-      "sink_fpm": 1161.14990234375,
+      "glide_ratio": 13.31991958618164,
+      "sink_fpm": 1161.130615234375,
       "final_kcas": 120.29934692382812,
       "initial_path_rad": -0.07702089846134186
     },
     {
       "aircraft": "SF50",
       "phase": "approach",
-      "final_kcas": 90.11739349365234,
-      "average_fpm": -531.1019897460938,
+      "final_kcas": 90.11741638183594,
+      "average_fpm": -531.2542114257812,
       "flaps": 1.0,
       "gear": 1.0,
       "mass_kg": 2517.437744140625
@@ -376,8 +376,8 @@
     {
       "aircraft": "SF50",
       "phase": "go_around",
-      "height_gain_m": 317.111328125,
-      "final_kcas": 140.0337371826172,
+      "height_gain_m": 317.113525390625,
+      "final_kcas": 140.03379821777344,
       "flaps": 0.0,
       "gear": 0.0,
       "stall_warning": 0.0
@@ -385,19 +385,19 @@
     {
       "aircraft": "SF50",
       "phase": "banked_turn",
-      "height_change_m": -19.75439453125,
-      "bank_rad": 0.519050657749176,
-      "heading_change_rad": 2.0244603157043457,
-      "final_kcas": 180.03392028808594,
-      "beta_rad": 0.009295433759689331
+      "height_change_m": -19.751220703125,
+      "bank_rad": 0.5190505385398865,
+      "heading_change_rad": 2.0244593620300293,
+      "final_kcas": 180.03366088867188,
+      "beta_rad": 0.009295374155044556
     },
     {
       "aircraft": "SF50",
       "phase": "stall_recovery",
       "max_warning": 1.0,
       "max_alpha_rad": 0.5734140872955322,
-      "minimum_kcas": 79.5455093383789,
-      "recovered_kcas": 194.94918823242188,
+      "minimum_kcas": 79.54550170898438,
+      "recovered_kcas": 194.9491424560547,
       "final_warning": 0.0
     },
     {
@@ -430,73 +430,73 @@
     {
       "aircraft": "SR22",
       "phase": "ground_settle",
-      "cg_height_m": 1.169921875,
-      "groundspeed_mps": 5.517432146007195e-05,
-      "roll_rad": -2.282571074374573e-07,
-      "pitch_rad": 0.02698102593421936,
-      "ground_load_g": 1.0004370212554932
+      "cg_height_m": 1.170166015625,
+      "groundspeed_mps": 5.169664291315712e-05,
+      "roll_rad": -2.4223206551710064e-08,
+      "pitch_rad": 0.026985887438058853,
+      "ground_load_g": 1.0001953840255737
     },
     {
       "aircraft": "SR22",
       "phase": "takeoff",
-      "distance_to_8m_agl_m": 765.4668579101562,
-      "airspeed_at_8m_kcas": 85.08468627929688,
-      "height_m": 8.0137939453125,
-      "final_kcas": 85.08468627929688,
+      "distance_to_8m_agl_m": 765.5062255859375,
+      "airspeed_at_8m_kcas": 85.08639526367188,
+      "height_m": 8.017333984375,
+      "final_kcas": 85.08639526367188,
       "crashed": 0.0
     },
     {
       "aircraft": "SR22",
       "phase": "landing",
-      "distance_to_stop_m": 237.8693389892578,
-      "max_contact_sink_mps": 1.2966961860656738,
-      "final_groundspeed_mps": 0.17510217428207397,
-      "pitch_rad": -0.010781239718198776,
+      "distance_to_stop_m": 237.81448364257812,
+      "max_contact_sink_mps": 1.2966572046279907,
+      "final_groundspeed_mps": 0.19706499576568604,
+      "pitch_rad": -0.010780305601656437,
       "crashed": 0.0
     },
     {
       "aircraft": "SR22",
       "phase": "differential_braking",
-      "heading_change_rad": -3.744673013687134,
-      "final_groundspeed_mps": 1.054632544517517,
-      "roll_rad": 0.006946424022316933,
-      "pitch_rad": 0.02336844429373741,
+      "heading_change_rad": -3.745558500289917,
+      "final_groundspeed_mps": 1.0546541213989258,
+      "roll_rad": 0.006949279922991991,
+      "pitch_rad": 0.02337360754609108,
       "crashed": 0.0
     },
     {
       "aircraft": "SF50",
       "phase": "ground_settle",
-      "cg_height_m": 1.16455078125,
-      "groundspeed_mps": 1.13908945422736e-05,
-      "roll_rad": 2.0495361852113092e-08,
-      "pitch_rad": 0.024728640913963318,
-      "ground_load_g": 0.9998459815979004
+      "cg_height_m": 1.1639404296875,
+      "groundspeed_mps": 8.395920303883031e-06,
+      "roll_rad": -1.3042503965721153e-08,
+      "pitch_rad": 0.024728873744606972,
+      "ground_load_g": 1.0001201629638672
     },
     {
       "aircraft": "SF50",
       "phase": "takeoff",
-      "distance_to_8m_agl_m": 840.3377685546875,
-      "airspeed_at_8m_kcas": 98.45394897460938,
-      "height_m": 8.0072021484375,
-      "final_kcas": 98.45394897460938,
+      "distance_to_8m_agl_m": 840.384521484375,
+      "airspeed_at_8m_kcas": 98.45829772949219,
+      "height_m": 8.0103759765625,
+      "final_kcas": 98.45829772949219,
       "crashed": 0.0
     },
     {
       "aircraft": "SF50",
       "phase": "landing",
-      "distance_to_stop_m": 330.2471923828125,
-      "max_contact_sink_mps": 0.9990606307983398,
-      "final_groundspeed_mps": 0.1668674498796463,
-      "pitch_rad": 0.003146114991977811,
+      "distance_to_stop_m": 330.212890625,
+      "max_contact_sink_mps": 0.9990637898445129,
+      "final_groundspeed_mps": 0.19398361444473267,
+      "pitch_rad": 0.003148807445541024,
       "crashed": 0.0
     },
     {
       "aircraft": "SF50",
       "phase": "differential_braking",
-      "heading_change_rad": -3.8187289237976074,
-      "final_groundspeed_mps": 1.4135743379592896,
-      "roll_rad": 0.007013069931417704,
-      "pitch_rad": 0.02291961759328842,
+      "heading_change_rad": -3.819420099258423,
+      "final_groundspeed_mps": 1.4136747121810913,
+      "roll_rad": 0.007013523485511541,
+      "pitch_rad": 0.022924648597836494,
       "crashed": 0.0
     }
   ]

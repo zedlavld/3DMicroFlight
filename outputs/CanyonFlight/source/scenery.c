@@ -1,10 +1,13 @@
 #include "scenery.h"
 #include "terrain.h"
 #include "terrain_stream.h"
+#include "airport_index.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #define PI 3.14159265359f
+#define SCENERY_NEAR_RUNWAYS 256
+int sceneryRunwayStats[4][2];
 /* v35.13: ground colour for the whole grid on the 4 km US base lattice (tools/build_west_v35.py colormap):
    the mean photo colour, open water where the elevation is exactly level (hydro-flattened lakes, sea),
    gaps filled from neighbours. Used beyond the photo tiles instead of the Arizona desert palette.
@@ -33,6 +36,7 @@ static int groundMapColor(float e,float n,float rgb[3]){
  for(int i=0;i<3;i++)rgb[i]=((a[i]*(1-tx)+b[i]*tx)*(1-ty)+(c[i]*(1-tx)+d[i]*tx)*ty)/255.f;
  return 1;
 }
+int sceneryGroundColor(float east,float north,float rgb[3]){return groundMapColor(east,north,rgb);}
 static WorldVertex *output;static int used,limit;static Vec viewer;
 static int surfaceMaterial=-1;
 static signed char vertexMaterial[SCENERY_PART_CAPACITY];
@@ -63,10 +67,11 @@ static Vec point(const Airport *ap,float along,float across,float z){
     and wheel contact agree (v31). Primaries keep their exact profile. */
  return (Vec){e,n,(ap->primary?runwayElevation(ap,along):terrain(e,n))+z};
 }
+static int coarsePavement; /* v1.1p20: far runways, 400 m strips */
 static void pavement(const Airport *ap,float a,float b,float left,float right,float r,float g,float blue,float bias){
  int asphalt=r<135&&fabsf(r-g)<12; /* v35.06: asphalt greys now reach 124 */surfaceMaterial=asphalt?-2:-1;
  /* Bounded, broad age variation complements the repeating aggregate grain. */
- int strips=asphalt?(int)ceilf((b-a)/40):1;
+ int strips=asphalt?(int)ceilf((b-a)/(coarsePavement?400:40)):1;
  for(int i=0;i<strips;i++){
   float start=a+(b-a)*i/strips,end=a+(b-a)*(i+1)/strips;
   float shade=asphalt?1+.035f*sinf(start*.071f+left*.13f):1;
@@ -93,6 +98,8 @@ static void digit(const Airport *ap,int value,float along,float across,int rever
 }
 static void airport(const Airport *ap,int detailed){
  float half=ap->length/2,w=ap->width/2;
+ /* v1.1p20: far runways (15 km+, detailed < 0) are only the asphalt, in 400 m strips. */
+ if(detailed<0){coarsePavement=1;pavement(ap,-half,half,-w,w,112,114,116,.025f);coarsePavement=0;return;}
  /* Shoulder bands must not bridge underneath the sloped runway. A single
     end-to-end quad interpolated clamped endpoint heights over a longer span,
     lifting its low half through the asphalt. */
@@ -396,9 +403,9 @@ static void scatter(const Flight *s,int quadrant){
   int gx=cx+x,gy=cy+y;unsigned h=hashCell(gx,gy);
   if((h&255)>112)continue;
   float e=(gx+.15f+((h>>8)&255)/360.f)*128,n=(gy+.15f+((h>>16)&255)/360.f)*128;
-  int blocked=0;
-  for(int i=0;i<AIRPORT_COUNT&&!blocked;i++){
-   const Airport *ap=&airports[i];float dx=e-ap->east,dy=n-ap->north;
+  int blocked=0;const uint16_t *list;int listed=airportCellRunways(e,n,&list); /* v1.1p20: this cell's runways */
+  for(int k=0;k<listed&&!blocked;k++){
+   const Airport *ap=&airports[list[k]];float dx=e-ap->east,dy=n-ap->north;
    if(fabsf(dx)>ap->length+400||fabsf(dy)>ap->length+400)continue;
    float angle=ap->heading*PI/180;
    if(fabsf(dx*sinf(angle)+dy*cosf(angle))<ap->length*.6f&&fabsf(dx*cosf(angle)-dy*sinf(angle))<310)blocked=1;
@@ -484,8 +491,18 @@ int buildSceneryPart(const Flight *s,WorldVertex *vertices,int capacity,int part
   terrainLimitAirportsOff();
  }else{
   /* Spread runway records over the four object parts so multi-runway
-     airports (KPHX + KDVT within 45 km) stay inside one part's capacity. */
-  for(int i=part-32;i<AIRPORT_COUNT;i+=4)if(hypotf(s->pos.x-airports[i].east,s->pos.y-airports[i].north)<45000)airport(&airports[i],1);
+     airports (KPHX + KDVT within 45 km) stay inside one part's capacity.
+     v1.1p20: thousands of runways: those within 45 km nearest first, the
+     ones 15 km+ away coarse pavement only, and a runway that would leave a part
+     less than 1800 vertices for the ground scatter is left out. */
+  static int near[SCENERY_NEAR_RUNWAYS];int nearCount=airportsNear(s->pos.x,s->pos.y,45000,near,SCENERY_NEAR_RUNWAYS);
+  sceneryRunwayStats[part-32][0]=sceneryRunwayStats[part-32][1]=0;
+  for(int k=part-32;k<nearCount;k+=4){
+   const Airport *ap=&airports[near[k]];int before=used;
+   airport(ap,hypotf(s->pos.x-ap->east,s->pos.y-ap->north)<15000?1:-1);
+   if(used>limit-1800){used=before;sceneryRunwayStats[part-32][1]++;continue;}   /* a smaller one may still fit */
+   sceneryRunwayStats[part-32][0]++;
+  }
   scatter(s,part-32);
  }
  return used;

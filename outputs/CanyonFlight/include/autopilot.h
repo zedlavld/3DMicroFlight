@@ -6,17 +6,27 @@
    flaps so hardware autotests can sample a whole cross-country flight.
    No 3DS dependencies, so the same code flies the route in host tests. */
 #include "flight.h"
-enum {AP_TAKEOFF,AP_CLIMB,AP_CRUISE,AP_DESCENT,AP_ORBIT,AP_STAGE_COUNT};
+enum {AP_TAKEOFF,AP_CLIMB,AP_CRUISE,AP_DESCENT,AP_ORBIT,AP_APPROACH,AP_FLARE,AP_ROLLOUT,AP_STAGE_COUNT};
 typedef struct {
  int stage,destination;
  float cruiseMsl,arrivalMsl,targetMsl,pitchBias,throttleBias,time;
  float holdHeading,holdMsl;   /* v32.03 panel: kept at engagement */
+ /* v1.1p15 route options (autopilotRoute): land on the runway end with the most headwind
+    instead of orbiting; cruise at the PFD limit speed less 5 kt. aim* is the touchdown point
+    300 m past the threshold, runwayHeading the landing direction (rad). */
+ int land,maxSpeed,runway,leg,side; /* leg 0: downwind point first, 1: to the final start */
+ float aimX,aimY,aimZ,runwayHeading,flareSink,groundAgl,rudderI; /* groundAgl: CG height on the wheels */
 } Autopilot;
 void autopilotBegin(Autopilot *ap,const Flight *s,int destinationAirport);
 /* Advances the autopilot by dt and returns the stick inputs for stepFlight.
    Sets s->throttle, s->gear and s->flap itself. */
 void autopilotStep(Autopilot *ap,Flight *s,float dt,float *elevator,float *aileron,float *rudder);
 float autopilotDistance(const Autopilot *ap,const Flight *s);
+/* v1.1p15, after autopilotBegin: cruise altitude (m MSL, 0 = the default 2000 m above the
+   higher airport), cruise at the maximum allowed speed, and a full landing: descent to an
+   18 km straight-in final, 3 degree glide path, gear and flaps by speed, flare, touchdown,
+   spoilers and brakes to a stop on the centreline. */
+void autopilotRoute(Autopilot *ap,const Flight *s,float cruiseMsl,int maxSpeed,int land);
 const char *autopilotStageName(int stage);
 /* v31.17 player HOLD mode: wings to a heading, pitch to an altitude (MSL,
    metres), rates limited to about 1600 ft/min. The pilot keeps the

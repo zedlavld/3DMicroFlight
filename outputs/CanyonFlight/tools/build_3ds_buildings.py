@@ -4,6 +4,10 @@ Reads the Thor object tiles (o_x_y.bin, 2048 m tiles, from the CirrusFlight Thor
 tools/build_thor_objects.py: Microsoft US Building Footprints and OpenStreetMap, ODbL 1.0;
 USGS lidar heights, public domain) and writes one small file per tile for the 3DS:
 
+  Layout (v1.1p7): <out>/<x//16>_<y//16>/b_x_y.bin, plus <out>/index.bin:
+    'CFBIDX01', u32 count, then i32 x, y per tile, sorted by x then y (the game opens only
+    listed tiles; a folder per 16 x 16 tiles keeps each lookup short on the 3DS).
+
   b_x_y.bin  'CFB3D001', i32 x, i32 y, u32 buildings, u32 vertices
     per building: i16 cx, cy (dm from the tile's south-west corner; the game samples the
                   ground there), u16 vertex count
@@ -101,7 +105,47 @@ def box_tier(rect, top, roof, wall):
 AREAS = {'las_vegas': ((-152, 65, -146, 75), 20.0), 'tucson': ((32, -149, 42, -138), 12.0),
          'duluth': ((871, 642, 881, 651), 12.0)}
 
+# The other cities of the Thor CITIES table (name: lat, lon, half size km). They have no lidar:
+# heights come from OpenStreetMap tags, and untagged footprints get at most 13 m from their area,
+# so a 20 m cut-off keeps only measured or tagged towers.
+METROS = {
+    'new_york': (40.7400, -73.9700, 14), 'los_angeles': (34.0500, -118.2500, 14), 'chicago': (41.8800, -87.6400, 12),
+    'san_francisco': (37.7800, -122.3600, 11), 'seattle': (47.6100, -122.3300, 9), 'washington': (38.9000, -77.0300, 10),
+    'boston': (42.3550, -71.0600, 9), 'philadelphia': (39.9520, -75.1650, 9), 'atlanta': (33.7550, -84.3900, 10),
+    'houston': (29.7600, -95.3700, 12), 'dallas': (32.7800, -96.8000, 11), 'denver': (39.7400, -104.9900, 10),
+    'miami': (25.7750, -80.1950, 9), 'minneapolis': (44.9750, -93.2650, 9), 'san_diego': (32.7200, -117.1600, 9),
+    'st_louis': (38.6270, -90.2000, 8), 'phoenix': (33.4500, -112.0700, 12),
+    'portland': (45.5200, -122.6750, 8), 'salt_lake_city': (40.7600, -111.8900, 8), 'detroit': (42.3310, -83.0460, 8),
+    'new_orleans': (29.9510, -90.0710, 7), 'nashville': (36.1620, -86.7780, 7), 'charlotte': (35.2270, -80.8430, 7),
+    'pittsburgh': (40.4410, -79.9950, 7), 'kansas_city': (39.0997, -94.5786, 7), 'austin': (30.2700, -97.7400, 8),
+    'san_antonio': (29.4240, -98.4930, 7), 'orlando': (28.5400, -81.3790, 7), 'baltimore': (39.2900, -76.6120, 7),
+}
+LAT0, LON0 = 34.848598480225, -111.78800201416
+_M = 6371000 * math.pi / 180; _MX = _M * math.cos(math.radians(LAT0))
+for _name, (_la, _lo, _h) in METROS.items():
+    _dla = _h * 1000 / _M; _dlo = _h * 1000 / (_M * math.cos(math.radians(_la)))
+    _e0, _n0 = (_lo - _dlo - LON0) * _MX, (_la - _dla - LAT0) * _M; _e1, _n1 = (_lo + _dlo - LON0) * _MX, (_la + _dla - LAT0) * _M
+    AREAS[_name] = ((math.floor(_e0 / SPAN), math.floor(_n0 / SPAN), math.floor(_e1 / SPAN), math.floor(_n1 / SPAN)), 20.0)
+
 FAR_MIN = 30.0   # metres; must match BLD_FAR_MIN_DM in source/aircraft_render.c
+
+# Triangle cap per tile where the default (--cap) would put too many in view: Manhattan and
+# Brooklyn fill tile after tile with towers.
+CAPS = {'new_york': 1000}
+
+# Landmark models of source/landmarks.c drawn over places the Thor tiles still have buildings:
+# (lat, lon, radius m). Buildings with their centre inside are left out (the Thor port removes
+# its own landmarks' footprints already).
+LANDMARK_SPOTS = [(38.871019, -77.055947, 260), (38.897642, -77.036540, 45), (38.881369, -77.036571, 50),
+                  (37.802373, -122.405834, 25), (34.118213, -118.300372, 55), (37.826629, -122.422931, 60),
+                  (28.585747, -80.650913, 150), (29.749856, -95.080712, 45)]
+def _spots():
+    out = []
+    for la, lo, r in LANDMARK_SPOTS:
+        out.append(((lo - LON0) * _MX, (la - LAT0) * _M, r))
+    return out
+def under_landmark(e, n):
+    return any((e - a) ** 2 + (n - b) ** 2 < r * r for a, b, r in _spots())
 
 SIMPLE = 8   # outer rings with more corners become their minimum-area rectangle
 
@@ -169,19 +213,24 @@ def main():
     a = ap.parse_args()
     src, out = Path(a.src), Path(a.out); out.mkdir(parents=True, exist_ok=True)
     boxes = [(a.box, 20.0)] if a.box else [AREAS[k] for k in (AREAS if a.area == 'all' else a.area.split(','))]
-    cells = [(x, y, a.min_height or mh) for (x0, y0, x1, y1), mh in boxes for x in range(x0, x1 + 1) for y in range(y0, y1 + 1)]
-    tiles = kept = tris_all = 0
-    for x, y, min_h in cells:
+    names = [None] if a.box else list(AREAS if a.area == 'all' else a.area.split(','))
+    cells = {}
+    for name, ((x0, y0, x1, y1), mh) in zip(names, boxes):
+        for x in range(x0, x1 + 1):
+            for y in range(y0, y1 + 1):
+                cells.setdefault((x, y), (a.min_height or mh, CAPS.get(name, a.cap)))
+    tiles = kept = tris_all = 0; written = []
+    for (x, y), (min_h, cap) in cells.items():
         if True:
             p = src / f'o_{x}_{y}.bin'
             if not p.exists():
                 continue
-            blds = [bd for bd in read_tile(p) if bd[2] and bd[4] >= min_h]
+            blds = [bd for bd in read_tile(p) if bd[2] and bd[4] >= min_h and not under_landmark(x * SPAN + bd[0] / 10, y * SPAN + bd[1] / 10)]
             blds.sort(key=lambda bd: -bd[4] * math.sqrt(max(bd[3], 1.0)))
             chosen, tris = [], 0
             for bd in blds:
                 t = len(bd[2]) // 3
-                if tris + t > a.cap:
+                if tris + t > cap:
                     continue          # a smaller building later may still fit
                 chosen.append(bd); tris += t
             if not chosen:
@@ -194,9 +243,12 @@ def main():
                 for (vx, vy, vh), (r, g, bb) in verts:
                     body += struct.pack('<hhhBBBB', vx, vy, vh, r, g, bb, 0)
             nv = sum(len(bd[2]) for bd in chosen)
-            (out / f'b_{x}_{y}.bin').write_bytes(b'CFB3D001' + struct.pack('<iiII', x, y, len(chosen), nv) + body)
+            sub = out / f'{x // 16}_{y // 16}'; sub.mkdir(exist_ok=True); written.append((x, y))
+            (sub / f'b_{x}_{y}.bin').write_bytes(b'CFB3D001' + struct.pack('<iiII', x, y, len(chosen), nv) + body)
             tiles += 1; kept += len(chosen); tris_all += tris
             print(f'b_{x}_{y}: {len(chosen)}/{len(blds)} buildings, {tris} triangles, {len(body) // 1024} KB', flush=True)
+    written.sort()
+    (out / 'index.bin').write_bytes(b'CFBIDX01' + struct.pack('<I', len(written)) + b''.join(struct.pack('<ii', x, y) for x, y in written))
     print(f'{tiles} tiles, {kept} buildings, {tris_all} triangles -> {out}')
 
 if __name__ == '__main__':

@@ -19,6 +19,22 @@ static LightPoint *steadyVbo[2];static int steadyBuffer,steadyCount;static Vec s
 static LightPoint *emitTarget;static int *emitCount;static Vec emitAnchor;
 static u16 *indices;static Vec anchor;static unsigned builtFrame=~0u;
 static double statMs,statDynamic,statCity;static int statFrames;
+/* v1.1p16: 32 x 32 disc (alpha only) so lamps 2.5 px and wider draw round; the edge (alpha .5) sits at 0.9 of the radius so a 3 px lamp loses its corners (light_shader.g.pica). */
+#define DISC 32
+static C3D_Tex discTexture;static int discReady;
+static void makeDisc(void){
+ if(!C3D_TexInit(&discTexture,DISC,DISC,GPU_A8))return;
+ u8 *texels=discTexture.data;
+ for(int y=0;y<DISC;y++)for(int x=0;x<DISC;x++){
+  /* 8 x 8 tiles, Morton order inside a tile (the disc is symmetric, so the row flip does not matter) */
+  int m=0;for(int b=0;b<3;b++)m|=((x>>b)&1)<<(2*b)|((y>>b)&1)<<(2*b+1);
+  float dx=x+.5f-DISC/2.f,dy=y+.5f-DISC/2.f,d=sqrtf(dx*dx+dy*dy)/(DISC/2.f);
+  texels[((y>>3)*(DISC>>3)+(x>>3))*64+m]=(u8)(255*fminf(fmaxf((.96f-d)*8,0),1));
+ }
+ GSPGPU_FlushDataCache(texels,DISC*DISC);
+ C3D_TexSetFilter(&discTexture,GPU_LINEAR,GPU_LINEAR);C3D_TexSetWrap(&discTexture,GPU_CLAMP_TO_EDGE,GPU_CLAMP_TO_EDGE);
+ discReady=1;
+}
 bool initLightRenderer(void){
  shader=DVLB_ParseFile((u32*)light_shader_shbin,light_shader_shbin_size);if(!shader)return false;
  shaderProgramInit(&program);shaderProgramSetVsh(&program,&shader->DVLE[0]);shaderProgramSetGsh(&program,&shader->DVLE[1],2);
@@ -33,6 +49,7 @@ bool initLightRenderer(void){
  for(int i=0;i<SLICE;i++)indices[i]=i;
  GSPGPU_FlushDataCache(indices,SLICE*sizeof(u16));
  initCityLights(); /* optional: no town lights without the table */
+ makeDisc();      /* optional: square lamps without it */
  return true;
 }
 void freeLightRenderer(void){
@@ -40,6 +57,7 @@ void freeLightRenderer(void){
  for(int i=0;i<2;i++){if(dynamicVbo[i]){linearFree(dynamicVbo[i]);dynamicVbo[i]=NULL;}if(steadyVbo[i]){linearFree(steadyVbo[i]);steadyVbo[i]=NULL;}}
  if(indices){linearFree(indices);indices=NULL;}
  if(shader){shaderProgramFree(&program);DVLB_Free(shader);shader=NULL;}
+ if(discReady){C3D_TexDelete(&discTexture);discReady=0;}
 }
 static void emitDynamic(Vec p,float r,float g,float b,float size,float minPixels){
  (void)size;if(*emitCount>=DYNAMIC_CAPACITY)return;
@@ -61,9 +79,10 @@ static void bindLightPass(void){
  C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER,locModelView,&view);
  C3D_FVUnifMtx4x4(GPU_GEOMETRY_SHADER,locProjection,passProjection);
  C3D_FVUnifSet(GPU_GEOMETRY_SHADER,locSize,.25f,1/440.f,1.1f,1.0f);
- C3D_CullFace(GPU_CULL_NONE);C3D_DepthTest(true,GPU_GREATER,GPU_WRITE_COLOR);C3D_AlphaTest(false,GPU_ALWAYS,0);
+ C3D_CullFace(GPU_CULL_NONE);C3D_DepthTest(true,GPU_GREATER,GPU_WRITE_COLOR);C3D_AlphaTest(discReady,GPU_GREATER,0x7f);
  for(int i=0;i<6;i++)C3D_TexEnvInit(C3D_GetTexEnv(i));
  C3D_TexEnv *env=C3D_GetTexEnv(0);C3D_TexEnvSrc(env,C3D_Both,GPU_PRIMARY_COLOR,0,0);C3D_TexEnvFunc(env,C3D_Both,GPU_REPLACE);
+ if(discReady){C3D_TexBind(0,&discTexture);C3D_TexEnvSrc(env,C3D_Alpha,GPU_TEXTURE0,0,0);}
 }
 static void drawPoints(const LightPoint *base,Vec origin,int count){
  if(count<=0)return;
@@ -113,6 +132,7 @@ void drawLightPass(const Flight *s,const CameraPose *camera,int exterior,const C
   cityLights(camera,frame,drawPoints);
   int cells,pending;cityLightStats(&cells,&city,&pending);
  }
+ if(passBound)C3D_AlphaTest(false,GPU_ALWAYS,0); /* later passes (weather, HUD) do not set it */
  statMs+=(svcGetSystemTick()-start)/(SYSCLOCK_ARM11/1000.0);statDynamic+=dynamicCount+steadyCount;statCity+=city;statFrames++;
 }
 void lightPassStats(float *ms,float *dynamicLamps,float *cityLamps){

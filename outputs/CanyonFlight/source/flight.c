@@ -328,6 +328,24 @@ static Vec posCarry;
 static float compensatedAdd(float sum,float add,float *carry){
  volatile float y=add-*carry,t=sum+y;*carry=(t-sum)-y;return t;
 }
+int flightLevel=FLIGHT_LEVEL_NORMAL,flightEasyRescues;
+void flightEasyRescue(Flight *s){
+ const Aircraft *a=&aircraft[s->aircraft];flightEasyRescues++;
+ float reach=a->span*.5f+1,ground=terrain(s->pos.x,s->pos.y);
+ for(int k=0;k<4;k++)ground=fmaxf(ground,terrain(s->pos.x+(k==0?reach:k==1?-reach:0),s->pos.y+(k==2?reach:k==3?-reach:0)));
+ s->p=s->q=s->r=0;
+ if(s->ias<stallSpeedCAS(s,0)*1.6f){ /* landing speed: on the wheels */
+  s->gear=1;s->gearActual=1;
+  setAttitude(s,0,clampf(s->pitch,0,a->tailStrike*.5f),s->yaw);
+  s->pos.z=ground+a->gearArmZ-.05f;if(s->vel.z<0)s->vel.z=0;
+ }else{                                 /* flying: clear of the ground and climbing */
+  setAttitude(s,0,fmaxf(s->pitch,.10f),s->yaw);
+  s->pos.z=ground+fmaxf(a->gearArmZ,a->bellyClear)+reach+3;if(s->vel.z<3)s->vel.z=3;
+ }
+}
+int flightForgive(const Flight *s){
+ return flightLevel<=0||(flightLevel==1&&s->gearActual>.95f&&s->ias<stallSpeedCAS(s,0)*1.6f&&s->vel.z>-10);
+}
 void stepFlight(Flight *s,float dt,float elevator,float aileron,float rudder){
  if(s->crashed||dt<=0)return;
  const Aircraft *a=&aircraft[s->aircraft];dt=fminf(dt,1/60.f);
@@ -364,7 +382,7 @@ void stepFlight(Flight *s,float dt,float elevator,float aileron,float rudder){
  s->loadFactor=-aero.force.z/(mass*G);s->stallWarning=aero.stallRatio;
  /* Ground reactions precede integration; belly penetration is checked again
     afterward so a fast impact cannot tunnel through the contact region. */
- if(s->pos.z<terrain(s->pos.x,s->pos.y)+a->bellyClear)s->crashed=1;
+ if(s->pos.z<terrain(s->pos.x,s->pos.y)+a->bellyClear){if(flightForgive(s))flightEasyRescue(s);else s->crashed=1;}
 }
 
 const char *flightPhaseName(int phase){

@@ -250,7 +250,7 @@ int main(void){
   }
   worldCounts[ap]=buildScenery(&s,worldOutput[ap],WORLD_VERTEX_CAPACITY);
   CHECK(worldCounts[ap]>25000&&worldCounts[ap]<WORLD_VERTEX_CAPACITY);
-  for(int i=0;i<worldCounts[ap];i+=31){WorldVertex v=worldOutput[ap][i];CHECK(isfinite(v.p.z)&&v.p.z>400&&v.p.z<4500);CHECK(v.color[0]>=0&&v.color[0]<=1&&v.color[1]>=0&&v.color[1]<=1);}
+  for(int i=0;i<worldCounts[ap];i+=31){WorldVertex v=worldOutput[ap][i];CHECK(isfinite(v.p.z)&&v.p.z>-100&&v.p.z<4500); /* v1.1: US-wide ground (was > 400 m, Arizona only); Death Valley -86 m */CHECK(v.color[0]>=0&&v.color[0]<=1&&v.color[1]>=0&&v.color[1]<=1);}
  }
  /* The clipping partition must cover every source terrain triangle exactly
     once, preserve its plane, and stay inside the texture gutters and buffers. */

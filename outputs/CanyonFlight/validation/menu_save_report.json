@@ -1,5 +1,5 @@
 {
-  "checks": 250,
+  "checks": 255,
   "failures": 0,
   "firstFailure": 0,
   "filesystem": "in-memory fault injection; real SD behavior not verified"

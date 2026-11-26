@@ -1,4 +1,5 @@
 #include "cockpit.h"
+#include <math.h>
 #define PI 3.14159265359f
 static CockpitFace *out;static int count,limit;
 /* Citro2D packed ABGR color. */
@@ -104,6 +105,23 @@ static void shapedPanel(float right,int jet){
   quad((Vec){1.02f,a,za},(Vec){1.02f,b,zb},(Vec){1.02f,b,.59f},(Vec){1.02f,a,.59f},rgb(jet?54:45,jet?58:49,jet?62:53));
   quad((Vec){.94f,a,za-.025f},(Vec){.94f,b,zb-.025f},(Vec){1.20f,b,zb-.012f},(Vec){1.20f,a,za-.012f},rgb(22,25,29));
   quad((Vec){.94f,a,za-.025f},(Vec){1.02f,a,za+.012f},(Vec){1.02f,b,zb+.012f},(Vec){.94f,b,zb-.025f},rgb(33,37,42));
+ }
+}
+/* v1.1p18: the glare shield ended 1.20 m ahead of the eye and the side walls at 1.10 m, but the
+   windscreen posts and sills run to 1.38 m: the scene showed through a wedge between each
+   post's foot and the dash. A deck now runs from the glare shield's front edge to the
+   windscreen base (the sill height at the posts), and each side wall reaches the post. */
+static void windshieldDeck(float right,uint32_t wallColour){
+ const float xe=1.20f,xb=1.40f,zb=sillZ(1.38f)-.005f;uint32_t deck=rgb(22,25,29);
+ for(int i=0;i<16;i++){
+  float a=-.65f+(right+.65f)*i/16,b=-.65f+(right+.65f)*(i+1)/16;
+  float u=(a-(right-.65f)/2)/((right+.65f)/2),v=(b-(right-.65f)/2)/((right+.65f)/2);
+  float za=.095f+.075f*u*u-.012f,zb2=.095f+.075f*v*v-.012f;
+  quad((Vec){xe,a,za},(Vec){xe,b,zb2},(Vec){xb,b,fmaxf(zb,zb2)},(Vec){xb,a,fmaxf(zb,za)},deck);
+ }
+ for(int side=0;side<2;side++){
+  float y=side?right-.06f:-.60f,x1=1.10f-.02f,x2=1.40f;
+  quad((Vec){x1,y,sillZ(x1)-.01f},(Vec){x2,y,sillZ(1.38f)-.01f},(Vec){x2,y,.88f},(Vec){x1,y,.88f},wallColour);
  }
 }
 static void segment(float x,float y,float z,float w,float h,int digit,uint32_t c){
@@ -254,6 +272,7 @@ int buildCockpitStatic(int type,CockpitFace *faces,int capacity){
  }
  box((Vec){-1.35f,-.62f,.87f},(Vec){1.1f,right,.93f},dark);
  shapedPanel(right,style);
+ if(style!=4)windshieldDeck(right,rgb(40,44,50));
  /* Close the footwell so terrain cannot show through under the panel. */
  quad((Vec){1.10f,-.65f,.55f},(Vec){1.10f,right,.55f},(Vec){1.10f,right,.91f},(Vec){1.10f,-.65f,.91f},rgb(26,29,34));
  if(style<=1){

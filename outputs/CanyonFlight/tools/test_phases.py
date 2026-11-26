@@ -8,7 +8,7 @@ root=Path(__file__).resolve().parent.parent;out=root/'build/phase_tests';out.mkd
 cc=Path(os.environ.get('DEVKITARM','C:/devkitPro/devkitARM'))/'bin/arm-none-eabi-gcc.exe'
 if not cc.exists():cc=Path('C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe')
 elfpath=out/'phase_test.elf'
-subprocess.run([str(cc),'-O2','-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(root/'include'),*[str(root/'source'/n) for n in ['flight.c','fbw.c','f16_aero.c','ground.c','airports.c']],str(root/'tests/phase_test.c'),'-Wl,-e,main','-lm','-o',str(elfpath)],check=True)
+subprocess.run([str(cc),'-O2','-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(root/'include'),*[str(root/'source'/n) for n in ['flight.c','fbw.c','f16_aero.c','ground.c','airports.c','airport_index.c']],str(root/'tests/phase_test.c'),'-Wl,-e,main','-lm','-o',str(elfpath)],check=True)
 u=Uc(UC_ARCH_ARM,UC_MODE_ARM);u.mem_map(0,0x4000000)
 with elfpath.open('rb') as f:
  e=ELFFile(f)

@@ -10,7 +10,7 @@ from unicorn import Uc,UC_ARCH_ARM,UC_MODE_ARM
 from unicorn.arm_const import *
 from elftools.elf.elffile import ELFFile
 r=Path(__file__).resolve().parent.parent;out=r/'build/cockpit_tests';out.mkdir(parents=True,exist_ok=True);elf=out/'cockpit.elf'
-subprocess.run(['C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe','-Wall','-O2','-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(r/'include'),str(r/'source/cockpit.c'),str(r/'source/camera.c'),str(r/'source/flight.c'),str(r/'source/fbw.c'),str(r/'source/f16_aero.c'),str(r/'source/ground.c'),str(r/'source/airports.c'),str(r/'tests/cockpit_test.c'),'-Wl,-e,main','-lm','-o',str(elf)],check=True)
+subprocess.run(['C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe','-Wall','-O2','-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(r/'include'),str(r/'source/cockpit.c'),str(r/'source/camera.c'),str(r/'source/flight.c'),str(r/'source/fbw.c'),str(r/'source/f16_aero.c'),str(r/'source/ground.c'),str(r/'source/airports.c'),str(r/'source/airport_index.c'),str(r/'tests/cockpit_test.c'),'-Wl,-e,main','-lm','-o',str(elf)],check=True)
 u=Uc(UC_ARCH_ARM,UC_MODE_ARM);u.mem_map(0,0x2000000)
 with elf.open('rb') as f:
  e=ELFFile(f)

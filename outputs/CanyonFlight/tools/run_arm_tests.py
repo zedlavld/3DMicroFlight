@@ -4,16 +4,16 @@ from pathlib import Path
 from unicorn import Uc, UC_ARCH_ARM, UC_MODE_ARM
 from unicorn.arm_const import UC_ARM_REG_SP,UC_ARM_REG_LR,UC_ARM_REG_R0,UC_ARM_REG_PC,UC_ARM_REG_C1_C0_2,UC_ARM_REG_FPEXC
 from elftools.elf.elffile import ELFFile
-u=Uc(UC_ARCH_ARM,UC_MODE_ARM);u.mem_map(0,0x02000000)
+u=Uc(UC_ARCH_ARM,UC_MODE_ARM);u.mem_map(0,0x04000000) # v1.1: 64 MB; the physics test's data now ends past 32 MB
 with Path(sys.argv[1]).open('rb') as f:
  elf=ELFFile(f)
  for seg in elf.iter_segments():
   if seg['p_type']=='PT_LOAD':u.mem_write(seg['p_vaddr'],seg.data())
  symbols={s.name:s['st_value'] for s in elf.get_section_by_name('.symtab').iter_symbols()}
 u.reg_write(UC_ARM_REG_C1_C0_2,0xf<<20);u.reg_write(UC_ARM_REG_FPEXC,0x40000000)
-u.reg_write(UC_ARM_REG_SP,0x1f00000);u.reg_write(UC_ARM_REG_LR,0x1ff0000)
-u.emu_start(symbols['main'],0x1ff0000,count=4000000000)
-if u.reg_read(UC_ARM_REG_PC)!=0x1ff0000:raise RuntimeError('Instruction budget exhausted')
+u.reg_write(UC_ARM_REG_SP,0x3f00000);u.reg_write(UC_ARM_REG_LR,0x3ff0000)
+u.emu_start(symbols['main'],0x3ff0000,count=4000000000)
+if u.reg_read(UC_ARM_REG_PC)!=0x3ff0000:raise RuntimeError('Instruction budget exhausted')
 def integer(name):return struct.unpack('<i',u.mem_read(symbols[name],4))[0]
 report={k:integer(k) for k in ['checks','failures','firstFailure']}
 report['diagnostic']=struct.unpack('<24f',u.mem_read(symbols['diagnostic'],96))

@@ -8,13 +8,21 @@ enum {MENU_NONE,MENU_START_FLIGHT,MENU_RESUME,MENU_SAVE,MENU_LOAD,MENU_QUIT,MENU
    calibrate stick, stick deadzone (percent, 0-15), back. */
 #define MENU_DEADZONE_MAX 15
 /* v35.15 autotestCases: cases in autotest.txt; the title menu then offers "Run autotest" (row 4). */
-typedef struct {int screen,row,returnScreen,aircraft,airport,phase,weather,hasSave,slot,volume,muted,deadzone,timeOfDay,autotestCases;} AppMenu;
+/* v1.1p18 lowerMap: 1 = lower screen split, moving map left and flight data right (row 4 of
+   Audio & controls, saved with the controls). */
+typedef struct {int screen,row,returnScreen,aircraft,airport,phase,weather,hasSave,slot,volume,muted,deadzone,timeOfDay,autotestCases,lowerMap,level;} AppMenu;
+/* v1.1p21 level: difficulty slider, row 5 of Audio & controls (then Back, row 6),
+   0 Easy .. 4 Advanced (FLIGHT_LEVELS, flight.h); left / right move it, A steps it
+   round; saved with the controls; main copies it to flightLevel. */
 /* v34: setup rows are aircraft, airport, stage, weather, time of day
    (TIME_* in daylight.h), start flight, back. */
 int menuRowHeight(const AppMenu *m);
 int menuRows(const AppMenu *m);
 void menuMove(AppMenu *m,int direction);
 void menuAdjust(AppMenu *m,int direction);
+/* v1.1p20: the airport row in thousands: menuAdjust steps through the start airports in
+   state order, menuAdjustGroup (L / R) jumps a whole state. */
+void menuAdjustGroup(AppMenu *m,int direction);
 int menuAccept(AppMenu *m);
 void menuBack(AppMenu *m);
 #endif

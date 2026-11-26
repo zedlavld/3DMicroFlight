@@ -25,10 +25,11 @@ Open the latest release on the
 
 | File | What it is |
 |---|---|
-| `3DMicroFlight-v1.0.1.cia` | The game, installed to the HOME Menu |
-| `3DMicroFlight-scenery-01-of-NN.zip` ... `-NN-of-NN.zip` | The scenery: elevation, ground colours and aerial photos of the 48 states, split into parts under 2 GB. Download **all** of them. |
-| `3DMicroFlight-buildings-v1.0.1.zip` | Optional, small (0.3 MB): city buildings for Las Vegas, Tucson and Duluth. Extract it to the SD root like the scenery. |
-| `3DMicroFlight-v1.0.1.3dsx` | Optional: the same game for the Homebrew Launcher, if you don't want a HOME Menu icon |
+| `3DMicroFlight-v1.1.cia` | The game, installed to the HOME Menu |
+| `3DMicroFlight-scenery-01-of-13.zip` ... `-13-of-13.zip` | The scenery: elevation, ground colours and aerial photos of the 48 states, split into parts under 2 GB. Download **all** of them. They are on the [v1.0 release](https://github.com/zedlavld/3DMicroFlight/releases/tag/v1.0) and have not changed since. |
+| `3DMicroFlight-data-v1.1.zip` | About 17 MB: the US airports you can start from, every airport for the moving map, and the night lights of the 48 states. Without it you can only start from the 24 built-in airports and the cities are dark at night. |
+| `3DMicroFlight-buildings-v1.1.zip` | Optional, about 4 MB: city buildings for 32 US cities. |
+| `3DMicroFlight-v1.1.3dsx` | Optional: the same game for the Homebrew Launcher, if you don't want a HOME Menu icon |
 | `SHA256SUMS.txt` | Optional: checksums to confirm the downloads aren't damaged |
 
 The scenery parts can be downloaded in any order and at different times.
@@ -36,7 +37,7 @@ The scenery parts can be downloaded in any order and at different times.
 ## Step 2: Copy the scenery to the SD card
 
 1. Turn the console off and take out the SD card. Put it in your computer.
-2. Extract every scenery `.zip` to the **root of the SD card** (the top level,
+2. Extract every scenery `.zip`, the data zip and the buildings zip to the **root of the SD card** (the top level,
    for example `E:\` on Windows or `/Volumes/3DS` on a Mac).
    - Every zip contains the same top folder, `3ds`, and the folders merge on the card.
      If your computer asks whether to merge or replace, choose **merge** or **Yes to all**:
@@ -55,8 +56,11 @@ The scenery parts can be downloaded in any order and at different times.
            └── scenery
                ├── elevation36\        (about 15,000 files)
                ├── stream32\           (about 136,000 files in ~1,240 folders)
-               ├── buildings\          (186 files, optional)
+               ├── buildings\          (index.bin and 177 folders, optional)
                ├── ground_us4000.bin
+               ├── airports_fly.bin
+               ├── airports_us.bin
+               ├── night_lights_us.bin
                └── (24 .cft files)
    ```
 
@@ -66,9 +70,9 @@ Copying about 150,000 files takes a while: expect 30 to 90 minutes depending on 
 
 ## Step 3: Install the game
 
-1. Copy `3DMicroFlight-v1.0.1.cia` to the root of the SD card.
+1. Copy `3DMicroFlight-v1.1.cia` to the root of the SD card.
 2. Safely eject the card, put it back in the console and turn it on.
-3. Open **FBI**, choose **SD**, select `3DMicroFlight-v1.0.1.cia`, then
+3. Open **FBI**, choose **SD**, select `3DMicroFlight-v1.1.cia`, then
    **Install and delete CIA** (or **Install CIA** to keep the file).
 4. Go back to the HOME Menu. 3DMicroFlight appears as a new icon. Start it.
 
@@ -83,8 +87,10 @@ setup, or from <https://github.com/zoogie/DSP1/releases>), which creates
 
 - To update the game, install the new `.cia` with FBI over the old one. Your saves are kept.
 - Only download new scenery when the release notes say the scenery changed.
-- From v1.0 to v1.0.1: install the new CIA, and extract `3DMicroFlight-buildings-v1.0.1.zip`
-  to the SD root for the city buildings. The 13 scenery zips are unchanged.
+- From v1.0 or v1.0.1 to v1.1: install the new CIA, then extract `3DMicroFlight-data-v1.1.zip`
+  and `3DMicroFlight-buildings-v1.1.zip` to the SD root. The 13 scenery zips are unchanged.
+  You can delete the old `3ds/CanyonFlight/scenery/buildings/b_*.bin` files from v1.0.1
+  first; v1.1 keeps its tiles in subfolders and no longer reads them.
 
 ## Saves and settings
 
@@ -99,6 +105,8 @@ card. Back up that folder to keep your saves.
 | FBI says the CIA is invalid | The download is damaged. Download it again (or compare it with `SHA256SUMS.txt`). |
 | The game doesn't start on an original 3DS / 2DS | Not supported: the game needs a New 3DS, New 3DS XL or New 2DS XL. |
 | No sound | See "Sound" above. |
+| Only 24 airports to choose from, no airports on the map, or dark cities at night | `3DMicroFlight-data-v1.1.zip` is missing. Extract it to the SD root. |
+| I keep crashing on landing | Set **Difficulty** in **Audio & controls** to Forgiving or Easy. |
 | A "Run autotest" item appears on the title menu | There is an `autotest.txt` in `/3ds/3DMicroFlight/` from testing. Delete that file. |
 
 ## Formatting a large SD card

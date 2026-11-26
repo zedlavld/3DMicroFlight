@@ -3,6 +3,7 @@
 #include "terrain.h"
 #include "scenery.h"
 #include "daylight.h"
+#include "airport_index.h"
 #define PI 3.14159265359f
 /* Runway frame: along = metres from the centre toward the heading end,
    across = metres to the right of the heading. */
@@ -13,19 +14,32 @@ static Vec at(const Frame *f,float along,float across,float z){
 /* Approach-light ground heights: terrain() is too slow to call for every lamp
    every frame, so each station is cached and refreshed now and then (the
    elevation stream may still be loading finer tiles). */
+/* v1.1p20: thousands of runways, so the heights live in a small cache of runway ends
+   (least recently used slot reused), not a table per record. */
 #define ALS_STATIONS 25
-static float alsHeight[AIRPORT_COUNT][2][ALS_STATIONS];static unsigned char alsAge[AIRPORT_COUNT][2];
-static float stationHeight(const Frame *f,int index,int endIndex,int station,float along){
- (void)f;(void)along;return alsHeight[index][endIndex][station<0?0:station>=ALS_STATIONS?ALS_STATIONS-1:station];
+#define ALS_SLOTS 128
+static float alsHeight[ALS_SLOTS][ALS_STATIONS];static unsigned char alsAge[ALS_SLOTS];
+static int alsTag[ALS_SLOTS]={[0 ... ALS_SLOTS-1]=-1};static unsigned alsUsed[ALS_SLOTS],alsClock;
+static int alsSlot(int index,int endIndex){
+ int tag=index*2+endIndex,oldest=0;alsClock++;
+ for(int k=0;k<ALS_SLOTS;k++){
+  if(alsTag[k]==tag){alsUsed[k]=alsClock;return k;}
+  if(alsUsed[k]<alsUsed[oldest])oldest=k;
+ }
+ alsTag[oldest]=tag;alsUsed[oldest]=alsClock;alsAge[oldest]=0;   /* new end: measure on first use */
+ return oldest;
 }
-static void refreshStations(const Frame *f,int index,int endIndex,float side){
- if(alsAge[index][endIndex]--)return;
- alsAge[index][endIndex]=120;
+static float stationHeight(const Frame *f,int slot,int station,float along){
+ (void)f;(void)along;return alsHeight[slot][station<0?0:station>=ALS_STATIONS?ALS_STATIONS-1:station];
+}
+static void refreshStations(const Frame *f,int slot,float side){
+ if(alsAge[slot]--)return;
+ alsAge[slot]=120;
  float half=f->ap->length*.5f;
  for(int k=0;k<ALS_STATIONS;k++){
   float along=side*(half+30*(k+1));Vec p=at(f,along,0,0);
   float g=sceneryGroundHeight(p.x,p.y),r=runwayElevation(f->ap,side*half);
-  alsHeight[index][endIndex][k]=fmaxf(g,r-30); /* poles never sink far below the threshold */
+  alsHeight[slot][k]=fmaxf(g,r-30); /* poles never sink far below the threshold */
  }
 }
 /* v34.03 glideslope lights, drawn every frame (their colour depends on the
@@ -70,7 +84,7 @@ static void runwayEnd(const Frame *f,int index,float side,Vec eye,float eyeAlong
  /* side -1: threshold at along = -half, landing toward +along; +1 mirrored. */
  const Airport *ap=f->ap;float half=ap->length*.5f,w=ap->width*.5f,end=side*half,z=runwayElevation(ap,end)+.35f;
  int approachSide=(eyeAlong-end)*side>0;   /* viewer beyond this end, looking at it */
- int endIndex=side>0;
+ int slot=alsSlot(index,side>0);
  /* Threshold (green, from the approach) / runway end (red, from the runway). */
  if(!animated)for(int i=0;i<=8;i++){float across=-w+2*w*i/8;
   if(approachSide)emit(at(f,end,across,z),.15f*k,1*k,.30f*k,.45f,1.6f);
@@ -79,10 +93,10 @@ static void runwayEnd(const Frame *f,int index,float side,Vec eye,float eyeAlong
  if(!approachSide)return;
  float in=-side; /* direction from the threshold into the runway */
  /* Approach lights by runway length. */
- if(!animated)refreshStations(f,index,endIndex,side);
+ if(!animated)refreshStations(f,slot,side);
  if(ap->length>=2700&&ap->width>=44){
   /* ALSF-2: barrettes every 30 m to 720 m. */
-  if(!animated)for(int s=1;s<=24;s++){float along=end+side*30*s,h=stationHeight(f,index,endIndex,s-1,along)+1.5f;
+  if(!animated)for(int s=1;s<=24;s++){float along=end+side*30*s,h=stationHeight(f,slot,s-1,along)+1.5f;
    for(int j=-2;j<=2;j++)emit(at(f,along,j*1.05f,h),1*k,.95f*k,.85f*k,.5f,1.8f);
    if(s<=10){for(int j=0;j<3;j++){emit(at(f,along,-11-j*1.5f,h),1*k,.1f*k,.06f*k,.5f,1.5f);emit(at(f,along,11+j*1.5f,h),1*k,.1f*k,.06f*k,.5f,1.5f);}}
    if(s==5)for(int j=3;j<=6;j++){emit(at(f,along,-j*1.5f-2,h),1*k,.95f*k,.85f*k,.5f,1.6f);emit(at(f,along,j*1.5f+2,h),1*k,.95f*k,.85f*k,.5f,1.6f);}
@@ -91,16 +105,16 @@ static void runwayEnd(const Frame *f,int index,float side,Vec eye,float eyeAlong
   /* Sequenced flashers 330..720 m, running toward the runway twice a second. */
   float phase=fmodf(time*2,1);int lit=(int)((1-phase)*14);
   if(animated)for(int s=11;s<=24;s++)if(s-11==lit){float along=end+side*30*s;
-   emit(at(f,along,0,stationHeight(f,index,endIndex,s-1,along)+2.2f),1,1,1,1.2f,3.5f);}
+   emit(at(f,along,0,stationHeight(f,slot,s-1,along)+2.2f),1,1,1,1.2f,3.5f);}
  }else if(ap->length>=1800){
   /* MALSR: barrettes every 60 m to 420 m, crossbar at 300 m, flashers 480..720 m. */
-  if(!animated)for(int s=2;s<=14;s+=2){float along=end+side*30*s,h=stationHeight(f,index,endIndex,s-1,along)+1.5f;
+  if(!animated)for(int s=2;s<=14;s+=2){float along=end+side*30*s,h=stationHeight(f,slot,s-1,along)+1.5f;
    for(int j=-2;j<=2;j++)emit(at(f,along,j*1.05f,h),1*k,.95f*k,.85f*k,.5f,1.7f);
    if(s==10)for(int j=3;j<=8;j++){emit(at(f,along,-j*1.5f,h),1*k,.95f*k,.85f*k,.5f,1.7f);emit(at(f,along,j*1.5f,h),1*k,.95f*k,.85f*k,.5f,1.7f);}
   }
   float phase=fmodf(time*2,1);int lit=(int)((1-phase)*5);
   if(animated)for(int s=16;s<=24;s+=2)if((s-16)/2==lit){float along=end+side*30*s;
-   emit(at(f,along,0,stationHeight(f,index,endIndex,s-1,along)+2.2f),1,1,1,1.1f,3.2f);}
+   emit(at(f,along,0,stationHeight(f,slot,s-1,along)+2.2f),1,1,1,1.1f,3.2f);}
  }else{
   /* REIL: a pair of strobes at the threshold, twice a second. */
   if(animated&&fmodf(time*2,1)<.12f){emit(at(f,end,-w-4,z+.5f),1,1,1,.9f,3);emit(at(f,end,w+4,z+.5f),1,1,1,.9f,3);}
@@ -130,9 +144,16 @@ static void taxiways(const Frame *f,float k,LightEmit emit){
  for(float t=-640;t<=240;t+=110){float z=runwayElevation(ap,t)+14;
   emit(at(f,t,-238*m,z),1*k,.78f*k,.48f*k,2.4f,2.4f);emit(at(f,t,-60*m,z),1*k,.78f*k,.48f*k,2.0f,2.0f);}
 }
+/* v1.1p20: the nearest LIGHT_RUNWAYS runways within 32 km (nearest first, so a full lamp
+   buffer drops the far ones), listed again once the eye has moved 250 m. */
+#define LIGHT_RUNWAYS 48
+static int lightNear[LIGHT_RUNWAYS],lightCount,lightValid;static Vec lightEye;
 void airportLights(Vec eye,float time,float night,LightEmit emit,int animated){
  float k=daylightLampLevel(night);
- for(int i=0;i<AIRPORT_COUNT;i++){
+ if(!lightValid||hypotf(eye.x-lightEye.x,eye.y-lightEye.y)>250||airportCount!=lightValid){
+  lightCount=airportsNear(eye.x,eye.y,32000,lightNear,LIGHT_RUNWAYS);lightEye=eye;lightValid=airportCount;
+ }
+ for(int n=0;n<lightCount;n++){int i=lightNear[n];
   const Airport *ap=&airports[i];float dx=ap->east-eye.x,dy=ap->north-eye.y,range=sqrtf(dx*dx+dy*dy);
   if(range>32000)continue;
   float angle=ap->heading*PI/180;Frame f={ap,sinf(angle),cosf(angle)};

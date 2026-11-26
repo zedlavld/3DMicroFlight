@@ -11,6 +11,7 @@ void threadJoin(Thread t,u64 u){}void threadFree(Thread t){}
 void LightEvent_Init(LightEvent*e,int r){}void LightEvent_Signal(LightEvent*e){}void LightEvent_Wait(LightEvent*e){}
 void GSPGPU_FlushDataCache(void*p,size_t n){flushed+=n;}
 u32 linearSpaceFree(void){return 64u*1024u*1024u;}
+void svcSleepThread(s64 ns){(void)ns;}
 bool C3D_TexInitMipmap(C3D_Tex*t,int x,int y,int f){if(failAllocations){failAllocations--;return false;}int i=(int)(((char*)t-(char*)&slots[0].texture)/sizeof(Slot));t->data=gpuMemory[i];t->size=x==1024?699040:174752;t->maxLevel=0;return true;}
 void C3D_TexDelete(C3D_Tex*t){t->data=NULL;}
 unsigned C3D_TexCalcTotalSize(unsigned s,unsigned l){return s;}

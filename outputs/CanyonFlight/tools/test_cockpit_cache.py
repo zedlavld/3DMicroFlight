@@ -16,7 +16,7 @@ else:
 cc='C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe';obj=out/'baseline.o';elf=out/'cache.elf'
 flags=['-O2','-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(r/'include')]
 subprocess.run([cc,*flags,'-DbuildCockpit=buildReferenceCockpit','-c',str(out/'cockpit_v21.c'),'-o',str(obj)],check=True)
-subprocess.run([cc,*flags,str(obj),str(r/'source/cockpit.c'),str(r/'source/cockpit_cache.c'),str(r/'source/airports.c'),str(r/'tests/cockpit_cache_test.c'),'-Wl,-e,main','-lm','-o',str(elf)],check=True)
+subprocess.run([cc,*flags,str(obj),str(r/'source/cockpit.c'),str(r/'source/cockpit_cache.c'),str(r/'source/airports.c'),str(r/'source/airport_index.c'),str(r/'tests/cockpit_cache_test.c'),'-Wl,-e,main','-lm','-o',str(elf)],check=True)
 u=Uc(UC_ARCH_ARM,UC_MODE_ARM);u.mem_map(0,0x2000000)
 with elf.open('rb') as f:
  e=ELFFile(f)

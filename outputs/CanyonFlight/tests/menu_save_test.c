@@ -52,13 +52,16 @@ int main(void){
  m.row=6;menuAccept(&m);CHECK(m.screen==MENU_AUDIO);m.row=0;menuAdjust(&m,-1);CHECK(m.volume==0);
  menuAdjust(&m,1);CHECK(m.volume==1);m.row=1;menuAccept(&m);CHECK(m.muted);menuBack(&m);CHECK(m.screen==MENU_PAUSE);
  m.screen=MENU_TITLE;m.row=2;menuAccept(&m);CHECK(m.screen==MENU_AUDIO);
- /* v31.1 Audio & controls: 5 rows; row 2 asks main to calibrate the stick,
-    row 3 adjusts the deadzone within 0..MENU_DEADZONE_MAX, row 4 is Back. */
- CHECK(menuRows(&m)==5);m.row=2;CHECK(menuAccept(&m)==MENU_CALIBRATE&&m.screen==MENU_AUDIO);
+ /* v31.1 Audio & controls: row 2 asks main to calibrate the stick, row 3 adjusts the deadzone
+    within 0..MENU_DEADZONE_MAX; v1.1p18 row 4 lower screen, v1.1p21 row 5 easy mode, row 6 Back. */
+ CHECK(menuRows(&m)==7&&menuRowHeight(&m)==19);m.row=2;CHECK(menuAccept(&m)==MENU_CALIBRATE&&m.screen==MENU_AUDIO);
  m.row=3;m.deadzone=0;menuAdjust(&m,-1);CHECK(m.deadzone==0);menuAdjust(&m,1);CHECK(m.deadzone==1);
  m.deadzone=MENU_DEADZONE_MAX;menuAdjust(&m,1);CHECK(m.deadzone==MENU_DEADZONE_MAX);
  menuAccept(&m);CHECK(m.deadzone==0&&m.screen==MENU_AUDIO);
- m.row=4;menuAccept(&m);CHECK(m.screen==MENU_TITLE);
+ m.row=4;m.lowerMap=0;menuAccept(&m);CHECK(m.lowerMap==1&&m.screen==MENU_AUDIO);
+ m.row=5;m.level=0;menuAdjust(&m,-1);CHECK(m.level==0);menuAdjust(&m,1);CHECK(m.level==1);m.level=FLIGHT_LEVELS-1;menuAdjust(&m,1);CHECK(m.level==FLIGHT_LEVELS-1);
+ menuAccept(&m);CHECK(m.level==0&&m.screen==MENU_AUDIO);
+ m.row=6;menuAccept(&m);CHECK(m.screen==MENU_TITLE);
 
  for(int type=0;type<2;type++)for(int airport=0;airport<3;airport++)for(int phase=0;phase<PHASE_COUNT;phase++){
   Flight s={0},loaded={0};View v={.exterior=1,.distance=45,.orbitYaw=.2f},restored={0};

@@ -10,7 +10,9 @@
    42 km, level 1 to 10 km, level 2 to 3.5 km. Each cell in range gets a
    static GPU buffer of LightPoints (cell-relative positions); ground heights
    come from rawElevation, 600 lamps per frame, cells within 10 km first.
-   Cells unused for a while are freed. */
+   Cells unused for a while are freed.
+   v1.1p14: the rest of the lower 48 from scenery/night_lights_us.bin on the card
+   (tools/build_us_night_lights.py, OSM streets), cell points read by a worker. */
 int initCityLights(void);
 void freeCityLights(void);
 /* Calls draw(points, cell origin, count) for each visible cell. */

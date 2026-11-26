@@ -20,6 +20,7 @@
 #include "terrain_stream.h"
 #include "autotest.h"
 #include "autopilot.h"
+#include "map_render.h"
 #include "maneuver.h"
 #include "fbw.h"
 #include "pixel_font.h"
@@ -55,6 +56,7 @@ void __wrap___system_allocateHeaps(void){
 #include "scenery.h"
 #include "weather_visual.h"
 #include "daylight.h"
+#include "airport_index.h"
 #define PI 3.14159265359f
 static C2D_TextBuf texts;
 static bool boldLowerText;
@@ -243,18 +245,27 @@ static float stickAxis(int raw,int centre,int deadzonePercent){
  if(a<=dz)return 0;
  return clampf((a-dz)/(1-dz),0,1)*(v<0?-1:1);
 }
+/* v1.1p18 lower screen: PFD + MAP (menu, saved) or autotest cases named *_map; map range */
+static int lowerMap,caseMap,caseMapRange=-1,mapRangeIndex=3; /* caseMapRange: *_map0.._map5 cases (5-160 NM) */
+static const float mapRangesNm[]={5,10,20,40,80,160};
+#define MAP_RANGES 6
 static void loadControls(AppMenu *menu){
- menu->deadzone=6;stickCentreX=stickCentreY=0;
+ menu->deadzone=6;menu->level=FLIGHT_LEVEL_NORMAL;stickCentreX=stickCentreY=0;
  FILE *f=fopen(CONTROLS_PATH,"r");if(!f)return;
  int x,y,dz;
  char line[96]={0};if(!fgets(line,sizeof(line),f)){fclose(f);return;}
  /* v34.03c: renamed from CirrusFlight; files written before still load. */
  if((sscanf(line,"3DMicroFlight controls 1 %d %d %d",&x,&y,&dz)==3||sscanf(line,"CirrusFlight controls 1 %d %d %d",&x,&y,&dz)==3)&&abs(x)<=STICK_CAL_LIMIT&&abs(y)<=STICK_CAL_LIMIT&&dz>=0&&dz<=MENU_DEADZONE_MAX){stickCentreX=x;stickCentreY=y;menu->deadzone=dz;}
+ /* v1.1p18: lower screen layout and map range */
+ int lm,mr,lv=FLIGHT_LEVEL_NORMAL;
+ if(fgets(line,sizeof(line),f)&&sscanf(line,"3DMicroFlight display %*d %d %d %d",&lm,&mr,&lv)>=2){menu->lowerMap=lm!=0;if(mr>=0&&mr<MAP_RANGES)mapRangeIndex=mr;
+  if(!strncmp(line,"3DMicroFlight display 2",23)&&lv>=0&&lv<FLIGHT_LEVELS)menu->level=lv;} /* v1.1p21: display 2 adds the difficulty */
  fclose(f);
 }
 static int saveControls(const AppMenu *menu){
  FILE *f=fopen(CONTROLS_PATH ".tmp","w");if(!f)return 0;
  int ok=fprintf(f,"3DMicroFlight controls 1 %d %d %d\n",stickCentreX,stickCentreY,menu->deadzone)>0;
+ if(ok)ok=fprintf(f,"3DMicroFlight display 2 %d %d %d\n",menu->lowerMap,mapRangeIndex,menu->level)>0;
  if(fclose(f)!=0)ok=0;
  if(ok){remove(CONTROLS_PATH);ok=rename(CONTROLS_PATH ".tmp",CONTROLS_PATH)==0;}
  return ok;
@@ -317,7 +328,7 @@ static void athrOff(const char *why){if(apPanel.athr&&why){apNotice=2.5f;apNotic
 static int apNextDestination(const Flight *s,int after){
  float afterDist=-1;if(after>=0)afterDist=hypotf(airports[after].east-s->pos.x,airports[after].north-s->pos.y);
  int best=-1,first=-1;float bestDist=1e30f,firstDist=1e30f;
- for(int i=0;i<AIRPORT_COUNT;i++){if(!airports[i].primary)continue;
+ for(int i=0;i<airportCount;i++){if(!airports[i].primary)continue;   /* v1.1p20: once per tap, not per frame */
   float d=hypotf(airports[i].east-s->pos.x,airports[i].north-s->pos.y);if(d<3000)continue;
   if(d<firstDist){firstDist=d;first=i;}
   if(d>afterDist+1&&d<bestDist){bestDist=d;best=i;}
@@ -379,6 +390,7 @@ static int saveSpikes(const char *path,int append){
 static float msSince(u64 *mark){u64 now=svcGetSystemTick();float ms=(now-*mark)/(SYSCLOCK_ARM11/1000.f);*mark=now;return ms;}
 /* v31.8: cases with a destination are flown by the test autopilot. */
 static Autopilot autopilot;static int autopilotOn;
+static float wrapPi(float a){while(a>PI)a-=2*PI;while(a<-PI)a+=2*PI;return a;}
 /* v35: AT<lat>,<lon> cases: same height above the ground, over that point. The
    aircraft's own elevation tile is read at once so the height is the real one. */
 static void autotestPlace(Flight *s,float e,float n){
@@ -420,8 +432,10 @@ static void lidWatch(float dt){
    were unavailable, and never added twice. */
 static void lidWatchStop(void){if(lidHooked){aptUnhook(&lidHook);lidHooked=0;}if(!lidServices)return;lidLog("run end");GSPLCD_PowerOnAllBacklights();gspLcdExit();ptmuExit();lidServices=0;}
 static void startAutotestCase(const AutotestCase *c,Flight *s,AppMenu *menu,int *paused){
- resetFlightPhase(s,c->aircraft,c->airport,c->phase);if(c->destination==AUTOTEST_AT_POSITION)autotestPlace(s,c->atEast,c->atNorth);{size_t nl=strlen(c->name);setCityBuildingsEnabled(!(nl>4&&!strcmp(c->name+nl-4,"_nob")));}setWeather(s,c->weather);daylightSet(c->hours);{float a,b,d;nightLightFrameStats(&a,&b,&d);}beginSceneryHold();spikeCount=0;memset(caseSum,0,sizeof(caseSum));memset(caseStage,0,sizeof(caseStage));caseFrames=0;{int h,m;sceneryPartCacheStats(&h,&m);}
- autopilotOn=c->destination>=0;if(autopilotOn)autopilotBegin(&autopilot,s,c->destination);
+ resetFlightPhase(s,c->aircraft,c->airport,c->phase);if(c->destination==AUTOTEST_AT_POSITION)autotestPlace(s,c->atEast,c->atNorth);{size_t nl=strlen(c->name);setCityBuildingsEnabled(!(nl>4&&!strcmp(c->name+nl-4,"_nob")));caseMap=nl>4&&!strcmp(c->name+nl-4,"_map");caseMapRange=-1;
+ flightLevel=nl>5&&!strcmp(c->name+nl-5,"_easy")?0:nl>4&&!strcmp(c->name+nl-4,"_adv")?FLIGHT_LEVELS-1:FLIGHT_LEVEL_NORMAL;flightEasyRescues=0; /* v1.1p21: Normal unless *_easy / *_adv */
+ if(nl>5&&!strncmp(c->name+nl-5,"_map",4)&&c->name[nl-1]>='0'&&c->name[nl-1]<='5'){caseMap=1;caseMapRange=c->name[nl-1]-'0';}}setWeather(s,c->weather);daylightSet(c->hours);{float a,b,d;nightLightFrameStats(&a,&b,&d);}beginSceneryHold();spikeCount=0;memset(caseSum,0,sizeof(caseSum));memset(caseStage,0,sizeof(caseStage));caseFrames=0;{int h,m;sceneryPartCacheStats(&h,&m);}
+ autopilotOn=c->destination>=0;if(autopilotOn){autopilotBegin(&autopilot,s,c->destination);autopilotRoute(&autopilot,s,c->cruiseFt/3.28084f,c->routeMax,c->routeLand);}
  maneuverOn=c->destination<=AUTOTEST_MANEUVER_BASE-1;if(maneuverOn)maneuverBegin(&maneuver,AUTOTEST_MANEUVER_BASE-c->destination,s);
  fbwReset();dynStatsBegin(&dynStats,s);dynCount=0;dynNext=0;dynClock=0;
  if(c->destination==AUTOTEST_PLAYER_HOLD||c->destination==AUTOTEST_PLAYER_PANEL)apHold(s,s->yaw+30*PI/180,s->pos.z+500/3.28084f);
@@ -477,7 +491,7 @@ static void scenery(const Flight *s,int showHints){
  if(renderTest!=RENDER_NO_SKY&&!MAGENTA_MODE(renderTest))drawSky(&activeCamera,s);
  if(texturedReady&&renderTest!=RENDER_NO_WORLD)drawWorldScenery(s,&activeCamera);
  if(texturedReady&&renderTest!=RENDER_NO_WORLD)drawCityBuildings(s,&activeCamera);
- else {count=0;for(int i=0;i<AIRPORT_COUNT;i++)runway(s,&airports[i]);if(view.exterior)aircraftModel(s);
+ else {count=0;{static int near[64];int n=airportsNear(s->pos.x,s->pos.y,30000,near,64);for(int i=0;i<n;i++)runway(s,&airports[near[i]]);}if(view.exterior)aircraftModel(s);
  qsort(triangles,count,sizeof(Tri),farFirst);for(int i=0;i<count;i++)raster(&triangles[i]);}
  int drawModel=renderTest!=RENDER_NO_MODEL;
  if(view.exterior&&texturedReady&&drawModel)drawTexturedAircraft(s,&activeCamera);
@@ -597,8 +611,102 @@ static int apPanelTouch(Flight *s,int px,int py){
  }
  return 1; /* the panel covers the PFD: other touches do nothing */
 }
+/* v1.1p18 lower screen PFD + MAP: track-up moving map on the left (ground colours, runways,
+   airport IDs, range ring, magenta line to the NAV destination or the test route), flight data
+   on the right, the same NAV strip, status line, gear button and softkeys as the PFD. */
+#define MAP_X1 210
+#define MAP_Y0 28
+#define MAP_Y1 216
+#define MAP_AX 105.f
+#define MAP_AY 178.f
+#define MAP_RANGE_Y 198
+#define MAP_RANGE_W 46
+static void mapPoint(const Flight *s,float ct,float st,float ppm,float e,float n,float *x,float *y){
+ float de=(e-s->pos.x)*ppm,dn=(n-s->pos.y)*ppm;*x=MAP_AX+de*ct-dn*st;*y=MAP_AY-(de*st+dn*ct);
+}
+static int inMap(float x,float y,float margin){return x>-margin&&x<MAP_X1+margin&&y>MAP_Y0-margin&&y<MAP_Y1+margin;}
+static void mapScreen(const Flight *s,const PfdData *d,int paused){
+ int ri=caseMapRange>=0?caseMapRange:mapRangeIndex;
+ u32 white=C2D_Color32(238,240,242,255),black=C2D_Color32(0,0,0,255),dark=C2D_Color32(22,27,34,255),gray=C2D_Color32(59,64,72,255),
+  magenta=C2D_Color32(245,74,240,255),cyan=C2D_Color32(80,220,240,255),green=C2D_Color32(60,219,88,255),yellow=C2D_Color32(250,210,60,255),red=C2D_Color32(240,60,50,255);
+ float range=mapRangesNm[ri]*1852,ppm=(MAP_AY-MAP_Y0)/range;
+ float trk=d->track*PI/180,ct=cosf(trk),st=sinf(trk);
+ mapInit();
+ /* the texture reaches the far panel corner (~190 px) with a tenth of its width to spare */
+ mapUpdate(s->pos.x,s->pos.y,460/ppm);
+ rect(0,MAP_Y0,MAP_X1+1,MAP_Y1-MAP_Y0,C2D_Color32(26,33,46,255));
+ {C2D_Image img;float ce,cn,side;
+  if(mapImage(&img,&ce,&cn,&side)){float x,y;mapPoint(s,ct,st,ppm,ce,cn,&x,&y);float k=side*ppm/128;C2D_DrawImageAtRotated(img,x,y,0,-trk,NULL,k,k);}}
+ /* range ring at half range */
+ for(int i=0;i<48;i+=2){float a0=i*PI/24,a1=(i+1)*PI/24,r=(MAP_AY-MAP_Y0)/2;
+  float x0=MAP_AX+sinf(a0)*r,y0=MAP_AY-cosf(a0)*r,x1=MAP_AX+sinf(a1)*r,y1=MAP_AY-cosf(a1)*r;
+  if(inMap(x0,y0,0)&&inMap(x1,y1,0))line(x0,y0,x1,y1,1,C2D_Color32(170,180,190,160));}
+ {char half[12];float hv=mapRangesNm[ri]/2;snprintf(half,sizeof(half),hv<10?"%.1f":"%.0f",hv);label(MAP_AX+3,MAP_AY-(MAP_AY-MAP_Y0)/2-11,.30f,C2D_Color32(190,198,206,255),"%s",half);}
+ /* v1.1p19: every other US airport (card file). Small fields show as the range closes:
+    class 3 at 20 NM and less, class 2 to 80 NM, large and medium always; labels later still.
+    At most 400 airports and 30 labels a frame. */
+ {int x0,y0,x1,y1;float nm=mapRangesNm[ri];
+  if(mapAirportCells(s->pos.x,s->pos.y,range*1.35f,&x0,&y0,&x1,&y1)){
+   int maxCls=nm<=20?3:nm<=80?2:1,labelCls=nm<=10?3:nm<=40?2:nm<=80?1:0,drawn=0,labels=0;const MapRunway *rws=mapRunways();
+   u32 paved=C2D_Color32(225,228,232,255),soft=C2D_Color32(176,150,110,255),major=cyan,minor=C2D_Color32(150,196,206,255);
+   for(int cy=y0;cy<=y1&&drawn<400;cy++)for(int cx=x0;cx<=x1&&drawn<400;cx++){int n;const MapAirport *ap=mapAirportsInCell(cx,cy,&n);
+    for(int k=0;k<n&&drawn<400;k++){const MapAirport *a=&ap[k];if(a->cls>maxCls)continue;
+     float x,y;mapPoint(s,ct,st,ppm,a->east,a->north,&x,&y);if(!inMap(x,y,8))continue;drawn++;
+     int lines=0;
+     for(int r=0;r<a->runways;r++){const MapRunway *w=&rws[a->first+r];float xa,ya,xb,yb;
+      mapPoint(s,ct,st,ppm,a->east+w->east1,a->north+w->north1,&xa,&ya);mapPoint(s,ct,st,ppm,a->east+w->east2,a->north+w->north2,&xb,&yb);
+      if(hypotf(xb-xa,yb-ya)>=3){line(xa,ya,xb,yb,a->cls<=1?2.5f:1.5f,w->paved?paved:soft);lines++;}}
+     if(!lines)pfdCircle(x,y,a->cls<=1?2:1.3f,a->cls<=2?paved:soft);
+     if(a->cls<=labelCls&&labels<30&&inMap(x,y,-4)){char id[9];memcpy(id,a->id,8);id[8]=0;label(x+4,y-4,.28f,a->cls<=1?major:minor,"%s",id);labels++;}
+    }}
+  }}
+ /* runways; airport IDs on the start runway record */
+ for(int i=0;i<AIRPORT_COUNT;i++){const Airport *a=&airports[i];float x,y;mapPoint(s,ct,st,ppm,a->east,a->north,&x,&y);
+  if(!inMap(x,y,30))continue;
+  float h=a->heading*PI/180,hl=a->length/2,x0,y0,x1,y1;
+  mapPoint(s,ct,st,ppm,a->east-sinf(h)*hl,a->north-cosf(h)*hl,&x0,&y0);mapPoint(s,ct,st,ppm,a->east+sinf(h)*hl,a->north+cosf(h)*hl,&x1,&y1);
+  if(hypotf(x1-x0,y1-y0)<3)pfdCircle(x,y,2,white);else line(x0,y0,x1,y1,2.5f,white);
+  if(a->primary&&inMap(x,y,-4))label(x+5,y-4,.30f,cyan,"%s",a->id);
+ }
+ /* route: NAV destination, or the test autopilot's route (final start, then the runway) */
+ {float px=MAP_AX,py=MAP_AY;
+  if(autopilotOn&&autopilot.destination>=0){const Airport *to=&airports[autopilot.destination];
+   if(autopilot.land&&autopilot.stage!=AP_ROLLOUT){float h=autopilot.runwayHeading,fx,fy,ax,ay;
+    mapPoint(s,ct,st,ppm,autopilot.aimX-sinf(h)*18000,autopilot.aimY-cosf(h)*18000,&fx,&fy);mapPoint(s,ct,st,ppm,autopilot.aimX,autopilot.aimY,&ax,&ay);
+    if(autopilot.stage<AP_APPROACH){line(px,py,fx,fy,2,magenta);px=fx;py=fy;}
+    line(px,py,ax,ay,2,magenta);}
+   else{float x,y;mapPoint(s,ct,st,ppm,to->east,to->north,&x,&y);line(px,py,x,y,2,magenta);}}
+  else if(apPanel.nav&&apPanel.destination>=0){const Airport *to=&airports[apPanel.destination];float x,y;mapPoint(s,ct,st,ppm,to->east,to->north,&x,&y);line(px,py,x,y,2,magenta);}}
+ /* aircraft (track up) and a north pointer */
+ pfdTriangle(MAP_AX,MAP_AY-10,MAP_AX-8,MAP_AY+8,MAP_AX+8,MAP_AY+8,black);
+ pfdTriangle(MAP_AX,MAP_AY-7,MAP_AX-5.5f,MAP_AY+6,MAP_AX+5.5f,MAP_AY+6,white);
+ {float nx=-st,ny=-ct,cx=186,cy=50;line(cx-nx*8,cy-ny*8,cx+nx*8,cy+ny*8,1.5f,white);pfdTriangle(cx+nx*10,cy+ny*10,cx+nx*4-ny*3,cy+ny*4+nx*3,cx+nx*4+ny*3,cy+ny*4-nx*3,white);label(cx-3+nx*17,cy-5+ny*17,.30f,white,"N");}
+ label(4,MAP_Y0+2,.32f,white,"TRK %03.0f",d->track);
+ /* range button: touch cycles 5-160 NM */
+ rect(2,MAP_RANGE_Y,MAP_RANGE_W,15,dark);line(2,MAP_RANGE_Y,2+MAP_RANGE_W,MAP_RANGE_Y,1,gray);
+ {char rt[12];snprintf(rt,sizeof(rt),"%.0f NM",mapRangesNm[ri]);labelFit(4,MAP_RANGE_Y+2,MAP_RANGE_W-4,.32f,white,rt);}
+ /* panels over anything drawn past the map */
+ rect(0,0,320,MAP_Y0,dark);rect(MAP_X1+1,MAP_Y0,320-MAP_X1-1,MAP_Y1-MAP_Y0,dark);line(MAP_X1+1,MAP_Y0,MAP_X1+1,MAP_Y1,1,gray);
+ /* flight data column */
+ {float maximum=pfdAirspeedLimit(s);int stall=s->stallWarning>.5f&&!s->onGround;float x0=MAP_X1+5,x1=316,y=MAP_Y0+3,dy=20.5f;
+  label(x0,y+2,.30f,gray==0?white:C2D_Color32(170,178,186,255),"IAS");labelRight(x1,y,.42f,stall||s->ias>maximum?red:white,"%.0f",s->ias);y+=dy;
+  label(x0,y+2,.30f,C2D_Color32(170,178,186,255),"ALT");labelRight(x1,y,.42f,cyan,"%.0f",d->altitude);y+=dy;
+  label(x0,y+2,.30f,C2D_Color32(170,178,186,255),"V/S");labelRight(x1,y,.42f,white,"%+.0f",d->verticalSpeed);y+=dy;
+  label(x0,y+2,.30f,C2D_Color32(170,178,186,255),"HDG");labelRight(x1,y,.42f,white,"%03.0f",d->heading);y+=dy;
+  label(x0,y+2,.30f,C2D_Color32(170,178,186,255),"GS");labelRight(x1,y,.42f,white,"%.0f",d->groundSpeed);y+=dy;
+  label(x0,y+2,.30f,C2D_Color32(170,178,186,255),"WIND");if(d->windSpeed<1)labelRight(x1,y+1,.36f,white,"CALM");else labelRight(x1,y+1,.36f,white,"%03.0f/%.0f",d->windFrom,d->windSpeed);y+=dy;
+  {int f16=aircraft[s->aircraft].aeroModel==AERO_F16;float pwr=f16?f16Power(s->engine):s->engine*100;
+   label(x0,y+2,.30f,C2D_Color32(170,178,186,255),s->spoilerActual>.02f?"PWR SPD":"PWR");labelRight(x1,y,.42f,s->spoilerActual>.02f||(f16&&pwr>50.5f)?yellow:white,"%.0f%%",pwr);y+=dy;}
+  {const Aircraft *craft=&aircraft[s->aircraft];int detent=(int)roundf(s->flapActual*craft->flapSteps);
+   label(x0,y+2,.30f,C2D_Color32(170,178,186,255),"FLAPS");
+   if(craft->flapNames[0]&&detent>=0&&detent<=craft->flapSteps)labelRight(x1,y+1,.36f,white,"%s",craft->flapNames[detent]);else labelRight(x1,y+1,.36f,white,"%.0f",s->flapActual*100);}
+ }
+ (void)green;(void)paused;
+}
 static void attitude(const Flight *s,float fps,int paused){
  PfdData d=readPfd(s);u32 gray=C2D_Color32(59,64,72,255),dark=C2D_Color32(22,27,34,255),magenta=C2D_Color32(245,74,240,255),green=C2D_Color32(60,219,88,255),red=C2D_Color32(241,54,47,255);
+ /* v1.1p18: PFD + MAP draws the map and data column, then shares the gear button, NAV strip and status */
+ if(lowerMap||caseMap){mapScreen(s,&d,paused);goto mapShared;}
  float cr=cosf(s->roll),sr=sinf(s->roll),h=clampf(s->pitch*140,-260,260);
  /* Attitude horizon and pitch ladder; the surrounding panels mask overscan. */
  rect(0,0,320,240,C2D_Color32(30,108,181,255));
@@ -679,6 +787,8 @@ static void attitude(const Flight *s,float fps,int paused){
  labelRight(316,148,.34f,white,"V/S %+.0f",d.verticalSpeed);
  if(d.windSpeed<1)labelRight(316,161,.34f,white,"WIND CALM");else labelRight(316,161,.34f,white,"WIND %03.0f/%.0f",d.windFrom,d.windSpeed);
  {float level=weatherLevel(s);labelRight(316,174,.34f,cyan,"%s",level<.5f?"CLEAR":level<1.4f?"SCATTERED":"T-STORM");}
+ mapShared:
+ maximum=pfdAirspeedLimit(s);
  /* Touchable gear button (colours below). The SR22's fixed gear reads FIXED.
     Touch area: GEAR_BUTTON_*. */
  {int fixedGear=!aircraft[s->aircraft].retractableGear;const char *gearText=fixedGear?"GEAR FIXED":s->gearActual>.99f?"GEAR DN":s->gearActual<.01f?"GEAR UP":"GEAR ...";
@@ -741,9 +851,10 @@ static void splashScreen(const AppMenu *menu){
  pfdTriangle(247,107,188,141,205,143,white);pfdTriangle(247,107,224,147,215,145,white);
  line(200,144,247,107,3,white);pfdTriangle(211,136,201,129,202,140,white);
  label(25,23,.88f,white,"3DMicroFlight");line(26,65,153,65,2,cyan);
- label(27,74,.32f,cyan,"SR22  /  VISION JET SF50");
- rect(0,207,400,33,navy);label(25,212,.34f,white,"SEDONA  /  FLAGSTAFF  /  GRAND CANYON");
- label(26,227,.25f,cyan,"NEW NINTENDO 3DS XL");label(268,227,.25f,white,"v32  |  ARIZONA / NEVADA");
+ /* v1.1p21: the five aircraft and the US scenery (was the v32 two-aircraft Arizona card) */
+ label(27,74,.32f,cyan,"SR22 / SF50 / 737 / A321 / F-16");
+ rect(0,207,400,33,navy);label(25,212,.34f,white,"COAST TO COAST  /  %d AIRPORTS",airportStartCount());
+ label(26,227,.25f,cyan,"NEW NINTENDO 3DS XL");label(268,227,.25f,white,"%s  |  LOWER 48 US",AUTOTEST_BUILD);
  (void)menu;
 }
 static void drawAppMenu(const AppMenu *m,const char *notice){
@@ -760,19 +871,29 @@ static void drawAppMenu(const AppMenu *m,const char *notice){
    if(i==4)snprintf(text,sizeof(text),"Run autotest (%d cases)",m->autotestCases);else snprintf(text,sizeof(text),"%s",items[i]);}
   else if(m->screen==MENU_SETUP){
    if(i==0)snprintf(text,sizeof(text),"Aircraft    < %s >",aircraft[m->aircraft].name);
-   else if(i==1)snprintf(text,sizeof(text),"Airport     < %s  %s >",airports[m->airport].name,airports[m->airport].id);
+   else if(i==1)snprintf(text,sizeof(text),"Airport  < %s  %s  %s >",airports[m->airport].state?airports[m->airport].state:"",airports[m->airport].name,airports[m->airport].id);
    else if(i==2)snprintf(text,sizeof(text),"Stage       < %s >",flightPhaseName(m->phase));
    else if(i==3)snprintf(text,sizeof(text),"Weather     < %s >",weatherNames[m->weather]);
    else if(i==4)snprintf(text,sizeof(text),"Time        < %s >",timeSettingNames[m->timeOfDay]);
    else snprintf(text,sizeof(text),"%s",i==5?"Start flight":"Back");
   }else if(m->screen==MENU_PAUSE){char swap[48];snprintf(swap,sizeof(swap),"Switch to %s",aircraft[(m->aircraft+1)%AIRCRAFT_COUNT].name);
    const char *items[]={"Resume flight",swap,"Save flight",m->hasSave?"Load saved flight":"Load - no saved flight","New flight","Title screen","Audio & controls","Exit"};
-   if(i==4)snprintf(text,sizeof(text),"Run autotest (%d cases)",m->autotestCases);else snprintf(text,sizeof(text),"%s",items[i]);}
+   snprintf(text,sizeof(text),"%s",items[i]);} /* v1.1p20: row 4 is New flight (the autotest label was copied from the title menu) */
   else if(m->screen==MENU_AUDIO){
    if(i==0)snprintf(text,sizeof(text),"Volume   < %d%% >",m->volume*20);
    else if(i==1)snprintf(text,sizeof(text),"Sound    < %s >",!audioReady?"Unavailable":m->muted?"Muted":"On");
    else if(i==2)snprintf(text,sizeof(text),"Calibrate stick  (release, press A)");
    else if(i==3)snprintf(text,sizeof(text),"Stick deadzone   < %d%% >",m->deadzone);
+   else if(i==4)snprintf(text,sizeof(text),"Lower screen     < %s >",m->lowerMap?"PFD + MAP":"PFD");
+   else if(i==5){static const char *names[FLIGHT_LEVELS]={"Easy","Forgiving","Normal","Hard","Advanced"};
+    int lv=m->level<0?0:m->level>=FLIGHT_LEVELS?FLIGHT_LEVELS-1:m->level;snprintf(text,sizeof(text),"Difficulty  %s",names[lv]);
+    /* v1.1p21 slider: Easy (green) .. Advanced (red), the knob on the level */
+    float y=38+menuRowHeight(m)*i+menuRowHeight(m)/2-1,x0=190,x1=296;
+    rect(x0,y-1,x1-x0,3,C2D_Color32(80,96,112,255));
+    for(int k=0;k<FLIGHT_LEVELS;k++){float x=x0+(x1-x0)*k/(FLIGHT_LEVELS-1);u32 tc=C2D_Color32(70+45*k,200-35*k,90,255);
+     if(k<=lv)rect(x-(k?(x1-x0)/(FLIGHT_LEVELS-1):0),y-1,k?(x1-x0)/(FLIGHT_LEVELS-1):0,3,tc);rect(x-1,y-4,2,9,k==lv?white:C2D_Color32(120,136,150,255));}
+    float kx=x0+(x1-x0)*lv/(FLIGHT_LEVELS-1);rect(kx-4,y-6,8,13,white);rect(kx-3,y-5,6,11,C2D_Color32(70+45*lv,200-35*lv,90,255));
+   }
    else snprintf(text,sizeof(text),"Back");
   }else if(m->screen==MENU_SAVE_SLOTS||m->screen==MENU_LOAD_SLOTS){
    if(i==3)snprintf(text,sizeof(text),"Back");
@@ -782,13 +903,16 @@ static void drawAppMenu(const AppMenu *m,const char *notice){
  }
  if(m->screen==MENU_AUDIO){
   circlePosition c;hidCircleRead(&c);
-  label(16,170,.29f,white,"Stick raw x %+4d  y %+4d   centre %+d %+d",c.dx,c.dy,stickCentreX,stickCentreY);
-  label(16,182,.29f,cyan,"Input  roll %+.2f  pitch %+.2f",stickAxis(c.dx,stickCentreX,m->deadzone),stickAxis(c.dy,stickCentreY,m->deadzone));
+  label(16,174,.29f,white,"Stick raw x %+4d  y %+4d   centre %+d %+d",c.dx,c.dy,stickCentreX,stickCentreY);
+  label(16,184,.29f,cyan,"Input  roll %+.2f  pitch %+.2f",stickAxis(c.dx,stickCentreX,m->deadzone),stickAxis(c.dy,stickCentreY,m->deadzone));
  }
+ if(m->screen==MENU_AUDIO&&m->row==5){static const char *what[FLIGHT_LEVELS]={"Easy: nothing crashes - impacts put you back on a safe path","Forgiving: hard landings forgiven, terrain still crashes","Normal: crash above 4.5 m/s sink or 17 deg bank at touchdown","Hard: 3.5 m/s sink, 14 deg bank","Advanced: 3.0 m/s sink, 11 deg bank, tighter pitch"};
+  int lv=m->level<0?0:m->level>=FLIGHT_LEVELS?FLIGHT_LEVELS-1:m->level;label(15,201,.27f,yellow,"%s",what[lv]);}
  if(m->screen==MENU_SAVE_SLOTS)label(16,149,.30f,yellow,"Selecting a used slot replaces that save.");
  if(m->screen==MENU_EXIT){label(16,101,.33f,yellow,"Unsaved flight changes will be lost.");label(16,117,.3f,white,"Cancel, then Save flight to keep progress.");}
  if(notice[0])label(15,194,.29f,yellow,"%s",notice);
- label(15,214,.30f,cyan,"D-pad: select / change    A: confirm");label(15,229,.27f,white,"Touch: select    B: back    START: menu");
+ if(m->screen==MENU_SETUP&&m->row==1)label(15,214,.30f,cyan,"D-pad: airport   L / R: state   Y: nearest");   /* v1.1p20 */
+ else label(15,214,.30f,cyan,"D-pad: select / change    A: confirm");label(15,229,.27f,white,"Touch: select    B: back    START: menu");
 }
 
 int main(void){
@@ -806,17 +930,22 @@ int main(void){
   GX_TRANSFER_FLIP_VERT(0)|GX_TRANSFER_OUT_TILED(0)|GX_TRANSFER_RAW_COPY(0)|GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8)|GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8)|GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO));
  white=C2D_Color32(245,245,240,255);black=C2D_Color32(12,18,25,255);cyan=C2D_Color32(62,221,240,255);yellow=C2D_Color32(255,224,54,255);
  mkdir("sdmc:/3ds",0777);mkdir("sdmc:/3ds/3DMicroFlight",0777);migrateOldFolder();
+ /* v1.1p20: every flyable US runway, before saves and the autotest script name them */
+ airportsLoad(AIRPORTS_FLY_PATH);
  int extendedInput=R_SUCCEEDED(irrstInit());
  u32 previousExtended=0;view=(View){0};resetView(&view);
  texturedReady=initAircraftRenderer();
  audioReady=initFlightAudio();
- AppMenu menu={.screen=MENU_TITLE,.phase=PHASE_TAKEOFF,.volume=3,.timeOfDay=TIME_NOON};loadControls(&menu);
+ AppMenu menu={.screen=MENU_TITLE,.phase=PHASE_TAKEOFF,.volume=3,.timeOfDay=TIME_NOON};loadControls(&menu);lowerMap=menu.lowerMap;flightLevel=menu.level;
  char menuNotice[96]="";
  Flight saved;View savedView;for(int slot=0;slot<3;slot++)if(loadFlightState(savePaths[slot],&saved,&savedView))menu.hasSave|=1<<slot;
  Flight s;resetFlight(&s,0,0);u64 previous=osGetTime();float accumulator=0,fps=60;int paused=0,zlHeldLast=0,zlZoomUsed=0;
- static AutotestCase autoCases[AUTOTEST_MAX_CASES];int autoRejected=0;
- int autoCount=autotestLoad(AUTOTEST_PATH,autoCases,AUTOTEST_MAX_CASES,&autoRejected),autoIndex=-1,autoShot=0;float autoClock=0;u64 autoRunStart=0,autoCaseStart=0;
- static char autoSummary[131072];int autoSummaryLen=0; /* v32.04: 8 KB filled up after ~28 cases; v33.09: ~560 B per case with the dyn line */
+ /* v1.1p12: the case list and summary live on the heap; as static arrays they pushed the program image past
+    32 MB (cirrusflight-32mb-code-limit: such a CIA dies at its first instruction on hardware). */
+ static AutotestCase *autoCases;if(!autoCases)autoCases=calloc(AUTOTEST_MAX_CASES,sizeof(AutotestCase));int autoRejected=0;
+ int autoCount=!autoCases?0:autotestLoad(AUTOTEST_PATH,autoCases,AUTOTEST_MAX_CASES,&autoRejected),autoIndex=-1,autoShot=0;float autoClock=0;u64 autoRunStart=0,autoCaseStart=0;
+#define AUTO_SUMMARY_SIZE 524288
+ static char *autoSummary;if(!autoSummary)autoSummary=calloc(1,AUTO_SUMMARY_SIZE);if(!autoSummary)autoCount=0;int autoSummaryLen=0; /* v32.04: 8 KB filled up after ~28 cases; v33.09: ~560 B per case with the dyn line */
  /* v35.15 (as on the Thor): an autotest.txt on the card no longer takes over the game. The title menu
     offers "Run autotest (N cases)" next to normal flying; the test starts by itself only when
     autotest.go exists (the Azahar runner writes it), which is removed so the next launch is normal.
@@ -836,7 +965,7 @@ int main(void){
    aptSetSleepAllowed(false);lidWatchStart();
    autoRunStart=osGetTime();autoShot=0;
    mkdir(AUTOTEST_DIR,0777);autoIndex=0;autoCaseStart=osGetTime();startAutotestCase(&autoCases[0],&s,&menu,&paused);autoClock=0;previous=osGetTime();
-   autoSummaryLen=snprintf(autoSummary,sizeof(autoSummary),"3DMicroFlight " AUTOTEST_BUILD " autotest: %d cases, %d rejected lines, sleep on lid close off, lid watch %s, ground map %s, started from %s\n",autoCount,autoRejected,lidServices?"on":"UNAVAILABLE",sceneryGroundMapLoaded()?"loaded":"MISSING",autoFromMenu?"the menu":"autotest.go");
+   autoSummaryLen=snprintf(autoSummary,AUTO_SUMMARY_SIZE,"3DMicroFlight " AUTOTEST_BUILD " autotest: %d cases, %d rejected lines, sleep on lid close off, lid watch %s, ground map %s, started from %s\n",autoCount,autoRejected,lidServices?"on":"UNAVAILABLE",sceneryGroundMapLoaded()?"loaded":"MISSING",autoFromMenu?"the menu":"autotest.go");
   }
   u64 frameMark=svcGetSystemTick();float inputMs=0,physicsMs=0,waitMs=0,drawMs=0,endMs=0;int readsBefore=terrainStreamSyncReads();
   hidScanInput();u32 down=hidKeysDown(),held=hidKeysHeld();
@@ -860,7 +989,9 @@ int main(void){
    look.dx=look.dy=0;
   }
 
-  u64 now=osGetTime();float rawElapsed=(now-previous)/1000.f;float elapsed=clampf(rawElapsed,0,.1f);previous=now;
+  /* v1.1p13: osGetTime() can step back when the system clock is resynced (once in the 6.8 h v1.1p12 run);
+     the unsigned difference then wrapped to 2^64 ms and broke that case's FPS line. Such a frame is not recorded. */
+  u64 now=osGetTime();int clockBack=now<previous;if(clockBack)now=previous;float rawElapsed=(now-previous)/1000.f;float elapsed=clampf(rawElapsed,0,.1f);previous=now;
   holdingScenery=0;
   if(sceneryHoldLeft>0&&menu.screen==MENU_FLIGHT){
    if(!texturedReady||!rendererSceneryLoading(s.pos))sceneryHoldLeft=0;
@@ -872,7 +1003,7 @@ int main(void){
   /* v34.03: the frame that finishes a loading hold carries the whole scenery
      build (about 1.2 s on hardware); keep it out of FPS, p95 and worst. */
   static int heldLastFrame;int loadFrame=holdingScenery||heldLastFrame;heldLastFrame=holdingScenery;
-  if(!loadFrame)recordFrameProfile(&frameProfile,rawElapsed,C3D_GetProcessingTime(),C3D_GetDrawingTime(),s.aircraft,view.exterior,paused||menu.screen!=MENU_FLIGHT,osGet3DSliderState()>.01f);
+  if(!loadFrame&&!clockBack)recordFrameProfile(&frameProfile,rawElapsed,C3D_GetProcessingTime(),C3D_GetDrawingTime(),s.aircraft,view.exterior,paused||menu.screen!=MENU_FLIGHT,osGet3DSliderState()>.01f);
   if(frameProfile.count<30||frameProfile.next%30==0)frameStats=frameProfileStats(&frameProfile);
   aircraftNotice=fmaxf(0,aircraftNotice-elapsed);gearNotice=fmaxf(0,gearNotice-elapsed);
   if(frameProfile.sum>0)fps=frameProfile.count*1000/frameProfile.sum;
@@ -888,16 +1019,23 @@ int main(void){
     if(down&KEY_DDOWN)menuMove(&menu,1);
     if(down&KEY_DLEFT)menuAdjust(&menu,-1);
     if(down&KEY_DRIGHT)menuAdjust(&menu,1);
+    if(down&KEY_L)menuAdjustGroup(&menu,-1);
+    if(down&KEY_R)menuAdjustGroup(&menu,1);
+    if((down&KEY_Y)&&menu.screen==MENU_SETUP&&menu.row==1){int near=airportNearest(s.pos.x,s.pos.y,0);if(near>=0)menu.airport=near;}
     if(down&KEY_A)action=menuAccept(&menu);
     if(down&KEY_TOUCH){touchPosition t;hidTouchRead(&t);int row=(t.py-38)/menuRowHeight(&menu);
      if(t.py>=38&&t.py<38+menuRowHeight(&menu)*menuRows(&menu)&&t.px>=12&&t.px<308){
-      menu.row=row;if(menu.screen==MENU_SETUP&&row<5)menuAdjust(&menu,t.px<160?-1:1);else action=menuAccept(&menu);
+      menu.row=row;if(menu.screen==MENU_SETUP&&row<5)menuAdjust(&menu,t.px<160?-1:1);
+      else if(menu.screen==MENU_AUDIO&&row==5&&t.px>=180){int lv=(int)((t.px-190)*(FLIGHT_LEVELS-1)/106.f+.5f);menu.level=lv<0?0:lv>=FLIGHT_LEVELS?FLIGHT_LEVELS-1:lv;} /* v1.1p21 slider */
+      else action=menuAccept(&menu);
      }
     }
    }
    if(action==MENU_QUIT)break;
    if(action==MENU_AUTOTEST&&autoCount<0){autoFromMenu=1;autoStartNow=1;menuNotice[0]=0;}
    if(action==MENU_CALIBRATE)calibrateStick(&menu,menuNotice,sizeof(menuNotice));
+   if(menu.lowerMap!=lowerMap){lowerMap=menu.lowerMap;saveControls(&menu);} /* v1.1p18 */
+   if(autoIndex<0&&menu.level!=flightLevel){flightLevel=menu.level;saveControls(&menu);} /* v1.1p21 */
    if(action==MENU_SAVE){
     if(saveFlightState(savePaths[menu.slot],&s,&view)){menu.hasSave|=1<<menu.slot;snprintf(menuNotice,sizeof(menuNotice),"Flight saved to Slot %d.",menu.slot+1);}
     else snprintf(menuNotice,sizeof(menuNotice),"Save failed. Check SD space / access.");
@@ -952,9 +1090,10 @@ int main(void){
    else nextFlap(&s);
   }else if(t.px>=GEAR_BUTTON_X-4&&t.px<GEAR_BUTTON_X+GEAR_BUTTON_W+4&&t.py>=GEAR_BUTTON_Y-4)requestGear(&s);
   else if(apPanelOpen)apPanelTouch(&s,t.px,t.py);
-  else if((aircraft[s.aircraft].spoilerLift>0||aircraft[s.aircraft].spoilerDrag>0)&&t.px<118&&t.py>=184&&t.py<198)s.speedbrake=s.speedbrake>.75f?0:s.speedbrake+.5f;
-  else if(apPanel.ap&&apPanel.hdg&&t.px>=122&&t.px<198&&t.py>=141&&t.py<216){apPanel.heading+=(t.px<160?-10:10)*PI/180;apPanel.heading=fmodf(apPanel.heading+4*PI,2*PI);}
-  else if(apPanel.ap&&apPanel.alt&&t.px>=253&&t.px<305&&t.py>=28&&t.py<145)apPanel.altitude=fmaxf(apPanel.altitude+(t.py<88?500:-500)/3.28084f,terrain(s.pos.x,s.pos.y)+150);
+  else if((lowerMap||caseMap)&&t.px<MAP_RANGE_W+6&&t.py>=MAP_RANGE_Y-4&&t.py<216){mapRangeIndex=(mapRangeIndex+1)%MAP_RANGES;saveControls(&menu);}
+  else if(!(lowerMap||caseMap)&&(aircraft[s.aircraft].spoilerLift>0||aircraft[s.aircraft].spoilerDrag>0)&&t.px<118&&t.py>=184&&t.py<198)s.speedbrake=s.speedbrake>.75f?0:s.speedbrake+.5f;
+  else if(!(lowerMap||caseMap)&&apPanel.ap&&apPanel.hdg&&t.px>=122&&t.px<198&&t.py>=141&&t.py<216){apPanel.heading+=(t.px<160?-10:10)*PI/180;apPanel.heading=fmodf(apPanel.heading+4*PI,2*PI);}
+  else if(!(lowerMap||caseMap)&&apPanel.ap&&apPanel.alt&&t.px>=253&&t.px<305&&t.py>=28&&t.py<145)apPanel.altitude=fmaxf(apPanel.altitude+(t.py<88?500:-500)/3.28084f,terrain(s.pos.x,s.pos.y)+150);
   else if(apPanel.nav&&t.py<14){int next=apNextDestination(&s,apPanel.destination);if(next>=0)apPanel.destination=next;}
   else if(t.py<28)renderTest=(renderTest+1)%RENDER_TEST_COUNT;
   }
@@ -1029,8 +1168,8 @@ int main(void){
    if(autoShot<c->shots&&t>=c->warmup+autoShot*c->interval){
     char path[160];snprintf(path,sizeof(path),AUTOTEST_DIR "/%s_%02d.bmp",c->name,autoShot);
     /* v31.19: the lower screen too, on each case's first shot. */
-    if(!autoShot){char bpath[160];snprintf(bpath,sizeof(bpath),AUTOTEST_DIR "/%s_00_bottom.bmp",c->name);captureScreen(bottom,bpath,320);}
-    if(!captureTopScreen(top,path)&&autoSummaryLen<(int)sizeof(autoSummary)-80)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,"%s: capture %d failed\n",c->name,autoShot);
+    if(!autoShot||caseMap){char bpath[160];snprintf(bpath,sizeof(bpath),AUTOTEST_DIR "/%s_%02d_bottom.bmp",c->name,autoShot);captureScreen(bottom,bpath,320);}
+    if(!captureTopScreen(top,path)&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-80)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,"%s: capture %d failed\n",c->name,autoShot);
     /* v31.7: per-shot scene log; bad = ranges whose memory differs from
        what the CPU wrote. */
     {RendererWorldStats w=rendererVerifyWorld();snprintf(path,sizeof(path),AUTOTEST_DIR "/%s_scene.csv",c->name);
@@ -1044,46 +1183,55 @@ int main(void){
     char path[160];snprintf(path,sizeof(path),AUTOTEST_DIR "/%s_profile.csv",c->name);saveFrameProfile(&frameProfile,path);
     snprintf(path,sizeof(path),AUTOTEST_DIR "/%s_spikes.csv",c->name);int caseSpikes=spikeCount;saveSpikes(path,0);
     FrameStats st=frameProfileStats(&frameProfile);
-    if(autoSummaryLen<(int)sizeof(autoSummary)-150)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
-     "%s: %d shots, %.1f FPS, p95 %.1f ms, worst %.1f ms, AGL %.0f m, load %.1f s, %d long frames, C-stick peak %d/%d (ignored)%s\n",c->name,c->shots,st.fps,st.p95Ms,st.maxMs,s.pos.z-terrain(s.pos.x,s.pos.y),sceneryHoldTime,caseSpikes,cstickPeakX,cstickPeakY,s.crashed?" (crashed)":"");
+    if(autoSummaryLen<(int)AUTO_SUMMARY_SIZE-150)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,
+     "%s: %d shots, %.1f FPS, p95 %.1f ms, worst %.1f ms, AGL %.0f m, load %.1f s, %d long frames, C-stick peak %d/%d (ignored)%s\n",c->name,c->shots,st.fps,st.p95Ms,st.maxMs,s.pos.z-terrain(s.pos.x,s.pos.y),sceneryHoldTime,caseSpikes,cstickPeakX,cstickPeakY,s.crashed?" (crashed)":flightEasyRescues?" (easy rescues)":"");
     cstickPeakX=cstickPeakY=0;
     {float lms,lverts,lcity;nightLightFrameStats(&lms,&lverts,&lcity);
-     if(lverts>0&&autoSummaryLen<(int)sizeof(autoSummary)-100)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
+     if(lverts>0&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-100)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,
       "%s: night lights %.1f ms/frame, %.0f vertices, %.0f city lights considered\n",c->name,lms,lverts,lcity);}
     {int bt,btri,bres;float bms;cityBuildingStats(&bt,&btri,&bres,&bms);
-     if(bres>0&&autoSummaryLen<(int)sizeof(autoSummary)-100)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
+     if(bres>0&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-100)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,
       "%s: buildings %d tiles drawn, %d triangles, %d tiles resident\n",c->name,bt,btri,bres);}
-    if(caseFrames&&autoSummaryLen<(int)sizeof(autoSummary)-160)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
+    {int ld,ltri,lres;float lms;landmarkStats(&ld,&ltri,&lres,&lms);
+     if(lres>0&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-100)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,
+      "%s: landmarks %d drawn, %d triangles, %d built, last build %.0f ms\n",c->name,ld,ltri,lres,lms);}
+    if(caseFrames&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-160)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,
      "%s: avg ms/frame %.1f = input+terrain %.1f, physics %.1f, gpu wait %.1f, draw %.1f, stream %.1f, scene build %.1f\n",c->name,
      caseSum[0]/caseFrames,caseSum[1]/caseFrames,caseSum[2]/caseFrames,caseSum[3]/caseFrames,caseSum[4]/caseFrames,caseSum[5]/caseFrames,caseSum[6]/caseFrames);
     int partHits,partMisses;sceneryPartCacheStats(&partHits,&partMisses);
-    if(caseFrames&&autoSummaryLen<(int)sizeof(autoSummary)-120)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
+    if(caseFrames&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-120)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,
      "%s: scene build ms/frame: mesh %.1f, sort %.1f, photo clip %.1f, upload %.1f, terrain parts reused %d of %d\n",c->name,caseStage[0]/caseFrames,caseStage[1]/caseFrames,caseStage[2]/caseFrames,caseStage[3]/caseFrames,partHits,partHits+partMisses);
-     {char diag[160];if(sceneryStreamDiagnostics(diag,sizeof(diag))>0&&autoSummaryLen<(int)sizeof(autoSummary)-200)
-      autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,"%s: %s\n",c->name,diag);}
+     {char diag[160];if(sceneryStreamDiagnostics(diag,sizeof(diag))>0&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-200)
+      autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,"%s: %s\n",c->name,diag);}
      {unsigned el=(unsigned)((osGetTime()-autoRunStart)/1000),dur=(unsigned)((osGetTime()-autoCaseStart)/1000);
-      if(autoSummaryLen<(int)sizeof(autoSummary)-80)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,"%s: case took %u s, run time %u:%02u\n",c->name,dur,el/60,el%60);}
-     if(lidServices&&(lidCloses||!lidOpen)&&autoSummaryLen<(int)sizeof(autoSummary)-100)
-      autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,"%s: lid %s, closed %d times, %.0f s closed so far\n",c->name,lidOpen?"open":"closed",lidCloses,lidClosedSeconds);
-    if(autopilotOn&&autoSummaryLen<(int)sizeof(autoSummary)-120)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
+      if(autoSummaryLen<(int)AUTO_SUMMARY_SIZE-80)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,"%s: case took %u s, run time %u:%02u\n",c->name,dur,el/60,el%60);}
+     if(lidServices&&(lidCloses||!lidOpen)&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-100)
+      autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,"%s: lid %s, closed %d times, %.0f s closed so far\n",c->name,lidOpen?"open":"closed",lidCloses,lidClosedSeconds);
+    if(autopilotOn&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-120)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,
      "%s: route to %s, autopilot %s, %.1f km from it\n",c->name,airports[c->destination].id,autopilotStageName(autopilot.stage),autopilotDistance(&autopilot,&s)/1000);
+    /* v1.1p15: how the landing went */
+    if(autopilotOn&&c->routeLand&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-200){const Airport *rw=&airports[autopilot.runway];float h=autopilot.runwayHeading,rx=s.pos.x-rw->east,ry=s.pos.y-rw->north;
+     autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,"%s: landing runway %s, touchdown sink %.2f m/s, %s, %.0f m along from runway centre, %.1f m off centreline, %.0f kt ground speed%s\n",
+      c->name,fabsf(wrapPi(h-rw->heading*PI/180))<.1f?rw->le:rw->he,s.touchdownSink,s.onGround?"on the ground":"airborne",rx*sinf(h)+ry*cosf(h),rx*cosf(h)-ry*sinf(h),hypotf(s.vel.x,s.vel.y)*1.94384f,s.crashed?" (crashed)":"");}
     {const DynStats *d=&dynStats;const char *law=fbwStatus(&s);
-     if(autoSummaryLen<(int)sizeof(autoSummary)-260)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
+     if(autoSummaryLen<(int)AUTO_SUMMARY_SIZE-260)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,
       "%s: dyn%s%s nz %.2f/%.2f alpha %.1f cas %.0f-%.0f bank %.0f pitch %.0f/%.0f p %.0f q %.0f beta %.1f alt %+.0f/%+.0f end %+.0f agl %.0f stall %.1f s prot %.1f s%s%s\n",c->name,
       maneuverOn?" ":"",maneuverOn?maneuverName(maneuver.kind):"",d->minNz,d->maxNz,d->maxAlpha*57.29578f,d->minCas,d->maxCas,d->maxBank*57.29578f,d->minPitch*57.29578f,d->maxPitch*57.29578f,
       d->maxRollRate*57.29578f,d->maxPitchRate*57.29578f,d->maxBeta*57.29578f,d->minAlt-d->startAlt,d->maxAlt-d->startAlt,s.pos.z-d->startAlt,d->minAgl<1e8f?d->minAgl:-1,d->stallTime,d->protTime,law?", ":"",law?law:"");
-     if(maneuverOn&&*maneuverReport(&maneuver)&&autoSummaryLen<(int)sizeof(autoSummary)-140)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,
+     if(maneuverOn&&*maneuverReport(&maneuver)&&autoSummaryLen<(int)AUTO_SUMMARY_SIZE-140)autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,
       "%s: %s %s, max yaw rate %.0f deg/s\n",c->name,maneuverName(maneuver.kind),maneuverReport(&maneuver),d->maxYawRate*57.29578f);
      snprintf(path,sizeof(path),AUTOTEST_DIR "/%s_dyn.csv",c->name);saveDynTrace(path);}
+    /* v1.1p12: a long run keeps its results so far in partial.txt (every 10 cases), so a crash or a stop late in it loses little */
+    if(autoIndex+1<autoCount&&(autoIndex+1)%10==0){FILE *pf=fopen(AUTOTEST_DIR "/partial.txt","w");if(pf){fputs(autoSummary,pf);fclose(pf);}}
     if(++autoIndex<autoCount){autoShot=0;autoCaseStart=osGetTime();startAutotestCase(&autoCases[autoIndex],&s,&menu,&paused);autoClock=0;previous=osGetTime();}
     else{
-     {unsigned el=(unsigned)((osGetTime()-autoRunStart)/1000);if(autoSummaryLen<(int)sizeof(autoSummary)-60)
-      autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,sizeof(autoSummary)-autoSummaryLen,"run complete: %d cases in %u:%02u\n",autoCount,el/60,el%60);}
+     {unsigned el=(unsigned)((osGetTime()-autoRunStart)/1000);if(autoSummaryLen<(int)AUTO_SUMMARY_SIZE-60)
+      autoSummaryLen+=snprintf(autoSummary+autoSummaryLen,AUTO_SUMMARY_SIZE-autoSummaryLen,"run complete: %d cases in %u:%02u\n",autoCount,el/60,el%60);}
      FILE *f=fopen(AUTOTEST_DIR "/done.txt","w");if(f){fputs(autoSummary,f);fclose(f);}
      lidWatchStop();aptSetSleepAllowed(true);
      /* v35.15: a run started from the title menu goes back to it; one started by autotest.go quits as before. */
      if(autoFromMenu){
-      autoIndex=-1;autoCount=-autoCount;autoFromMenu=0;menu.screen=MENU_TITLE;menu.row=0;paused=0;
+      autoIndex=-1;autoCount=-autoCount;autoFromMenu=0;flightLevel=menu.level;menu.screen=MENU_TITLE;menu.row=0;paused=0;
       snprintf(menuNotice,sizeof(menuNotice),"Autotest done: results in 3ds/3DMicroFlight/autotest");
      }else break;
     }

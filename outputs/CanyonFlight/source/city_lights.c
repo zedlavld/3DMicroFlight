@@ -1,5 +1,6 @@
 #include <3ds.h>
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
@@ -9,53 +10,109 @@
 #include "night_lights_bin.h"
 typedef struct {int16_t cx,cy;uint32_t first;uint16_t n[3];} Cell;
 typedef struct {int16_t dx,dy;uint8_t attr,brightness;} Point;
-typedef struct {LightPoint *gpu;uint16_t filled,flushed;unsigned lastUse;} CellState;
-static const unsigned char *table;static const Point *points;
-static int cellSize,cellCount,pointCount;
-static CellState *state;
+/* v1.1p14: gpu holds cap lights (grown as the camera comes closer, not n2 up front: dense
+   eastern cells would otherwise take tens of MB of linear memory); ram holds a card cell's
+   points read so far (the first ramCount, level 0 first). */
+typedef struct {LightPoint *gpu;uint16_t filled,flushed,cap,ramCount;unsigned lastUse;Point *ram;} CellState;
+/* Two stores with the same cell layout: the embedded Arizona/Nevada table (v34.02) and, from
+   v1.1p14, scenery/night_lights_us.bin on the card for the rest of the lower 48 (OSM streets),
+   whose points are read per cell by a low-priority worker. The stores never share a cell. */
+typedef struct {const unsigned char *table;const Point *points;int cellCount;CellState *state;unsigned char *heapTable;} Store;
+static Store stores[2];static int storeCount;
+static int cellSize;
 static int statCells,statDrawn,statPending;
 /* Traffic pieces: int16 cx, cy, uint32 first, uint16 count, uint16 primary. */
 static const unsigned char *pieces,*piecePoints;static int pieceCount,trafficPoints;
 static float *pieceZ,*pieceS;static unsigned char *pieceReady;
 static int rd32(const unsigned char *p){return p[0]|p[1]<<8|p[2]<<16|p[3]<<24;}
-static Cell cellAt(int i){
- const unsigned char *p=table+14*i;Cell c;
+static Cell cellAt(const Store *s,int i){
+ const unsigned char *p=s->table+14*i;Cell c;
  c.cx=(int16_t)(p[0]|p[1]<<8);c.cy=(int16_t)(p[2]|p[3]<<8);c.first=(uint32_t)rd32(p+4);
  for(int k=0;k<3;k++)c.n[k]=(uint16_t)(p[8+2*k]|p[9+2*k]<<8);
  return c;
 }
+/* ------------------------------------------------------------ card store and its reader */
+#define US_LIGHTS_PATH "sdmc:/3ds/CanyonFlight/scenery/night_lights_us.bin"
+static FILE *usFile;static long usPointsAt;static int usState; /* 0 not tried, 1 open, -1 absent */
+static Thread usWorker;static LightEvent usWake;static int usQuit;
+static int usJobState,usJobCell,usJobCount;static Point *usJobRam; /* 0 idle, 1 reading, 2 read */
+static uint32_t usJobFirst;
+static void usReader(void *unused){
+ (void)unused;
+ for(;;){
+  LightEvent_Wait(&usWake);if(__atomic_load_n(&usQuit,__ATOMIC_ACQUIRE))return;
+  Point *p=malloc(sizeof(Point)*usJobCount);
+  if(p&&(fseek(usFile,usPointsAt+6L*usJobFirst,SEEK_SET)||fread(p,6,usJobCount,usFile)!=(size_t)usJobCount)){free(p);p=NULL;}
+  usJobRam=p;__atomic_store_n(&usJobState,2,__ATOMIC_RELEASE);
+ }
+}
+static void usOpen(void){
+ usState=-1;FILE *f=fopen(US_LIGHTS_PATH,"rb");if(!f)return;
+ unsigned char head[20];
+ if(fread(head,1,20,f)!=20||memcmp(head,"CFLITE03",8)||rd32(head+8)!=cellSize){fclose(f);return;}
+ int cells=rd32(head+12);
+ Store *s=&stores[storeCount];memset(s,0,sizeof(*s));
+ if(cells<=0||cells>400000||!(s->heapTable=malloc(14*cells))||fread(s->heapTable,14,cells,f)!=(size_t)cells||!(s->state=calloc(cells,sizeof(CellState)))){
+  free(s->heapTable);free(s->state);memset(s,0,sizeof(*s));fclose(f);return;}
+ s->table=s->heapTable;s->cellCount=cells;usFile=f;usPointsAt=20+14L*cells;
+ LightEvent_Init(&usWake,RESET_ONESHOT);
+ usWorker=threadCreate(usReader,NULL,8192,0x38,-2,false);
+ if(!usWorker){free(s->heapTable);free(s->state);memset(s,0,sizeof(*s));fclose(f);usFile=NULL;return;}
+ storeCount++;usState=1;
+}
+static void usStop(void){
+ if(usWorker){__atomic_store_n(&usQuit,1,__ATOMIC_RELEASE);LightEvent_Signal(&usWake);threadJoin(usWorker,U64_MAX);threadFree(usWorker);usWorker=NULL;}
+ usQuit=0;free(usJobRam);usJobRam=NULL;usJobState=0;
+ if(usFile){fclose(usFile);usFile=NULL;}usState=0;
+}
+/* A finished read replaces the cell's points (the job always reads a longer prefix). */
+static void usCollect(void){
+ if(__atomic_load_n(&usJobState,__ATOMIC_ACQUIRE)!=2)return;
+ Store *s=&stores[storeCount-1];CellState *st=&s->state[usJobCell];
+ if(usJobRam&&usJobCount>st->ramCount){free(st->ram);st->ram=usJobRam;st->ramCount=(uint16_t)usJobCount;}else free(usJobRam);
+ usJobRam=NULL;__atomic_store_n(&usJobState,0,__ATOMIC_RELEASE);
+}
+static void usRequest(int i,const Cell *c,int count){
+ if(usJobState)return;
+ usJobCell=i;usJobFirst=c->first;usJobCount=count;usJobRam=NULL;
+ __atomic_store_n(&usJobState,1,__ATOMIC_RELEASE);LightEvent_Signal(&usWake);
+}
 int initCityLights(void){
- const unsigned char *b=night_lights_bin;
+ const unsigned char *b=night_lights_bin;storeCount=0;
  if(night_lights_bin_size<20||memcmp(b,"CFLITE02",8))return 0;
- cellSize=rd32(b+8);cellCount=rd32(b+12);pointCount=rd32(b+16);
+ cellSize=rd32(b+8);int cellCount=rd32(b+12),pointCount=rd32(b+16);
  if((unsigned)(20+14*cellCount+6*pointCount)>night_lights_bin_size)return 0;
- table=b+20;points=(const Point*)(b+20+14*cellCount);
- if(((uintptr_t)points)&1)return 0;
- state=calloc(cellCount,sizeof(CellState));
+ Store *s=&stores[0];memset(s,0,sizeof(*s));
+ s->table=b+20;s->points=(const Point*)(b+20+14*cellCount);s->cellCount=cellCount;
+ if(((uintptr_t)s->points)&1)return 0;
+ s->state=calloc(cellCount,sizeof(CellState));if(!s->state)return 0;storeCount=1;
  const unsigned char *tr=b+20+14*cellCount+6*pointCount;
  if((unsigned)(tr+8-b)<=night_lights_bin_size){
   pieceCount=rd32(tr);trafficPoints=rd32(tr+4);pieces=tr+8;piecePoints=pieces+12*pieceCount;
   if((unsigned)(piecePoints+4*trafficPoints-b)>night_lights_bin_size)pieceCount=trafficPoints=0;
   else {pieceZ=malloc(sizeof(float)*trafficPoints);pieceS=malloc(sizeof(float)*trafficPoints);pieceReady=calloc(pieceCount,1);if(!pieceZ||!pieceS||!pieceReady)pieceCount=0;}
  }
- return state!=NULL;
+ return 1;
 }
 void freeCityLights(void){
- if(state)for(int i=0;i<cellCount;i++)if(state[i].gpu)linearFree(state[i].gpu);
- free(state);state=NULL;cellCount=0;
+ usStop();
+ for(int k=0;k<storeCount;k++){Store *s=&stores[k];
+  if(s->state)for(int i=0;i<s->cellCount;i++){if(s->state[i].gpu)linearFree(s->state[i].gpu);free(s->state[i].ram);}
+  free(s->state);free(s->heapTable);memset(s,0,sizeof(*s));}
+ storeCount=0;
  free(pieceZ);free(pieceS);free(pieceReady);pieceZ=pieceS=NULL;pieceReady=NULL;pieceCount=0;
 }
-static int lowerBound(int cy,int cx){
- int lo=0,hi=cellCount;
- while(lo<hi){int mid=(lo+hi)/2;Cell c=cellAt(mid);if(c.cy<cy||(c.cy==cy&&c.cx<cx))lo=mid+1;else hi=mid;}
+static int lowerBound(const Store *s,int cy,int cx){
+ int lo=0,hi=s->cellCount;
+ while(lo<hi){int mid=(lo+hi)/2;Cell c=cellAt(s,mid);if(c.cy<cy||(c.cy==cy&&c.cx<cx))lo=mid+1;else hi=mid;}
  return lo;
 }
 static const float palette[4][3]={{1,.62f,.26f},{1,.84f,.58f},{.86f,.9f,1},{1,.56f,.2f}};
 static const float minPixels[3]={2.2f,1.6f,1.25f};
-static void fill(int i,const Cell *c,int n){
- CellState *st=&state[i];float x0=(float)c->cx*cellSize,y0=(float)c->cy*cellSize;
+static void fill(CellState *st,const Cell *c,const Point *src,int n){
+ float x0=(float)c->cx*cellSize,y0=(float)c->cy*cellSize;
  for(int j=st->filled;j<st->filled+n;j++){
-  const Point *p=&points[c->first+j];int level=(p->attr>>2)&3,colour=p->attr&3;float b=(float)p->brightness;
+  const Point *p=&src[j];int level=(p->attr>>2)&3,colour=p->attr&3;float b=(float)p->brightness;
   float lift=(p->attr&16)?9:5;
   st->gpu[j]=(LightPoint){p->dx,p->dy,rawElevation(x0+p->dx,y0+p->dy)+lift,
    (unsigned char)(palette[colour][0]*b),(unsigned char)(palette[colour][1]*b),(unsigned char)(palette[colour][2]*b),
@@ -63,17 +120,27 @@ static void fill(int i,const Cell *c,int n){
  }
  st->filled+=n;
 }
+/* Grows the cell's GPU buffer to hold count lights, keeping those already filled. */
+static int ensureCapacity(CellState *st,int count){
+ if(st->gpu&&st->cap>=count)return 1;
+ LightPoint *g=linearAlloc(sizeof(LightPoint)*count);if(!g)return 0;
+ if(st->gpu){memcpy(g,st->gpu,sizeof(LightPoint)*st->filled);linearFree(st->gpu);}
+ st->gpu=g;st->cap=(uint16_t)count;st->flushed=0;return 1;
+}
 void cityLights(const CameraPose *camera,unsigned frame,CityDraw draw){
  statCells=statDrawn=statPending=0;
- if(!state)return;
+ if(!storeCount)return;
+ if(!usState)usOpen();
+ if(usState>0)usCollect();
  Vec eye=camera->eye;int budget=600;
  const float reach[3]={42000,10000,3500};
  int r=(int)ceilf(reach[0]/cellSize);int ex=(int)floorf(eye.x/cellSize),ey=(int)floorf(eye.y/cellSize);
+ for(int k=0;k<storeCount;k++){Store *s=&stores[k];int onCard=!s->points;
  for(int pass=0;pass<2;pass++){  /* pass 0 fills cells within 10 km only; pass 1 fills the rest and draws */
   for(int cy=ey-r;cy<=ey+r;cy++){
-   for(int i=lowerBound(cy,ex-r);i<cellCount;i++){
-    Cell c=cellAt(i);if(c.cy!=cy||c.cx>ex+r)break;
-    CellState *st=&state[i];
+   for(int i=lowerBound(s,cy,ex-r);i<s->cellCount;i++){
+    Cell c=cellAt(s,i);if(c.cy!=cy||c.cx>ex+r)break;
+    CellState *st=&s->state[i];
     float x0=(float)c.cx*cellSize,y0=(float)c.cy*cellSize;
     float dx=x0+cellSize*.5f-eye.x,dy=y0+cellSize*.5f-eye.y,d=sqrtf(dx*dx+dy*dy),half=cellSize*.71f;
     if(d-half>reach[0])continue;
@@ -89,9 +156,15 @@ void cityLights(const CameraPose *camera,unsigned frame,CityDraw draw){
     if(!count)continue;
     if(pass==0&&d-half>=reach[1])continue;
     st->lastUse=frame;
-    if(!st->gpu){st->gpu=linearAlloc(sizeof(LightPoint)*c.n[2]);if(!st->gpu)continue;st->filled=st->flushed=0;}
-    if(st->filled<count&&budget>0){int n=count-st->filled;if(n>budget)n=budget;fill(i,&c,n);budget-=n;}
+    const Point *src=s->points?s->points+c.first:st->ram;
+    int have=onCard?st->ramCount:count;
+    if(onCard&&have<count)usRequest(i,&c,count);
+    int want=count<have?count:have;
+    if(want>st->filled&&budget>0){
+     if(!ensureCapacity(st,want))continue;
+     int n=want-st->filled;if(n>budget)n=budget;fill(st,&c,src,n);budget-=n;}
     if(pass==0)continue;
+    if(!st->gpu)continue;
     if(st->flushed<st->filled){GSPGPU_FlushDataCache(st->gpu+st->flushed,(st->filled-st->flushed)*sizeof(LightPoint));st->flushed=st->filled;}
     int n=st->filled<count?st->filled:count;if(st->filled<count)statPending+=count-st->filled;
     if(n){draw(st->gpu,(Vec){x0,y0,0},n);statCells++;statDrawn+=n;}
@@ -99,9 +172,11 @@ void cityLights(const CameraPose *camera,unsigned frame,CityDraw draw){
   }
  }
  /* Free buffers of cells not drawn for ~20 s (keeps linear memory bounded). */
- static int sweep;
- for(int k=0;k<64&&cellCount;k++){sweep=(sweep+1)%cellCount;CellState *st=&state[sweep];
-  if(st->gpu&&frame-st->lastUse>1200){linearFree(st->gpu);st->gpu=NULL;st->filled=st->flushed=0;}}
+ {static int sweep[2];
+  for(int j=0;j<64&&s->cellCount;j++){sweep[k]=(sweep[k]+1)%s->cellCount;CellState *st=&s->state[sweep[k]];
+   if((st->gpu||st->ram)&&frame-st->lastUse>1200&&!(onCard&&usJobState&&usJobCell==sweep[k])){
+    if(st->gpu){linearFree(st->gpu);}free(st->ram);st->gpu=NULL;st->ram=NULL;st->filled=st->flushed=st->cap=st->ramCount=0;}}}
+ }
 }
 void cityLightStats(int *cells,int *drawn,int *pending){*cells=statCells;*drawn=statDrawn;*pending=statPending;}
 /* Moving car lights on primary and secondary roads within 12 km: one lamp

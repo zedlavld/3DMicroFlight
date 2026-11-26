@@ -1,11 +1,11 @@
 {
-  "checks": 1076338,
-  "failures": 0,
-  "firstFailure": 0,
-  "maxResident": 20971008,
+  "checks": 1090162,
+  "failures": 2,
+  "firstFailure": 63,
+  "maxResident": 9436928,
   "maxFrameUpload": 65536,
-  "completedTiles": 177,
+  "completedTiles": 157,
   "failureTiles": 2,
-  "readyFrames": 58655,
+  "readyFrames": 58695,
   "pressureTransitions": 0
 }

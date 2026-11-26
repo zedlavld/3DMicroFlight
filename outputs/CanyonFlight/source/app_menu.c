@@ -1,14 +1,21 @@
 #include "app_menu.h"
 #include "flight.h"
 #include "daylight.h"
-int menuRows(const AppMenu *m){return m->screen==MENU_TITLE?4+(m->autotestCases>0):m->screen==MENU_SETUP?7:m->screen==MENU_PAUSE?8:m->screen==MENU_EXIT?2:m->screen==MENU_AUDIO?5:(m->screen==MENU_SAVE_SLOTS||m->screen==MENU_LOAD_SLOTS)?4:0;}
-int menuRowHeight(const AppMenu *m){return m->screen==MENU_PAUSE?19:25;}
+#include "airport_index.h"
+int menuRows(const AppMenu *m){return m->screen==MENU_TITLE?4+(m->autotestCases>0):m->screen==MENU_SETUP?7:m->screen==MENU_PAUSE?8:m->screen==MENU_EXIT?2:m->screen==MENU_AUDIO?7:(m->screen==MENU_SAVE_SLOTS||m->screen==MENU_LOAD_SLOTS)?4:0;}
+int menuRowHeight(const AppMenu *m){return m->screen==MENU_PAUSE||m->screen==MENU_AUDIO?19:25;}
 void menuMove(AppMenu *m,int d){int n=menuRows(m);if(n)m->row=(m->row+d+n)%n;}
+/* v1.1p20: L / R on the airport row jump to the first airport of the previous / next state. */
+void menuAdjustGroup(AppMenu *m,int d){
+ if(m->screen==MENU_SETUP&&m->row==1)m->airport=airportNextState(m->airport,d);
+}
 void menuAdjust(AppMenu *m,int d){
  if(m->screen==MENU_AUDIO){
   if(m->row==0){m->volume+=d;if(m->volume<0)m->volume=0;if(m->volume>5)m->volume=5;}
   else if(m->row==1)m->muted=!m->muted;
   else if(m->row==3){m->deadzone+=d;if(m->deadzone<0)m->deadzone=0;if(m->deadzone>MENU_DEADZONE_MAX)m->deadzone=MENU_DEADZONE_MAX;}
+  else if(m->row==4)m->lowerMap=!m->lowerMap;
+  else if(m->row==5){m->level+=d;if(m->level<0)m->level=0;if(m->level>=FLIGHT_LEVELS)m->level=FLIGHT_LEVELS-1;}
   return;
  }
  if(m->screen!=MENU_SETUP)return;
@@ -42,7 +49,7 @@ int menuAccept(AppMenu *m){
   if(m->screen==MENU_PAUSE&&m->row==7)confirmExit(m);
  }else if(m->screen==MENU_AUDIO){
   if(m->row==0)m->volume=(m->volume+1)%6;else if(m->row==1)m->muted=!m->muted;
-  else if(m->row==2)return MENU_CALIBRATE;else if(m->row==3)m->deadzone=(m->deadzone+1)%(MENU_DEADZONE_MAX+1);else menuBack(m);
+  else if(m->row==2)return MENU_CALIBRATE;else if(m->row==3)m->deadzone=(m->deadzone+1)%(MENU_DEADZONE_MAX+1);else if(m->row==4)m->lowerMap=!m->lowerMap;else if(m->row==5)m->level=(m->level+1)%FLIGHT_LEVELS;else menuBack(m);
  }else if(m->screen==MENU_SAVE_SLOTS||m->screen==MENU_LOAD_SLOTS){
   if(m->row==3){menuBack(m);return MENU_NONE;}
   m->slot=m->row;

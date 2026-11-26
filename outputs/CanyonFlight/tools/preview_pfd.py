@@ -39,7 +39,7 @@ int main(void){
 
 compiler=Path(os.environ.get('DEVKITARM','C:/devkitPro/devkitARM'))/'bin/arm-none-eabi-gcc.exe'
 if not compiler.exists():compiler=Path('C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe')
-sources=[root/'source'/f for f in ['flight.c','fbw.c','f16_aero.c','ground.c','instruments.c','terrain.c','terrain_stream.c','terrain_data.c','airports.c']]
+sources=[root/'source'/f for f in ['flight.c','fbw.c','f16_aero.c','ground.c','instruments.c','terrain.c','terrain_stream.c','terrain_data.c','airports.c','airport_index.c']]
 subprocess.run([str(compiler),'-O2','-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(root/'include'),*[str(f) for f in sources],str(previewDir/'pfd_dump.c'),'-Wl,-e,main','-lm','-o',str(previewDir/'pfd_dump.elf')],check=True)
 from pathlib import Path
 from unicorn import Uc,UC_ARCH_ARM,UC_MODE_ARM

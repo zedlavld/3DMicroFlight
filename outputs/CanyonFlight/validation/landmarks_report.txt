@@ -1,0 +1,41 @@
+checks 39, failures 0
+Golden Gate Bridge                 3850 triangles (  390 far)    292 x  2692 m, top   308 m
+Hoover Dam                         2988 triangles ( 2988 far)    358 x   317 m, top   394 m
+Hoover Dam Bypass bridge           1090 triangles ( 1090 far)    519 x   319 m, top   468 m
+Gateway Arch                        480 triangles (  480 far)     75 x   191 m, top   493 m
+Washington Monument                  14 triangles (   14 far)     18 x    17 m, top   469 m
+US Capitol                          304 triangles (  268 far)    105 x   230 m, top   388 m
+Lincoln Memorial                   1326 triangles (   30 far)     46 x    62 m, top   324 m
+Empire State Building               142 triangles (  106 far)    151 x   112 m, top   743 m
+Willis Tower                        162 triangles (  162 far)     77 x    70 m, top   827 m
+Luxor                                 4 triangles (    4 far)    186 x   183 m, top   409 m
+The STRAT                           210 triangles (  210 far)     57 x    55 m, top   650 m
+Las Vegas Strip resorts            5334 triangles ( 4758 far)   1772 x  5241 m, top   524 m
+Space Needle                        300 triangles (  144 far)     51 x    42 m, top   484 m
+Statue of Liberty                   338 triangles (  192 far)     97 x    90 m, top   394 m
+Aerial Lift Bridge                  950 triangles (   70 far)     95 x   133 m, top   261 m
+Blatnik Bridge                     1610 triangles (  890 far)    716 x  2278 m, top   302 m
+Bong Bridge                        1160 triangles (  540 far)   1388 x   794 m, top   302 m
+Canal Park lights                   210 triangles (   66 far)    404 x   252 m, top   206 m
+Duluth elevators and ore docks     1362 triangles ( 1362 far)   3185 x  3345 m, top   360 m
+Enger Tower                         108 triangles (  108 far)     11 x     9 m, top   328 m
+Mission San Xavier del Bac          422 triangles (  350 far)     68 x    49 m, top   330 m
+Sentinel Peak A                      90 triangles (   90 far)     44 x    35 m, top   301 m
+Arizona Stadium                     570 triangles (  570 far)    229 x   214 m, top   345 m
+Kitt Peak                          1511 triangles ( 1511 far)   1950 x  1406 m, top   352 m
+Brooklyn Bridge                    2010 triangles (  250 far)   1210 x  1171 m, top   298 m
+Mackinac Bridge                    3950 triangles ( 1610 far)    540 x  4208 m, top   345 m
+Sunshine Skyway Bridge             3450 triangles ( 2610 far)   3681 x  5373 m, top   302 m
+Jefferson Memorial                 1256 triangles (  320 far)     89 x    84 m, top   339 m
+The Pentagon                        200 triangles (  200 far)    468 x   443 m, top   323 m
+White House                         116 triangles (  116 far)    296 x    44 m, top   324 m
+Alcatraz                             56 triangles (   56 far)    186 x    85 m, top   326 m
+Coit Tower                          108 triangles (  108 far)     27 x    26 m, top   364 m
+Hollywood Sign                      300 triangles (  110 far)    103 x     1 m, top   314 m
+Griffith Observatory                410 triangles (  410 far)     71 x    32 m, top   334 m
+Vehicle Assembly Building            60 triangles (   60 far)    179 x   234 m, top   460 m
+Launch Complex 39A                   76 triangles (   76 far)    196 x   210 m, top   460 m
+Launch Complex 39B                  236 triangles (  128 far)    249 x   258 m, top   485 m
+Devils Tower                         72 triangles (   72 far)    496 x   430 m, top  1558 m
+San Jacinto Monument                156 triangles (  156 far)     48 x    50 m, top   474 m
+total 36991 triangles, 22675 far

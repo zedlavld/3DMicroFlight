@@ -2,6 +2,7 @@
 #include "terrain.h"
 #include "camera.h"
 #include "scenery.h"
+#include "airport_index.h"
 int checks,failures,firstFailure;
 /* v31: every start runway (AIRPORT_START_COUNT) for both aircraft. */
 int startCount=AIRPORT_START_COUNT;
@@ -37,14 +38,16 @@ int main(void){
   }
   /* Geometry at the runway must agree with the contact surface to centimetres,
      rather than putting the camera/airframe below metre-high pavement. */
-  /* v31: runway record i is drawn in object part 32 + i % 4. */
-  int n=buildSceneryPart(&s,vertices,SCENERY_PART_CAPACITY,32+ap%4);
+  /* v1.1p20: the runways within 45 km, nearest first, go round robin over object parts
+     32..35 (v31: record i in part 32 + i % 4). */
+  int near[64],nearCount=airportsNear(s.pos.x,s.pos.y,45000,near,64),slot=0;
+  for(int q=0;q<nearCount;q++)if(near[q]==ap)slot=q;
+  int n=buildSceneryPart(&s,vertices,SCENERY_PART_CAPACITY,32+slot%4);
   CHECK(n>0&&n<SCENERY_PART_CAPACITY-3&&n%3==0);
   airportVertices[k]=n;int asphalt=0;
   /* The four shoulder bands must leave the asphalt footprint open. Check
      triangle interiors; checking vertices alone missed the old spanning quad. */
-  int firstAirport=ap%4;while(firstAirport<AIRPORT_COUNT&&hypotf(s.pos.x-airports[firstAirport].east,s.pos.y-airports[firstAirport].north)>=45000)firstAirport+=4;
-  const Airport *shoulder=&airports[firstAirport];
+  const Airport *shoulder=&airports[near[slot%4]];   /* the part's first (and nearest) runway: full detail */
   for(int i=0;i<24;i+=3){
    Vec p={0,0,0};for(int j=0;j<3;j++){p.x+=vertices[i+j].p.x/3;p.y+=vertices[i+j].p.y/3;p.z+=vertices[i+j].p.z/3;}
    float angle=shoulder->heading*.01745329252f,dx=p.x-shoulder->east,dy=p.y-shoulder->north;

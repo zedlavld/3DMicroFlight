@@ -1,10 +1,10 @@
 {
-  "checks": 63803,
+  "checks": 66683,
   "failures": 0,
   "firstFailure": 0,
   "mesh_triangles": [
-    825,
-    739
+    861,
+    775
   ],
   "gpu_runtime_verified": false
 }

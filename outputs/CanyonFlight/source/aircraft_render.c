@@ -18,6 +18,7 @@
 #include "terrain.h"
 #include "airport_lights.h"
 #include "light_render.h"
+#include "landmarks.h"
 #include "flight.h"
 #include "aircraft_shader_shbin.h"
 #include "sr22_texture_bin.h"
@@ -740,7 +741,7 @@ void nightLightFrameStats(float *ms,float *vertices,float *cityConsidered){
    scenery/buildings). Tiles within BLD_LOAD of the aircraft load one per frame into their
    own linear buffer, vertices relative to the tile's corner and ground, so the shader's
    eye-offset subtraction stays on small numbers. Drawn opaque after the terrain. */
-#define BLD_SLOTS 48 /* v1.1p4: 12 m cut-off in Tucson and Duluth puts 30-36 tiles within BLD_LOAD */
+#define BLD_SLOTS 49 /* BLD_REACH 3: at most 7 x 7 tiles are candidates (New York fills them all) */
 #define BLD_SPAN 2048.f
 /* v1.1p2: only buildings 20 m and taller (a few thousand triangles per city), so they load
    and draw from much farther: the skyline shows on the approach. */
@@ -753,6 +754,7 @@ void nightLightFrameStats(float *ms,float *vertices,float *cityConsidered){
    BLD_FAR_MIN_DM and taller (the tool writes those first); the 12-30 m blocks show close up. */
 #define BLD_NEAR 2000.f
 #define BLD_FAR_MIN_DM 300
+#define BLD_FAR_TRIS 300 /* far tiles draw at most this many triangles (whole buildings) */
 #ifndef BLD_CULL
 #define BLD_CULL GPU_CULL_BACK_CCW
 #endif
@@ -765,51 +767,132 @@ static float bldTileDistance(int x,int y,Vec p){
 }
 static int bldKnownMissing(int x,int y){for(int i=0;i<bldMissCount;i++)if(bldMiss[i][0]==x&&bldMiss[i][1]==y)return 1;return 0;}
 static void bldMarkMissing(int x,int y){bldMiss[bldMissNext][0]=x;bldMiss[bldMissNext][1]=y;bldMissNext=(bldMissNext+1)%BLD_MISSES;if(bldMissCount<BLD_MISSES)bldMissCount++;}
+/* v1.1p7: tiles sit in folders of 16 x 16 tiles (one 1,395-file folder cost 260-380 ms per
+   open on hardware), and index.bin lists the tiles that exist, so absent tiles are never
+   opened. No index: no buildings. */
+static int32_t *bldIndex;static int bldIndexCount,bldIndexState;
+static int bldBlock(int v){return v>=0?v/16:-((15-v)/16);}
+static void bldIndexLoad(void){
+ bldIndexState=-1;FILE *f=fopen("sdmc:/3ds/CanyonFlight/scenery/buildings/index.bin","rb");if(!f)return;
+ unsigned char head[12];u32 n=0;
+ if(fread(head,1,12,f)==12&&!memcmp(head,"CFBIDX01",8)){memcpy(&n,head+8,4);
+  if(n>0&&n<200000&&(bldIndex=malloc(n*8))&&fread(bldIndex,8,n,f)==n){bldIndexCount=(int)n;bldIndexState=1;}
+  else {free(bldIndex);bldIndex=NULL;}}
+ fclose(f);
+}
+static int bldListed(int x,int y){ /* index sorted by x, then y */
+ int lo=0,hi=bldIndexCount-1;
+ while(lo<=hi){int m=(lo+hi)/2,mx=bldIndex[m*2],my=bldIndex[m*2+1];if(mx==x&&my==y)return 1;if(mx<x||(mx==x&&my<y))lo=m+1;else hi=m-1;}
+ return 0;
+}
 static void bldFree(BldSlot *t){if(t->v)linearFree(t->v);memset(t,0,sizeof(*t));}
-static int bldLoad(BldSlot *t,int x,int y){
- char path[96];snprintf(path,sizeof(path),"sdmc:/3ds/CanyonFlight/scenery/buildings/b_%d_%d.bin",x,y);
- FILE *f=fopen(path,"rb");if(!f)return 0;
- unsigned char head[24];u32 nb=0,nv=0;int32_t key[2];
- int ok=fread(head,1,24,f)==24&&!memcmp(head,"CFB3D001",8);
- if(ok){memcpy(key,head+8,8);memcpy(&nb,head+16,4);memcpy(&nv,head+20,4);ok=key[0]==x&&key[1]==y&&nb<20000&&nv>0&&nv<60000;}
- long bytes=ok?(long)nb*6+(long)nv*10:0;unsigned char *raw=ok?malloc(bytes):NULL;
- ok=raw&&fread(raw,1,bytes,f)==(size_t)bytes;fclose(f);
- GPUVertex *v=ok?linearAlloc(nv*sizeof(GPUVertex)):NULL;
- if(!v){free(raw);return 0;}
+/* v1.1p8: one tile read took ~300 ms on the main thread on hardware (the SD is shared with the
+   scenery workers), so a low-priority worker reads whole tile files, as terrain_stream.c does,
+   and the main thread only converts a finished file (ground heights from rawElevation). */
+static Thread bldWorker;static LightEvent bldWake;static int bldQuit;
+static int bldJobState,bldJobX,bldJobY;static long bldJobBytes;static unsigned char *bldJobRaw; /* 0 idle, 1 reading, 2 read */
+static unsigned char *bldReadFile(int x,int y,long *bytes){
+ char path[112];snprintf(path,sizeof(path),"sdmc:/3ds/CanyonFlight/scenery/buildings/%d_%d/b_%d_%d.bin",bldBlock(x),bldBlock(y),x,y);
+ *bytes=0;FILE *f=fopen(path,"rb");if(!f)return NULL;
+ long n=fseek(f,0,SEEK_END)?-1:ftell(f);unsigned char *raw=n>=24&&n<4000000&&!fseek(f,0,SEEK_SET)?malloc(n):NULL;
+ if(raw&&fread(raw,1,n,f)!=(size_t)n){free(raw);raw=NULL;}
+ fclose(f);if(raw)*bytes=n;return raw;
+}
+static void bldDiskWorker(void *unused){
+ (void)unused;
+ for(;;){
+  LightEvent_Wait(&bldWake);if(__atomic_load_n(&bldQuit,__ATOMIC_ACQUIRE))return;
+  bldJobRaw=bldReadFile(bldJobX,bldJobY,&bldJobBytes);__atomic_store_n(&bldJobState,2,__ATOMIC_RELEASE);
+ }
+}
+static void bldWorkerStop(void){
+ if(bldWorker){__atomic_store_n(&bldQuit,1,__ATOMIC_RELEASE);LightEvent_Signal(&bldWake);threadJoin(bldWorker,U64_MAX);threadFree(bldWorker);bldWorker=NULL;}
+ bldQuit=0;free(bldJobRaw);bldJobRaw=NULL;bldJobState=0;
+}
+static int bldConvert(BldSlot *t,int x,int y,const unsigned char *raw,long bytes){
+ if(!raw||bytes<24||memcmp(raw,"CFB3D001",8))return 0;
+ u32 nb=0,nv=0;int32_t key[2];memcpy(key,raw+8,8);memcpy(&nb,raw+16,4);memcpy(&nv,raw+20,4);
+ if(key[0]!=x||key[1]!=y||nb>=20000||!nv||nv>=60000||bytes<24+(long)nb*6+(long)nv*10)return 0;
+ GPUVertex *v=linearAlloc(nv*sizeof(GPUVertex));if(!v)return 0;
  float e0=x*BLD_SPAN,n0=y*BLD_SPAN,z0=floorf(rawElevation(e0+BLD_SPAN/2,n0+BLD_SPAN/2)/64)*64;
- const unsigned char *q=raw;u32 written=0,farEnd=0;int tallRun=1;
+ const unsigned char *q=raw+24;u32 written=0,farEnd=0;int tallRun=1,ok=1;
  for(u32 b=0;b<nb&&ok;b++){
   int16_t c[2];u16 count;memcpy(c,q,4);memcpy(&count,q+4,2);q+=6;
   if(written+count>nv){ok=0;break;}
   float ground=rawElevation(e0+c[0]*.1f,n0+c[1]*.1f)-z0;int top=-32768;
   for(int k=0;k<count;k++,q+=10){int16_t p[3];memcpy(p,q,6);if(p[2]>top)top=p[2];
    v[written++]=(GPUVertex){{p[0]*.1f,p[1]*.1f,ground+p[2]*.1f},{0,0},{q[6]/255.f,q[7]/255.f,q[8]/255.f,1}};}
-  if(tallRun&&top>=BLD_FAR_MIN_DM)farEnd=written;else tallRun=0;
+  if(tallRun&&top>=BLD_FAR_MIN_DM&&written<=BLD_FAR_TRIS*3)farEnd=written;else tallRun=0;
  }
- free(raw);
  if(!ok||!written){linearFree(v);return 0;}
  GSPGPU_FlushDataCache(v,written*sizeof(GPUVertex));
  *t=(BldSlot){x,y,1,(int)written,(int)nb,{e0,n0,z0},v,(int)farEnd};return 1;
 }
+static int bldFreeSlot(void){for(int i=0;i<BLD_SLOTS;i++)if(!bldSlots[i].used)return i;return -1;}
 static void bldUpdate(Vec p){
+ if(!bldIndexState)bldIndexLoad();if(bldIndexState<0)return;
  for(int i=0;i<BLD_SLOTS;i++)if(bldSlots[i].used&&bldTileDistance(bldSlots[i].x,bldSlots[i].y,p)>BLD_KEEP)bldFree(&bldSlots[i]);
+ if(__atomic_load_n(&bldJobState,__ATOMIC_ACQUIRE)==2){   /* a file is read: convert it here */
+  u64 t0=svcGetSystemTick();int slot=bldFreeSlot();
+  if(slot<0||!bldConvert(&bldSlots[slot],bldJobX,bldJobY,bldJobRaw,bldJobBytes))bldMarkMissing(bldJobX,bldJobY);
+  free(bldJobRaw);bldJobRaw=NULL;bldJobState=0;
+  bldLoadMs=(svcGetSystemTick()-t0)/(SYSCLOCK_ARM11/1000.f);
+ }
+ if(bldJobState)return;   /* still reading */
  int cx=(int)floorf(p.x/BLD_SPAN),cy=(int)floorf(p.y/BLD_SPAN),bx=0,by=0;float best=1e30f;
  for(int y=cy-BLD_REACH;y<=cy+BLD_REACH;y++)for(int x=cx-BLD_REACH;x<=cx+BLD_REACH;x++){
-  float d=bldTileDistance(x,y,p);if(d>BLD_LOAD||d>=best||bldKnownMissing(x,y))continue;
+  float d=bldTileDistance(x,y,p);if(d>BLD_LOAD||d>=best||!bldListed(x,y)||bldKnownMissing(x,y))continue;
   int have=0;for(int i=0;i<BLD_SLOTS;i++)if(bldSlots[i].used&&bldSlots[i].x==x&&bldSlots[i].y==y){have=1;break;}
   if(!have){best=d;bx=x;by=y;}
  }
- if(best>=1e30f)return;
- int slot=-1;for(int i=0;i<BLD_SLOTS;i++)if(!bldSlots[i].used){slot=i;break;}
- if(slot<0)return;
- u64 t0=svcGetSystemTick();
- if(!bldLoad(&bldSlots[slot],bx,by))bldMarkMissing(bx,by);
- bldLoadMs=(svcGetSystemTick()-t0)/(SYSCLOCK_ARM11/1000.f);
+ if(best>=1e30f||bldFreeSlot()<0)return;
+ bldJobX=bx;bldJobY=by;
+ if(!bldWorker){bldQuit=0;LightEvent_Init(&bldWake,RESET_ONESHOT);bldWorker=threadCreate(bldDiskWorker,NULL,8192,0x38,-2,false);}
+ if(bldWorker){__atomic_store_n(&bldJobState,1,__ATOMIC_RELEASE);LightEvent_Signal(&bldWake);}
+ else {bldJobRaw=bldReadFile(bx,by,&bldJobBytes);bldJobState=2;}   /* no thread: read here */
+}
+/* ------------------------------------------------------------------ landmarks (v1.1p9)
+   The Thor port's landmark models (source/landmarks.c), built on the main thread when the
+   aircraft comes within LMK_BUILD (one per frame), rebuilt once within LMK_FINE so the
+   ground under them is the streamed 100 m elevation, freed beyond LMK_BUILD + LMK_HYST. */
+#define LMK_MAX 48
+#define LMK_BUILD 25000.f
+#define LMK_FINE 5000.f
+#define LMK_HYST 5000.f
+#define LMK_NEAR 3000.f /* beyond: only parts at least 3 m thick (landmarkTriangles farCount) */
+typedef struct {GPUVertex *v;int count,fine,far;Vec origin,centre;float radius;} LmkSlot;
+static LmkSlot lmkSlots[LMK_MAX];static int lmkDrawnVertices,lmkDrawn;static float lmkBuildMs;
+static void lmkFree(LmkSlot *l){if(l->v)linearFree(l->v);memset(l,0,sizeof(*l));}
+static float lmkReach(int i){float r=landmarkRadius(i);return r>0?fminf(r,40000.f):LMK_BUILD;}
+static void lmkBuild(int i,int fine){
+ float e,n,stretch;landmarkAnchor(i,&e,&n,&stretch);
+ LandmarkVertex *lv=NULL;float z0=0;int far=0,count=landmarkTriangles(i,rawElevation(e,n),&lv,&z0,&far);
+ LmkSlot *l=&lmkSlots[i];lmkFree(l);
+ GPUVertex *v=count>0?linearAlloc(count*sizeof(GPUVertex)):NULL;
+ if(!v){free(lv);return;}
+ float lo[3]={1e9f,1e9f,1e9f},hi[3]={-1e9f,-1e9f,-1e9f};
+ for(int k=0;k<count;k++){const LandmarkVertex *q=&lv[k];float p[3]={q->x,q->y,q->z};
+  for(int a=0;a<3;a++){if(p[a]<lo[a])lo[a]=p[a];if(p[a]>hi[a])hi[a]=p[a];}
+  v[k]=(GPUVertex){{q->x,q->y,q->z},{0,0},{q->r/255.f,q->g/255.f,q->b/255.f,1}};}
+ free(lv);GSPGPU_FlushDataCache(v,count*sizeof(GPUVertex));
+ Vec mid={(lo[0]+hi[0])/2,(lo[1]+hi[1])/2,(lo[2]+hi[2])/2};
+ *l=(LmkSlot){v,count,fine,far,{e,n,z0},{e+mid.x,n+mid.y,z0+mid.z},.5f*sqrtf((hi[0]-lo[0])*(hi[0]-lo[0])+(hi[1]-lo[1])*(hi[1]-lo[1])+(hi[2]-lo[2])*(hi[2]-lo[2]))};
+}
+static void lmkUpdate(Vec p){
+ int n=landmarkCount();if(n>LMK_MAX)n=LMK_MAX;int built=0;
+ for(int i=0;i<n;i++){float e,no,st;landmarkAnchor(i,&e,&no,&st);float d=hypotf(e-p.x,no-p.y),reach=lmkReach(i);LmkSlot *l=&lmkSlots[i];
+  if(l->v&&d>reach+LMK_HYST){lmkFree(l);continue;}
+  if(!built&&d<reach&&(!l->v||(!l->fine&&d<LMK_FINE))){u64 t0=svcGetSystemTick();lmkBuild(i,d<LMK_FINE);built=1;
+   lmkBuildMs=(svcGetSystemTick()-t0)/(SYSCLOCK_ARM11/1000.f);}}
+}
+void landmarkStats(int *drawn,int *triangles,int *resident,float *buildMs){
+ int r=0;for(int i=0;i<LMK_MAX;i++)r+=lmkSlots[i].v!=NULL;
+ *drawn=lmkDrawn;*triangles=lmkDrawnVertices/3;*resident=r;*buildMs=lmkBuildMs;
 }
 void drawCityBuildings(const Flight *s,const CameraPose *camera){
  if(!ready)return;
- if(bldFrame!=renderFrame){bldFrame=renderFrame;bldLoadMs=0;bldUpdate(s->pos);bldDrawnVertices=bldDrawnTiles=0;}
- int any=0;for(int i=0;i<BLD_SLOTS;i++)any|=bldSlots[i].used;if(!any||bldOff)return;
+ if(bldFrame!=renderFrame){bldFrame=renderFrame;bldLoadMs=lmkBuildMs=0;bldUpdate(s->pos);lmkUpdate(s->pos);bldDrawnVertices=bldDrawnTiles=lmkDrawnVertices=lmkDrawn=0;}
+ int any=0;for(int i=0;i<BLD_SLOTS;i++)any|=bldSlots[i].used;for(int i=0;i<LMK_MAX;i++)any|=lmkSlots[i].v!=NULL;if(!any||bldOff)return;
  /* v1.1p2: at full night the unlit boxes are near black against the ground and the city
     lights carry the scene, so skip them (they stay loaded for dawn). */
  if(daylightNight()>.85f)return;
@@ -831,14 +914,23 @@ void drawCityBuildings(const Flight *s,const CameraPose *camera){
   setEyeOffset((Vec){camera->eye.x-t->origin.x,camera->eye.y-t->origin.y,camera->eye.z-t->origin.z});
   drawIndexedSlices(t->v,count);bldDrawnVertices+=count;bldDrawnTiles++;
  }
+ for(int i=0;i<LMK_MAX;i++){LmkSlot *l=&lmkSlots[i];if(!l->v)continue;
+  if(!cameraSphereVisible(camera,l->centre,l->radius,stereoIod,stereoScreen))continue;
+  float dist=fmaxf(hypotf(camera->eye.x-l->centre.x,camera->eye.y-l->centre.y)-l->radius,0);
+  int count=dist>LMK_NEAR?l->far:l->count;if(!count)continue;
+  setEyeOffset((Vec){camera->eye.x-l->origin.x,camera->eye.y-l->origin.y,camera->eye.z-l->origin.z});
+  drawIndexedSlices(l->v,count);lmkDrawnVertices+=count;lmkDrawn++;
+ }
 }
 void cityBuildingStats(int *tiles,int *triangles,int *resident,float *loadMs){
  int r=0;for(int i=0;i<BLD_SLOTS;i++)r+=bldSlots[i].used;
  *tiles=bldDrawnTiles;*triangles=bldDrawnVertices/3;*resident=r;*loadMs=bldLoadMs;
 }
 void freeAircraftRenderer(void){
+ bldWorkerStop();
  for(int i=0;i<BLD_SLOTS;i++)bldFree(&bldSlots[i]);
- bldMissCount=bldMissNext=0;
+ for(int i=0;i<LMK_MAX;i++)lmkFree(&lmkSlots[i]);
+ bldMissCount=bldMissNext=0;free(bldIndex);bldIndex=NULL;bldIndexCount=bldIndexState=0;
  freeSceneryStream();freeTerrainStream();freeSceneryPartCache();freeGroundImagery();freeLightRenderer();
  if(airportTexture.data){C3D_TexDelete(&airportTexture);memset(&airportTexture,0,sizeof(airportTexture));}
  if(cockpitTexture.data){C3D_TexDelete(&cockpitTexture);memset(&cockpitTexture,0,sizeof(cockpitTexture));}

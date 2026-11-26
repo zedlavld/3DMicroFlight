@@ -24,7 +24,7 @@
 #define AUTOTEST_PATH "sdmc:/3ds/3DMicroFlight/autotest.txt"
 #define AUTOTEST_DIR "sdmc:/3ds/3DMicroFlight/autotest"
 #define AUTOTEST_GO_PATH "sdmc:/3ds/3DMicroFlight/autotest.go" /* v35.15: start the autotest without the menu (Azahar runner) */
-#define AUTOTEST_MAX_CASES 160 /* v34.02: + day/night and night-lighting cases */
+#define AUTOTEST_MAX_CASES 450 /* v34.02: + day/night and night-lighting cases; v1.1p12: the 1.1 release run (~430) */
 /* v31.17: destination HOLD engages the player autopilot's HOLD mode, turned
    30 degrees right and 500 ft up from the start. */
 #define AUTOTEST_PLAYER_HOLD (-2)
@@ -42,9 +42,14 @@
    over that point instead of the airport: the phase's height above the
    ground and the runway heading are kept. For checking new scenery. */
 #define AUTOTEST_AT_POSITION (-5)
-#define AUTOTEST_BUILD "v1.0.1"
+/* v1.1p15: route options after the destination ICAO, separated by '/': FLnnn cruise flight
+   level, MAX cruise at the maximum allowed speed, LAND land and stop instead of orbiting
+   (autopilotRoute), e.g. KTUS/FL350/MAX/LAND. Up to 120 shots per case. */
+#define AUTOTEST_MAX_SHOTS 120
+#define AUTOTEST_BUILD "v1.1"
 typedef struct {char name[32];int aircraft,airport,phase,exterior,renderTest,shots,destination,weather;float warmup,interval,lookYaw,lookPitch,hours;
- float atEast,atNorth;} AutotestCase;
+ float atEast,atNorth;
+ float cruiseFt;int routeMax,routeLand;} AutotestCase;
 /* Parses the script; returns the number of valid cases (0 when absent).
    Malformed lines are skipped and counted in *rejected when non-NULL. */
 int autotestLoad(const char *path,AutotestCase *cases,int max,int *rejected);

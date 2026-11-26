@@ -12,7 +12,7 @@ if baseline:
  current=scenery.read_text();helper=current[current.index('void sceneryLodLayout'):current.index('int buildSceneryPart')]
  with zipfile.ZipFile(r.parent/'CirrusFlight-v25-update.zip') as z:old=z.read('source/scenery.c').decode()
  scenery=out/'scenery_v25.c';scenery.write_text(old+'\n'+helper+'\n'+current[current.index('float sceneryHaze'):current.index('void scenerySkyColor')])
-sources=[r/'source'/n for n in ['flight.c','fbw.c','f16_aero.c','ground.c','airports.c','terrain.c','terrain_stream.c','terrain_data.c','imagery.c','weather_visual.c']]+[scenery]
+sources=[r/'source'/n for n in ['flight.c','fbw.c','f16_aero.c','ground.c','airports.c','airport_index.c','terrain.c','terrain_stream.c','terrain_data.c','imagery.c','weather_visual.c']]+[scenery]
 subprocess.run(['C:/devkitPro/devkitARM/bin/arm-none-eabi-gcc.exe','-O2',*(['-DBASELINE_V25'] if baseline else []),'-marm','-march=armv6k','-mfloat-abi=hard','-mfpu=vfp','-specs=nosys.specs','-I'+str(r/'include'),*[str(p) for p in sources],str(r/'tests/terrain_stability_test.c'),'-Wl,-e,main','-lm','-o',str(elf)],check=True)
 u=Uc(UC_ARCH_ARM,UC_MODE_ARM);u.mem_map(0,0x4000000)
 with elf.open('rb') as f:

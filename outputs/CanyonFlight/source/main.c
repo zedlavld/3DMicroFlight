@@ -942,10 +942,10 @@ int main(void){
  Flight s;resetFlight(&s,0,0);u64 previous=osGetTime();float accumulator=0,fps=60;int paused=0,zlHeldLast=0,zlZoomUsed=0;
  /* v1.1p12: the case list and summary live on the heap; as static arrays they pushed the program image past
     32 MB (cirrusflight-32mb-code-limit: such a CIA dies at its first instruction on hardware). */
- static AutotestCase *autoCases;if(!autoCases)autoCases=calloc(AUTOTEST_MAX_CASES,sizeof(AutotestCase));int autoRejected=0;
- int autoCount=!autoCases?0:autotestLoad(AUTOTEST_PATH,autoCases,AUTOTEST_MAX_CASES,&autoRejected),autoIndex=-1,autoShot=0;float autoClock=0;u64 autoRunStart=0,autoCaseStart=0;
+ static AutotestCase *autoCases;if(!autoCases&&AUTOTEST_ENABLED)autoCases=calloc(AUTOTEST_MAX_CASES,sizeof(AutotestCase));int autoRejected=0; /* v1.1.1: none in a release */
+ int autoCount=!AUTOTEST_ENABLED||!autoCases?0:autotestLoad(AUTOTEST_PATH,autoCases,AUTOTEST_MAX_CASES,&autoRejected),autoIndex=-1,autoShot=0;float autoClock=0;u64 autoRunStart=0,autoCaseStart=0;
 #define AUTO_SUMMARY_SIZE 524288
- static char *autoSummary;if(!autoSummary)autoSummary=calloc(1,AUTO_SUMMARY_SIZE);if(!autoSummary)autoCount=0;int autoSummaryLen=0; /* v32.04: 8 KB filled up after ~28 cases; v33.09: ~560 B per case with the dyn line */
+ static char *autoSummary;if(!autoSummary&&autoCount)autoSummary=calloc(1,AUTO_SUMMARY_SIZE);if(!autoSummary)autoCount=0;int autoSummaryLen=0; /* v32.04: 8 KB filled up after ~28 cases; v33.09: ~560 B per case with the dyn line */
  /* v35.15 (as on the Thor): an autotest.txt on the card no longer takes over the game. The title menu
     offers "Run autotest (N cases)" next to normal flying; the test starts by itself only when
     autotest.go exists (the Azahar runner writes it), which is removed so the next launch is normal.

@@ -47,6 +47,11 @@
    (autopilotRoute), e.g. KTUS/FL350/MAX/LAND. Up to 120 shots per case. */
 #define AUTOTEST_MAX_SHOTS 120
 #define AUTOTEST_BUILD "v1.1"
+/* v1.1.1: the Makefile sets this to 0 for a release tag (no "p" test number): the game then never
+   loads autotest.txt, shows no "Run autotest" row and ignores autotest.go. */
+#ifndef AUTOTEST_ENABLED
+#define AUTOTEST_ENABLED 1
+#endif
 typedef struct {char name[32];int aircraft,airport,phase,exterior,renderTest,shots,destination,weather;float warmup,interval,lookYaw,lookPitch,hours;
  float atEast,atNorth;
  float cruiseFt;int routeMax,routeLand;} AutotestCase;

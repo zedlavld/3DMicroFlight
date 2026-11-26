@@ -57,6 +57,13 @@ CFLAGS	:=	-g -Wall -O2 -mword-relocations \
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -D__3DS__
+# v1.1.1: autotest only in test builds. A release tag (v1.1, v1.1.1) has no "p" test number;
+# a test build (v1.1.1p1) has one. Release builds ignore autotest.txt and autotest.go.
+ifeq ($(findstring p,$(APP_VERSION)),)
+CFLAGS	+=	-DAUTOTEST_ENABLED=0
+else
+CFLAGS	+=	-DAUTOTEST_ENABLED=1
+endif
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
 
